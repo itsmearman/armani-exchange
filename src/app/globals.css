@@ -2,6 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "IranSans";
+  src: url("../../public/fonts/IRANSansUltraLight.ttf");
+  font-weight: 200;
+}
+@font-face {
+  font-family: "IranSans";
+  src: url("../../public/fonts/IRANSanLight.ttf");
+  font-weight: 300;
+}
+@font-face {
+  font-family: "IranSans";
+  src: url("../../public/fonts/IRANSansWeb.ttf");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "IranSans";
+  src: url("../../public/fonts/IRANSansMedium.ttf");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "IranSans";
+  src: url("../../public/fonts/IRANSansBold.ttf");
+  font-weight: 600;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
