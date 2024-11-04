@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import Layout from '@/view/layouts/layout'
 
 export const metadata: Metadata = {
   title: "Armani Exchange",
@@ -12,10 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html>
-      <body>
-        {children}
-      </body>
-    </html>
+    <Layout>
+      {children}
+    </Layout>
   );
 }
