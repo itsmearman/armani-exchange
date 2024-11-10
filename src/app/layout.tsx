@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Layout from '@/src/view/layouts/layout'
+import Layout from "@/src/view/layouts/layout";
 
 export const metadata: Metadata = {
   title: "Armani Exchange",
