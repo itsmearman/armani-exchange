@@ -12,7 +12,6 @@ export default function Navbar() {
   const item = NavbarItem;
   const slug = usePathname();
   const  width = useWidth();
-console.log(width);
 
   return (
     <nav className="font-IranSans h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-xl justify-between">

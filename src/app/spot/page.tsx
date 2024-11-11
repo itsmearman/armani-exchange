@@ -1,13 +1,13 @@
-import Home from "@/src/view/index";
+import Spot from "@/src/view/spot/index";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Armani Exchange",
+  title: "Spot Trading",
   description: "Biggest Exchange in Asia",
 };
 
-export default function HomePage() {
+export default function SpotPage() {
   return (
-    <Home/>
+    <Spot/>
   );
 }
