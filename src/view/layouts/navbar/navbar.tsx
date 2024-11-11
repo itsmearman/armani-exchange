@@ -6,10 +6,12 @@ import Image from "next/image";
 // import Logo from "@/public/Logo1.png";
 import Logo from "@/public/Logo.png";
 import { usePathname } from "next/navigation";
+import { useWidth } from "@/src/components/windowDimensions";
+
 export default function Navbar() {
   const item = NavbarItem;
   const slug = usePathname();
-  console.log(slug);
+  const  width = useWidth();
 
   return (
     <nav className="font-IranSans h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-xl justify-between">
@@ -23,7 +25,9 @@ export default function Navbar() {
             key={index}
             className="cursor-pointer hover:text-gray-400"
           >
+            { width < 768 ? 
             <Image src={data.route == slug ? data.imgActive : data.img} width={20} height={20} alt="" className="mx-auto text-center"/>
+            : null}
             {data.title}
           </Link>
         ))}
@@ -34,48 +38,3 @@ export default function Navbar() {
     </nav>
   );
 }
-
-//drawer
-
-// import * as React from "react";
-// import Box from "@mui/material/Box";
-// import Drawer from "@mui/material/Drawer";
-// import Button from "@mui/material/Button";
-// import List from "@mui/material/List";
-// import { HamburgerMenu } from "@/src/components/icons";
-// import Link from "next/link";
-
-// export default function TemporaryDrawer() {
-//   const [open, setOpen] = React.useState(false);
-//   const item = NavbarItem;
-//   const toggleDrawer = (newOpen: boolean) => () => {
-//     setOpen(newOpen);
-//   };
-
-//   const DrawerList = (
-//     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
-//       <div className="flex flex-col items-center gap-9 pt-4">
-//         {item.map((text, index) => (
-//           <Link
-//             href={text.route}
-//             key={index}
-//             className=" cursor-pointer hover:text-gray-400"
-//           >
-//             {text.title}
-//           </Link>
-//         ))}
-//       </div>
-//     </Box>
-//   );
-
-//   return (
-//     <div>
-//       <Button onClick={toggleDrawer(true)}>
-//         <HamburgerMenu />
-//       </Button>
-//       <Drawer open={open} onClose={toggleDrawer(false)}>
-//         {DrawerList}
-//       </Drawer>
-//     </div>
-//   );
-// }
