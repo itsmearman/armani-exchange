@@ -12,14 +12,17 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/base": "^5.0.0-beta.61",
-    "@mui/material": "^6.1.6",
+    "@mui/material": "^6.1.7",
     "@mui/system": "^6.1.6",
     "@reduxjs/toolkit": "^2.3.0",
     "axios": "^1.7.7",
+    "chart.js": "^4.4.6",
     "next": "15.0.2",
     "react": "19.0.0-rc-02c0e824-20241028",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "19.0.0-rc-02c0e824-20241028",
-    "redux": "^5.0.1"
+    "redux": "^5.0.1",
+    "swr": "^2.2.5"
   },
   "devDependencies": {
     "@types/node": "^20",

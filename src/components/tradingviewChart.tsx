@@ -33,7 +33,7 @@ export const TradingViewChart = () => {
         toolbar_bg: "#f1f3f6",
         withdateranges: false,
         hide_side_toolbar: true,
-        allow_symbol_change: true,
+        allow_symbol_change: false,
         save_image: false,
         hideideas: true,
         show_popup_button: false,
