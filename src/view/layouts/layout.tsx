@@ -8,7 +8,7 @@ export default function RootLayout({
   }>) {
     return (
       <html>
-        <body>
+        <body className=" font-IranSans">
             <Navbar/>
           {children}
         </body>
