@@ -395,136 +395,152 @@
 //انجام معامعله و نمایش کیف پول
 
 
-// import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-// const TradingApp = () => {
-//   const [cashBalance, setCashBalance] = useState(100000); // موجودی نقدی اولیه
-//   const [cryptoBalance, setCryptoBalance] = useState({ bitcoin: 0 }); // موجودی ارز دیجیتال
-//   const [prices, setPrices] = useState({}); // قیمت زنده ارزها
-//   const [tradeAmount, setTradeAmount] = useState(""); // مقدار خرید یا فروش
-//   const [selectedAsset, setSelectedAsset] = useState("bitcoin"); // ارز انتخابی
-//   const [tradeType, setTradeType] = useState("buy"); // نوع معامله (خرید یا فروش)
+const TradingApp = () => {
+  const [cashBalance, setCashBalance] = useState(100000); // موجودی نقدی اولیه
+  const [cryptoBalance, setCryptoBalance] = useState({ bitcoin: 0, ethereum: 0 }); // موجودی ارز دیجیتال
+  const [prices, setPrices] = useState({}); // قیمت زنده ارزها
+  const [tradeAmount, setTradeAmount] = useState(""); // مقدار خرید یا فروش
+  const [selectedAsset, setSelectedAsset] = useState("bitcoin"); // ارز انتخابی
+  const [tradeType, setTradeType] = useState("buy"); // نوع معامله (خرید یا فروش)
 
-//   // اتصال به WebSocket CoinCap
-//   useEffect(() => {
-//     const ws = new WebSocket("wss://ws.coincap.io/prices?assets=bitcoin");
+  // اتصال به WebSocket CoinCap
+  useEffect(() => {
+    const ws = new WebSocket("wss://ws.coincap.io/prices?assets=bitcoin,ethereum");
 
-//     ws.onmessage = (event) => {
-//       const data = JSON.parse(event.data);
-//       setPrices((prevPrices) => ({ ...prevPrices, ...data }));
-//     };
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setPrices((prevPrices) => ({ ...prevPrices, ...data }));
+    };
 
-//     ws.onclose = () => {
-//       console.log("WebSocket Disconnected");
-//     };
+    ws.onclose = () => {
+      console.log("WebSocket Disconnected");
+    };
 
-//     return () => {
-//       ws.close();
-//     };
-//   }, []);
+    return () => {
+      ws.close();
+    };
+  }, []);
 
-//   // انجام معامله
-//   const handleTrade = () => {
-//     const price = parseFloat(prices[selectedAsset] || 0);
-//     const amount = parseFloat(tradeAmount);
-  
-//     if (!amount || amount <= 0) {
-//       alert("لطفاً مقدار معتبر وارد کنید!");
-//       return;
-//     }
-  
-//     if (tradeType === "buy") {
-//       const cost = price * amount; // هزینه خرید
-//       if (cost > cashBalance) {
-//         alert("موجودی نقدی کافی نیست!");
-//         return;
-//       }
-//       setCashBalance((prev) => prev - cost); // کاهش موجودی نقدی
-//       setCryptoBalance((prev) => ({
-//         ...prev,
-//         [selectedAsset]: (prev[selectedAsset] || 0) + amount,
-//       })); // افزایش موجودی ارز دیجیتال
-//     } else if (tradeType === "sell") {
-//       if ((cryptoBalance[selectedAsset] || 0) < amount) {
-//         alert("موجودی ارز دیجیتال کافی نیست!");
-//         return;
-//       }
-//       const earnings = price * amount; // درآمد فروش
-//       setCashBalance((prev) => prev + earnings); // افزایش موجودی نقدی
-//       setCryptoBalance((prev) => ({
-//         ...prev,
-//         [selectedAsset]: (prev[selectedAsset] || 0) - amount,
-//       })); // کاهش موجودی ارز دیجیتال
-//     }
-  
-//     setTradeAmount(""); // پاک کردن مقدار معامله
-//   };
-  
+  // انجام معامله
+  const handleTrade = () => {
+    const price = parseFloat(prices[selectedAsset] || 0);
+    const amount = parseFloat(tradeAmount);
 
-//   return (
-//     <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
-//       <h1>سیستم خرید و فروش ارز دیجیتال</h1>
+    if (!amount || amount <= 0) {
+      alert("لطفاً مقدار معتبر وارد کنید!");
+      return;
+    }
 
-//       {/* نمایش موجودی‌ها */}
-//       <div style={{ marginBottom: "20px" }}>
-//         <p>
-//           <strong>موجودی نقدی:</strong> ${cashBalance.toFixed(2)}
-//         </p>
-//         <p>
-//           <strong>موجودی بیت‌کوین:</strong> {cryptoBalance.bitcoin.toFixed(6)} BTC
-//         </p>
-//       </div>
+    if (tradeType === "buy") {
+      const cost = price * amount; // هزینه خرید
+      if (cost > cashBalance) {
+        alert("موجودی نقدی کافی نیست!");
+        return;
+      }
+      setCashBalance((prev) => prev - cost); // کاهش موجودی نقدی
+      setCryptoBalance((prev) => ({
+        ...prev,
+        [selectedAsset]: (prev[selectedAsset] || 0) + amount,
+      })); // افزایش موجودی ارز دیجیتال
+    } else if (tradeType === "sell") {
+      if ((cryptoBalance[selectedAsset] || 0) < amount) {
+        alert("موجودی ارز دیجیتال کافی نیست!");
+        return;
+      }
+      const earnings = price * amount; // درآمد فروش
+      setCashBalance((prev) => prev + earnings); // افزایش موجودی نقدی
+      setCryptoBalance((prev) => ({
+        ...prev,
+        [selectedAsset]: (prev[selectedAsset] || 0) - amount,
+      })); // کاهش موجودی ارز دیجیتال
+    }
 
-//       {/* فرم خرید و فروش */}
-//       <div style={{ marginBottom: "20px" }}>
-//         <label>نوع معامله:</label>
-//         <select value={tradeType} onChange={(e) => setTradeType(e.target.value)}>
-//           <option value="buy">خرید</option>
-//           <option value="sell">فروش</option>
-//         </select>
+    setTradeAmount(""); // پاک کردن مقدار معامله
+  };
 
-//         <label style={{ display: "block", marginTop: "10px" }}>ارز دیجیتال:</label>
-//         <select value={selectedAsset} onChange={(e) => setSelectedAsset(e.target.value)}>
-//           <option value="bitcoin">Bitcoin (BTC)</option>
-//         </select>
 
-//         <label style={{ display: "block", marginTop: "10px" }}>مقدار:</label>
-//         <input
-//           type="number"
-//           value={tradeAmount}
-//           onChange={(e) => setTradeAmount(e.target.value)}
-//           placeholder="مقدار (واحد ارز)"
-//           style={{ width: "100%", marginTop: "5px" }}
-//         />
+  return (
+    <div className="pt-8 pb-14 flex flex-col items-center text-center space-y-6 font-IranSans md:pt-24">
+      {/* عنوان اصلی */}
+      <h1 className="text-2xl font-bold text-gray-800">
+        سیستم خرید و فروش ارز دیجیتال
+      </h1>
+        {/* نمایش موجودی‌ها */}
+        <div className="bg-white shadow rounded-lg p-6 w-full max-w-md">
+          <p className="text-sm text-gray-600">
+            $  {cashBalance.toFixed(2)} <strong className="font-semibold text-gray-800"> : موجودی نقدی</strong>
+          </p>
+          <p className="text-sm text-gray-600">
+            BTC  {cryptoBalance.bitcoin.toFixed(6)} <strong className="font-semibold text-gray-800"> : موجودی بیت‌کوین</strong>
+          </p>
+          <p className="text-sm text-gray-600">
+            ETH  {cryptoBalance.ethereum.toFixed(4)} <strong className="font-semibold text-gray-800"> : موجودی اتریوم</strong>
+          </p>
+        </div>
+        {/* نمایش قیمت زنده */}
+        <div className="bg-white shadow rounded-lg p-6 w-full max-w-md text-left">
+          <h2 className="text-lg font-bold text-gray-800">قیمت زنده</h2>
+          <p className="text-sm text-gray-600">
+            <strong className="font-semibold text-gray-800">بیت‌کوین :
+              {prices.bitcoin ? ` ${prices.bitcoin} ` : "در حال دریافت..."}
+            </strong>
+          </p>
+          <p className="text-sm text-gray-600">
+            <strong className="font-semibold text-gray-800">اتریوم :
+              {prices.ethereum ? ` ${prices.ethereum} ` : "در حال دریافت..."}
+            </strong>
+          </p>
+        </div>
+      {/* فرم خرید و فروش */}
+      <div className="bg-white shadow rounded-lg p-6 w-full max-w-md space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">نوع معامله:</label>
+          <select
+            value={tradeType}
+            onChange={(e) => setTradeType(e.target.value)}
+            className="w-full mt-1 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+          >
+            <option value="buy">خرید</option>
+            <option value="sell">فروش</option>
+          </select>
+        </div>
 
-//         <button
-//           onClick={handleTrade}
-//           style={{
-//             marginTop: "10px",
-//             padding: "10px 20px",
-//             backgroundColor: "#007BFF",
-//             color: "white",
-//             border: "none",
-//             cursor: "pointer",
-//           }}
-//         >
-//           انجام معامله
-//         </button>
-//       </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">ارز دیجیتال:</label>
+          <select
+            value={selectedAsset}
+            onChange={(e) => setSelectedAsset(e.target.value)}
+            className="w-full mt-1 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+          >
+            <option value="bitcoin">Bitcoin (BTC)</option>
+            <option value="ethereum">Ethereum (ETH)</option>
+          </select>
+        </div>
 
-//       {/* نمایش قیمت زنده */}
-//       <div>
-//   <h2>قیمت زنده</h2>
-//   <p>
-//     <strong>بیت‌کوین:</strong> 
-//     {prices.bitcoin && typeof prices.bitcoin === "number"
-//       ? `$${prices.bitcoin.toFixed(2)}`
-//       : "در حال دریافت..."}
-//   </p>
-// </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">مقدار:</label>
+          <input
+            type="number"
+            value={tradeAmount}
+            onChange={(e) => setTradeAmount(e.target.value)}
+            placeholder="مقدار (واحد ارز)"
+            className="w-full mt-1 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+          />
+        </div>
 
-//     </div>
-//   );
-// };
+        <button
+          onClick={handleTrade}
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+        >
+          انجام معامله
+        </button>
+      </div>
 
-// export default TradingApp;
+    </div>
+
+  );
+};
+
+export default TradingApp;

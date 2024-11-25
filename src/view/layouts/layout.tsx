@@ -9,7 +9,7 @@ export default function RootLayout({
     return (
       <html>
         <body>
-            {/* <Navbar/> */}
+            <Navbar/>
           {children}
         </body>
       </html>
