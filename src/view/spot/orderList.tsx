@@ -19,7 +19,7 @@ const OrderList = ({ orders, livePrices }:any) => {
               <th className="border border-gray-300 px-4 py-2 text-gray-700">قیمت</th>
               <th className="border border-gray-300 px-4 py-2 text-gray-700">مقدار</th>
               <th className="border border-gray-300 px-4 py-2 text-gray-700">نوع</th>
-              {/* <th className="border border-gray-300 px-4 py-2 text-gray-700">سود/زیان</th> */}
+              <th className="border border-gray-300 px-4 py-2 text-gray-700">سود/زیان</th>
             </tr>
           </thead>
           <tbody>
@@ -51,9 +51,9 @@ const OrderList = ({ orders, livePrices }:any) => {
                     <td className="border border-gray-300 px-4 py-2 text-gray-800">
                       {order.type === "buy" ? "خرید" : "فروش"}
                     </td>
-                    {/* <td className={`border border-gray-300 px-4 py-2 ${profitLossClass}`}>
+                    <td className={`border border-gray-300 px-4 py-2 ${profitLossClass}`}>
                       {profitLoss !== null ? `${profitLoss.toFixed(2)}%` : "در حال دریافت..."}
-                    </td> */}
+                    </td>
                   </tr>
                 );
               })

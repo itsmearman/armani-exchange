@@ -48,7 +48,7 @@ function CryptoTradingApp() {
         <h1 className="text-2xl font-bold">سیستم خرید و فروش ارز دیجیتال</h1>
         <Balances cashBalance={cashBalance} cryptoBalance={cryptoBalance} />
         <LivePrices prices={prices} />
-        <TradeForm prices={prices} onTrade={handleTrade} />
+        <TradeForm prices={prices} onTrade={handleTrade} cryptoBalance={cryptoBalance} cashBalance={cashBalance} />
         <OrderList orders={orders} livePrices={prices}/>
       </div>
     </>
