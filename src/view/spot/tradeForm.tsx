@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function TradeForm({ prices, onTrade }: any) {
+function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: any) {
   const [tradeType, setTradeType] = useState("buy");
   const [selectedAsset, setSelectedAsset] = useState("bitcoin");
-  const [tradeAmount, setTradeAmount]:any = useState(""); // مبلغ معامله
-  const [cryptoAmount, setCryptoAmount]:any = useState(""); // مقدار ارز
-
+  const [tradeAmount, setTradeAmount]: any = useState(""); // مبلغ معامله
+  const [cryptoAmount, setCryptoAmount]: any = useState(""); // مقدار ارز
   const currentPrice = parseFloat(prices[selectedAsset] || 0); // قیمت فعلی
+  const [amount, setAmount] = useState("");
 
+  // Handle submit for trade
   const handleSubmit = () => {
     const totalAmount = parseFloat(tradeAmount);
     const cryptoQty = parseFloat(cryptoAmount);
@@ -43,10 +44,27 @@ function TradeForm({ prices, onTrade }: any) {
     setCryptoAmount("");
   };
 
+  // Handle click on the balance and set the input value
+  const handleBalanceClick = () => {
+    const formattedAmount = cryptoBalance[selectedAsset].toFixed(6); // Format the value to 6 decimal places
+    setAmount(formattedAmount); // Update the state with the formatted amount
+    setCryptoAmount(formattedAmount); // Set the input field with the formatted amount
+    setTradeAmount(""); // Clear the trade amount input
+  };
+
+  const handleCashClick = () => {
+    const formattedAmount = cashBalance.toFixed(2); // Format the value to 2 decimal places
+    setAmount(formattedAmount); // Update the state with the formatted amount
+    setTradeAmount(formattedAmount); // Set the input field with the formatted amount
+    setCryptoAmount(""); // Clear the crypto amount input
+  };
+
   return (
     <div className="bg-white shadow rounded-lg p-6 w-full max-w-md space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">نوع معامله:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          نوع معامله:
+        </label>
         <select
           value={tradeType}
           onChange={(e) => setTradeType(e.target.value)}
@@ -58,25 +76,38 @@ function TradeForm({ prices, onTrade }: any) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">ارز دیجیتال:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          ارز دیجیتال:
+        </label>
         <select
           value={selectedAsset}
           onChange={(e) => setSelectedAsset(e.target.value)}
           className="w-full mt-1 border border-gray-300 rounded-lg p-2"
         >
-          <option value="bitcoin">Bitcoin (BTC)</option>
-          <option value="ethereum">Ethereum (ETH)</option>
+          {Object.keys(cryptoBalance).map((asset) => (
+            <option key={asset} value={asset}>
+              {asset.charAt(0).toUpperCase() + asset.slice(1)} ({asset.toUpperCase()})
+            </option>
+          ))}
         </select>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">مبلغ (USD):</label>
+        <label className="flex justify-between text-sm font-medium text-gray-700">
+          <div>مبلغ (USD):</div>
+          <div
+            className="text-gray-400 hover:text-gray-700 cursor-pointer"
+            onClick={handleCashClick}
+          >
+            {tradeType === "buy" ? cashBalance.toFixed(2) : ""}
+          </div>
+        </label>
         <input
           type="number"
           value={tradeAmount}
           onChange={(e) => {
             setTradeAmount(e.target.value);
-            setCryptoAmount(""); // پاک‌سازی مقدار ارز
+            setCryptoAmount(""); // Clear the crypto amount input
           }}
           placeholder="مبلغ معامله"
           className="w-full mt-1 border border-gray-300 rounded-lg p-2"
@@ -84,13 +115,21 @@ function TradeForm({ prices, onTrade }: any) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">مقدار ارز:</label>
+        <label className="flex justify-between text-sm font-medium text-gray-700">
+          <div>مقدار ارز:</div>
+          <div
+            className="text-gray-400 hover:text-gray-700 cursor-pointer"
+            onClick={handleBalanceClick}
+          >
+            {tradeType === "buy" ? "" : cryptoBalance[selectedAsset].toFixed(6)}
+          </div>
+        </label>
         <input
           type="number"
           value={cryptoAmount}
           onChange={(e) => {
             setCryptoAmount(e.target.value);
-            setTradeAmount(""); // پاک‌سازی مبلغ معامله
+            setTradeAmount(""); // Clear the trade amount input
           }}
           placeholder="مقدار ارز (واحد)"
           className="w-full mt-1 border border-gray-300 rounded-lg p-2"
