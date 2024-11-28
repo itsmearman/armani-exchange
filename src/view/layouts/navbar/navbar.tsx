@@ -25,10 +25,7 @@ export default function Navbar() {
             key={index}
             className="cursor-pointer hover:text-gray-400"
           >
-            { width < 768 ? 
-            <Image src={data.route == slug ? data.imgActive : data.img} width={20} height={20} alt="" className="mx-auto text-center"/>
-            : null}
-            {data.title}
+            {width < 768 ? (data.route === slug ? (<>{data.imgActive}<span className="text-blue-600">{data.title}</span></>) : (<>{data.img}<span>{data.title}</span></>)):(data.route === slug ? (<span className="text-blue-600">{data.title}</span>) : (<span>{data.title}</span>))}
           </Link>
         ))}
       </div>

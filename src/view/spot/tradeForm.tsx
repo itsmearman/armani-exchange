@@ -86,7 +86,7 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: any) {
         >
           {Object.keys(cryptoBalance).map((asset) => (
             <option key={asset} value={asset}>
-              {asset.charAt(0).toUpperCase() + asset.slice(1)} ({asset.toUpperCase()})
+              {asset.charAt(0).toUpperCase() + asset.slice(1)} ({asset})
             </option>
           ))}
         </select>
@@ -134,11 +134,11 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: any) {
           placeholder="مقدار ارز (واحد)"
           className="w-full mt-1 border border-gray-300 rounded-lg p-2"
         />
-        {!tradeAmount && !cryptoAmount && currentPrice > 0 && (
+        {/* {!tradeAmount && !cryptoAmount && currentPrice > 0 && (
           <p className="text-sm text-gray-600 mt-1">
             قیمت فعلی: <strong>{currentPrice.toFixed(2)} USD</strong>
           </p>
-        )}
+        )} */}
       </div>
 
       {currentPrice > 0 && (tradeAmount || cryptoAmount) && (
