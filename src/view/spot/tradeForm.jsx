@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: any) {
+function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }) {
   const [tradeType, setTradeType] = useState("buy");
   const [selectedAsset, setSelectedAsset] = useState("bitcoin");
-  const [tradeAmount, setTradeAmount]: any = useState(""); // مبلغ معامله
-  const [cryptoAmount, setCryptoAmount]: any = useState(""); // مقدار ارز
+  const [tradeAmount, setTradeAmount] = useState(""); // مبلغ معامله
+  const [cryptoAmount, setCryptoAmount] = useState(""); // مقدار ارز
   const currentPrice = parseFloat(prices[selectedAsset] || 0); // قیمت فعلی
-  const [amount, setAmount] = useState("");
 
   // Handle submit for trade
   const handleSubmit = () => {
@@ -47,14 +46,14 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: any) {
   // Handle click on the balance and set the input value
   const handleBalanceClick = () => {
     const formattedAmount = cryptoBalance[selectedAsset].toFixed(6); // Format the value to 6 decimal places
-    setAmount(formattedAmount); // Update the state with the formatted amount
+    // setAmount(formattedAmount); // Update the state with the formatted amount
     setCryptoAmount(formattedAmount); // Set the input field with the formatted amount
     setTradeAmount(""); // Clear the trade amount input
   };
 
   const handleCashClick = () => {
     const formattedAmount = cashBalance.toFixed(2); // Format the value to 2 decimal places
-    setAmount(formattedAmount); // Update the state with the formatted amount
+    // setAmount(formattedAmount); // Update the state with the formatted amount
     setTradeAmount(formattedAmount); // Set the input field with the formatted amount
     setCryptoAmount(""); // Clear the crypto amount input
   };
