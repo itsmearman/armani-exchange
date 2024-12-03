@@ -13,9 +13,11 @@ export default async function RootLayout({
   return (
     <html  lang={locale} >
       <body className="font-IranSans">
+        <NextIntlClientProvider messages={messages}>
         <Navbar />
         {children}
         <Footer />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 import React from "react";
 
-function LivePrices({ prices }:any) {
+function LivePrices({ prices }) {
   return (
     <div className="bg-white shadow rounded-lg p-6 items-center text-center w-full max-w-md">
       <h2 className="text-lg font-bold text-black">قیمت زنده</h2>

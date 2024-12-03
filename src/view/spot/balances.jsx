@@ -1,6 +1,6 @@
 import React from "react";
 
-function Balances({ cashBalance, cryptoBalance }:any) {
+function Balances({ cashBalance, cryptoBalance }) {
   return (
     <div className="bg-white shadow rounded-lg p-6 w-full max-w-md justify-items-center">
       <p className="text-sm text-gray-800">
