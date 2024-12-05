@@ -1,6 +1,7 @@
 import React from "react";
-
+import { useTranslations } from "next-intl";
 const OrderList = ({ orders, livePrices }) => {
+  const t = useTranslations();
   const calculateProfitLossPercentage = (order) => {
     const currentPrice = parseFloat(livePrices[order.asset] || 0);
     if (!currentPrice || !order.price) return null;

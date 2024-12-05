@@ -1,6 +1,7 @@
 import React from "react";
-
+import { useTranslations } from "next-intl";
 function LivePrices({ prices }) {
+  const t = useTranslations();
   return (
     <div className="bg-white shadow rounded-lg p-6 items-center text-center w-full max-w-md">
       <h2 className="text-lg font-bold text-black">{t("livePrice")}</h2>

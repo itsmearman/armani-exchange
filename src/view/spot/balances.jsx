@@ -1,6 +1,7 @@
 import React from "react";
-
+import { useTranslations } from "next-intl";
 function Balances({ cashBalance, cryptoBalance }) {
+  const t = useTranslations();
   return (
     <div className="bg-white shadow rounded-lg p-6 w-full max-w-md justify-items-center">
       <p className="text-sm text-gray-800">
