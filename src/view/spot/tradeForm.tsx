@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 interface TradeFormProps {
   prices: { [key: string]: string | number }; // قیمت ارزها (bitcoin, ethereum)
   onTrade: (
@@ -11,6 +12,7 @@ interface TradeFormProps {
   cashBalance: number; // موجودی نقدی
 }
 function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormProps) {
+  const t = useTranslations();
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
   const [selectedAsset, setSelectedAsset] = useState<"bitcoin" | "ethereum">("bitcoin");
   const [tradeAmount, setTradeAmount] = useState<string>(""); // مبلغ معامله
@@ -39,12 +41,12 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
     const cryptoQty = parseFloat(cryptoAmount);
 
     if ((!totalAmount && !cryptoQty) || currentPrice <= 0) {
-      alert("لطفاً مبلغ یا مقدار ارز را وارد کنید!");
+      alert(t("enterCustomPrice"));
       return;
     }
 
     if (totalAmount && cryptoQty) {
-      alert("لطفاً فقط یکی از فیلدها (مبلغ یا مقدار ارز) را پر کنید!");
+      alert(t("justOneFieldComplete"));
       return;
     }
 
@@ -57,7 +59,7 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
       : totalAmount; // استفاده از مبلغ واردشده
 
     if (calculatedAmount <= 0 || calculatedTotal <= 0) {
-      alert("مقادیر واردشده معتبر نیستند!");
+      alert(t("Invalidate"));
       return;
     }
 
@@ -88,21 +90,21 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
     <div className="bg-white shadow rounded-lg p-6 w-full max-w-md space-y-4">
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          نوع معامله:
+          {t("tradeType")}
         </label>
         <select
           value={tradeType}
           onChange={handleTradeChange}
           className="w-full mt-1 border border-gray-300 rounded-lg p-2"
         >
-          <option value="buy">خرید</option>
-          <option value="sell">فروش</option>
+          <option value="buy">{t("buy")}</option>
+          <option value="sell">{t("sell")}</option>
         </select>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          ارز دیجیتال:
+          {t("cryptoCurrency")}
         </label>
         <select
           value={selectedAsset}
@@ -119,7 +121,7 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
 
       <div>
         <label className="flex justify-between text-sm font-medium text-gray-700">
-          <div>مبلغ (USD):</div>
+          <div>{t("tradePrice")}</div>
           <div
             className="text-gray-400 hover:text-gray-700 cursor-pointer"
             onClick={handleCashClick}
@@ -134,7 +136,7 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
             setTradeAmount(e.target.value);
             setCryptoAmount(""); // Clear the crypto amount input
           }}
-          placeholder="مبلغ معامله"
+          placeholder={t("contractionPrice")}
           className="w-full mt-1 border border-gray-300 rounded-lg p-2"
           step="0.01"
           min="0.00"
@@ -143,7 +145,7 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
 
       <div>
         <label className="flex justify-between text-sm font-medium text-gray-700">
-          <div>مقدار ارز:</div>
+          <div>{t("tradeValue")}</div>
           <div
             className="text-gray-400 hover:text-gray-700 cursor-pointer"
             onClick={handleBalanceClick}
@@ -158,7 +160,7 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
             setCryptoAmount(e.target.value);
             setTradeAmount(""); // Clear the trade amount input
           }}
-          placeholder="مقدار ارز (واحد)"
+          placeholder={t("tradeValuePlaceholder")}
           className="w-full mt-1 border border-gray-300 rounded-lg p-2"
           step="0.000001"
           min="0.000000"
@@ -174,8 +176,8 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
         <div className="bg-gray-100 p-3 rounded-lg text-sm text-gray-800">
           <p>
             {tradeAmount
-              ? `مقدار ارز محاسبه‌شده: ${(parseFloat(tradeAmount) / currentPrice).toFixed(6)}`
-              : `مبلغ محاسبه‌شده: ${(parseFloat(cryptoAmount) * currentPrice).toFixed(2)} USD`}
+              ? `${t("tradeValueCalculate")} ${(parseFloat(tradeAmount) / currentPrice).toFixed(6)}`
+              : `${t("tradePriceCalculate")} ${(parseFloat(cryptoAmount) * currentPrice).toFixed(2)} ${t("USD")}`}
           </p>
         </div>
       )}
@@ -184,7 +186,7 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
         onClick={handleSubmit}
         className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
       >
-        انجام معامله
+        {t("tradeDone")}
       </button>
     </div>
   );

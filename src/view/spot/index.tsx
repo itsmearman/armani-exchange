@@ -4,6 +4,7 @@ import LivePrices from "./livePrices";
 import Balances from "./balances";
 import TradeForm from "./tradeForm";
 import OrderList from "./orderList";
+import { useTranslations } from "next-intl";
 interface Prices { [key: string]: string | number }
 
 interface CryptoBalance {
@@ -19,6 +20,7 @@ interface Order {
   price: number;
 }
 function CryptoTradingApp() {
+  const t = useTranslations();
   const [prices, setPrices] = useState<Prices>({ bitcoin: 0, ethereum: 0 });
   const [cashBalance, setCashBalance] = useState<number>(150000);
   const [cryptoBalance, setCryptoBalance] = useState<CryptoBalance>({
@@ -47,7 +49,7 @@ function CryptoTradingApp() {
     setCashBalance((prev) => Number(prev.toFixed(6)) + cost);
     setCryptoBalance((prev) => ({ ...prev, [asset]: prev[asset] - amount }));
   } else {
-    alert("موجودی کافی نیست!");
+    alert(t("notEnough"));
     return;
   }
 
@@ -60,7 +62,7 @@ function CryptoTradingApp() {
   return (
     <>
       <div className="flex pt-12 flex-col items-center space-y-6 md:pt-24">
-        <h1 className="text-2xl font-bold">سیستم خرید و فروش ارز دیجیتال</h1>
+        <h1 className="text-2xl font-bold">{t("tradeSystem")}</h1>
         <Balances cashBalance={Number(cashBalance)} cryptoBalance={cryptoBalance} />
         <LivePrices prices={prices} />
         <TradeForm prices={prices} onTrade={handleTrade} cryptoBalance={cryptoBalance} cashBalance={Number(cashBalance)} />

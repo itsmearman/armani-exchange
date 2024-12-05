@@ -4,6 +4,7 @@ import Footer from "./footer/footer";
 import {NextIntlClientProvider} from 'next-intl';
 import {getLocale, getMessages} from 'next-intl/server';
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react"
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -13,10 +14,11 @@ export default async function RootLayout({
   const messages = await getMessages();
   const isRtl = locale === 'fa' || locale === 'ar' ? 'rtl' : 'ltr';
   return (
-    <html  lang={locale} dir={isRtl}>
-      <body className="font-IranSans">
+    <html  lang={locale} dir={isRtl}> 
+      <body className={`${locale == 'fa'? "font-IranSans ":"font-sans" }`}>
         <NextIntlClientProvider messages={messages}>
         <SpeedInsights/>
+        <Analytics/>
         <Navbar />
         {children}
         <Footer />

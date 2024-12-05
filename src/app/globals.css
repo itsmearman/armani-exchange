@@ -4,27 +4,27 @@
 
 @font-face {
   font-family: "IranSans";
-  src: url("../../public/fonts/IRANSansUltraLight.ttf");
+  src: url("../../public/fonts/IRANSansUltraLightFaNum.ttf");
   font-weight: 200;
 }
 @font-face {
   font-family: "IranSans";
-  src: url("../../public/fonts/IRANSanLight.ttf");
+  src: url("../../public/fonts/IRANSansLightFaNum.ttf");
   font-weight: 300;
 }
 @font-face {
   font-family: "IranSans";
-  src: url("../../public/fonts/IRANSansWeb.ttf");
+  src: url("../../public/fonts/IRANSansWebFaNum.ttf");
   font-weight: 400;
 }
 @font-face {
   font-family: "IranSans";
-  src: url("../../public/fonts/IRANSansMedium.ttf");
+  src: url("../../public/fonts/IRANSansMediumFaNum.ttf");
   font-weight: 500;
 }
 @font-face {
   font-family: "IranSans";
-  src: url("../../public/fonts/IRANSansBold.ttf");
+  src: url("../../public/fonts/IRANSansBoldFaNum.ttf");
   font-weight: 600;
 }
 
