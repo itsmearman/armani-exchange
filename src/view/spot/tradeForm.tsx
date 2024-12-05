@@ -1,12 +1,38 @@
 import React, { useState } from "react";
+interface TradeFormProps {
+  prices: { [key: string]: string | number }; // قیمت ارزها (bitcoin, ethereum)
+  onTrade: (
+    type: "buy" | "sell", asset: "bitcoin" | "ethereum", amount: number
+  ) => void;
+  cryptoBalance: {
+    bitcoin: number;
+    ethereum: number;
+  }; // موجودی ارزهای دیجیتال
+  cashBalance: number; // موجودی نقدی
+}
+function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormProps) {
+  const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
+  const [selectedAsset, setSelectedAsset] = useState<"bitcoin" | "ethereum">("bitcoin");
+  const [tradeAmount, setTradeAmount] = useState<string>(""); // مبلغ معامله
+  const [cryptoAmount, setCryptoAmount] = useState<string>(""); // مقدار ارز
+  const currentPrice = typeof prices[selectedAsset] === 'number'
+    ? prices[selectedAsset] // If it's a number, use it directly
+    : !isNaN(parseFloat(prices[selectedAsset] as string)) // If it's a string, parse it to a number
+      ? parseFloat(prices[selectedAsset] as string)
+      : 0;
 
-function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }) {
-  const [tradeType, setTradeType] = useState("buy");
-  const [selectedAsset, setSelectedAsset] = useState("bitcoin");
-  const [tradeAmount, setTradeAmount] = useState(""); // مبلغ معامله
-  const [cryptoAmount, setCryptoAmount] = useState(""); // مقدار ارز
-  const currentPrice = parseFloat(prices[selectedAsset] || 0); // قیمت فعلی
-
+  const handleAssetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value === "bitcoin" || value === "ethereum") {
+      setSelectedAsset(value);
+    }
+  };
+  const handleTradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value === "buy" || value === "sell") {
+      setTradeType(value);
+    }
+  };
   // Handle submit for trade
   const handleSubmit = () => {
     const totalAmount = parseFloat(tradeAmount);
@@ -35,10 +61,10 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }) {
       return;
     }
 
-    // ارسال معامله به تابع والد
-    onTrade(tradeType, selectedAsset, calculatedAmount, calculatedTotal);
+    onTrade(tradeType, selectedAsset, calculatedAmount,
+      // calculatedTotal
+    );
 
-    // پاک‌سازی مقادیر
     setTradeAmount("");
     setCryptoAmount("");
   };
@@ -66,7 +92,7 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }) {
         </label>
         <select
           value={tradeType}
-          onChange={(e) => setTradeType(e.target.value)}
+          onChange={handleTradeChange}
           className="w-full mt-1 border border-gray-300 rounded-lg p-2"
         >
           <option value="buy">خرید</option>
@@ -80,7 +106,7 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }) {
         </label>
         <select
           value={selectedAsset}
-          onChange={(e) => setSelectedAsset(e.target.value)}
+          onChange={handleAssetChange}
           className="w-full mt-1 border border-gray-300 rounded-lg p-2"
         >
           {Object.keys(cryptoBalance).map((asset) => (
@@ -110,6 +136,8 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }) {
           }}
           placeholder="مبلغ معامله"
           className="w-full mt-1 border border-gray-300 rounded-lg p-2"
+          step="0.01"
+          min="0.00"
         />
       </div>
 
@@ -132,20 +160,22 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }) {
           }}
           placeholder="مقدار ارز (واحد)"
           className="w-full mt-1 border border-gray-300 rounded-lg p-2"
+          step="0.000001"
+          min="0.000000"
         />
         {/* {!tradeAmount && !cryptoAmount && currentPrice > 0 && (
-          <p className="text-sm text-gray-600 mt-1">
-            قیمت فعلی: <strong>{currentPrice.toFixed(2)} USD</strong>
-          </p>
-        )} */}
+            <p className="text-sm text-gray-600 mt-1">
+              قیمت فعلی: <strong>{currentPrice.toFixed(2)} USD</strong>
+            </p>
+          )} */}
       </div>
 
       {currentPrice > 0 && (tradeAmount || cryptoAmount) && (
         <div className="bg-gray-100 p-3 rounded-lg text-sm text-gray-800">
           <p>
             {tradeAmount
-              ? `مقدار ارز محاسبه‌شده: ${(tradeAmount / currentPrice).toFixed(6)}`
-              : `مبلغ محاسبه‌شده: ${(cryptoAmount * currentPrice).toFixed(2)} USD`}
+              ? `مقدار ارز محاسبه‌شده: ${(parseFloat(tradeAmount) / currentPrice).toFixed(6)}`
+              : `مبلغ محاسبه‌شده: ${(parseFloat(cryptoAmount) * currentPrice).toFixed(2)} USD`}
           </p>
         </div>
       )}

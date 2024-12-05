@@ -1,13 +1,27 @@
 import React from "react";
 import { useTranslations } from "next-intl";
-const OrderList = ({ orders, livePrices }) => {
+interface Order {
+  id: number;
+  type: "buy" | "sell";
+  asset: "bitcoin" | "ethereum";
+  amount: number;
+  price: number;
+}
+
+interface LivePrices { [key: string]: string | number }
+
+interface OrderListProps {
+  orders: Order[];
+  livePrices: LivePrices;
+}
+const OrderList = ({ orders, livePrices }:OrderListProps) => {
   const t = useTranslations();
-  const calculateProfitLossPercentage = (order) => {
-    const currentPrice = parseFloat(livePrices[order.asset] || 0);
-    if (!currentPrice || !order.price) return null;
-    const profitLoss = ((currentPrice - order.price) / order.price) * 100;
-    return profitLoss;
-  };
+  // const calculateProfitLossPercentage = (order) => {
+  //   const currentPrice = parseFloat(livePrices[order.asset] || 0);
+  //   if (!currentPrice || !order.price) return null;
+  //   const profitLoss = ((currentPrice - order.price) / order.price) * 100;
+  //   return profitLoss;
+  // };
 
   return (
     <div className="bg-white shadow rounded-lg p-6 mx-auto pb-24">
@@ -20,7 +34,7 @@ const OrderList = ({ orders, livePrices }) => {
               <th className="border border-gray-300 px-4 py-2 text-gray-700">قیمت</th>
               <th className="border border-gray-300 px-4 py-2 text-gray-700">مقدار</th>
               <th className="border border-gray-300 px-4 py-2 text-gray-700">نوع</th>
-              <th className="border border-gray-300 px-4 py-2 text-gray-700">سود/زیان</th>
+              {/* <th className="border border-gray-300 px-4 py-2 text-gray-700">سود/زیان</th> */}
             </tr>
           </thead>
           <tbody>
@@ -35,13 +49,13 @@ const OrderList = ({ orders, livePrices }) => {
               </tr>
             ) : (
               orders.map((order) => {
-                const profitLoss = calculateProfitLossPercentage(order);
-                const profitLossClass =
-                  profitLoss > 0
-                    ? "text-green-600 font-bold"
-                    : profitLoss < 0
-                    ? "text-red-600 font-bold"
-                    : "text-gray-600";
+                // const profitLoss = calculateProfitLossPercentage(order);
+                // const profitLossClass =
+                //   profitLoss > 0
+                //     ? "text-green-600 font-bold"
+                //     : profitLoss < 0
+                //     ? "text-red-600 font-bold"
+                //     : "text-gray-600";
                 return (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="border border-gray-300 px-4 py-2 text-gray-800">
@@ -49,12 +63,12 @@ const OrderList = ({ orders, livePrices }) => {
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-gray-800">{order.price}</td>
                     <td className="border border-gray-300 px-4 py-2 text-gray-800">{order.amount.toFixed(6)}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-gray-800">
+                    <td className={`border border-gray-300 px-4 py-2 ${order.type === "buy" ? "text-green-700" : "text-red-700"}`}>
                       {order.type === "buy" ? "خرید" : "فروش"}
                     </td>
-                    <td className={`border border-gray-300 px-4 py-2 ${profitLossClass}`}>
+                    {/* <td className={`border border-gray-300 px-4 py-2 ${profitLossClass}`}>
                       {profitLoss !== null ? `${profitLoss.toFixed(2)}%` : "در حال دریافت..."}
-                    </td>
+                    </td> */}
                   </tr>
                 );
               })
