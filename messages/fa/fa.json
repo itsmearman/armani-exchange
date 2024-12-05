@@ -1,3 +1,12 @@
 {
-    "notFound":"صفحه پیدا نشد"
+    "notFound":"صفحه پیدا نشد",
+    "livePrice": "قییمت زنده",
+    "bitcoin":"بیتکوین",
+    "ethereum":"اتریوم",
+    "fetching":"در حال دریافت قیمت",
+    "balance":"موجودی نقدی",
+    "bitcoinBalance":"موجودی بیت‌کوین",
+    "ethereumBalance":"موجودی اتریوم",
+    "orderList":"لیست سفارشات",
+    "homeText":"صفحه اصلی"
 }

@@ -1,6 +1,7 @@
 import React from "react";
-
+import { useTranslations } from "next-intl";
 const OrderList = ({ orders, livePrices }:any) => {
+  const t = useTranslations()
   const calculateProfitLossPercentage = (order:any) => {
     const currentPrice = parseFloat(livePrices[order.asset] || 0);
     if (!currentPrice || !order.price) return null;
@@ -10,7 +11,7 @@ const OrderList = ({ orders, livePrices }:any) => {
 
   return (
     <div className="bg-white shadow rounded-lg p-6 mx-auto pb-24">
-      <h2 className="text-lg font-bold text-gray-800 mb-4">لیست سفارشات</h2>
+      <h2 className="text-lg font-bold text-gray-800 mb-4">{t("orderList")}</h2>
       <div className="overflow-x-auto">
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead className="bg-gray-100">
