@@ -17,7 +17,7 @@ export default function Navbar() {
 
 
   return (
-    <nav className="font-IranSans h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white">
+    <nav className="h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white">
       <Link href={"/"} className="invisible md:visible">
         <Image src={Logo} width={150} height={100} alt="" />
       </Link>

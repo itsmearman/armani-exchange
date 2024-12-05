@@ -11,11 +11,13 @@ export default function LocaleSwitcher() {
       items={[
         {
           value: 'en',
-          label: t('en')
+          label: t('en'),
+          code:'GB'
         },
         {
           value: 'fa',
-          label: t('fa')
+          label: t('fa'),
+          code:'IR'
         }
       ]}
       label={t('label')}

@@ -14,8 +14,8 @@ export default async function RootLayout({
   const messages = await getMessages();
   const isRtl = locale === 'fa' || locale === 'ar' ? 'rtl' : 'ltr';
   return (
-    <html  lang={locale} dir={isRtl}>
-      <body className="font-IranSans">
+    <html  lang={locale} dir={isRtl}> 
+      <body className={`${locale == 'fa'? "font-IranSans ":"font-sans" }`}>
         <NextIntlClientProvider messages={messages}>
         <SpeedInsights/>
         <Analytics/>
