@@ -3,6 +3,7 @@ import Navbar from "./navbar/navbar";
 import Footer from "./footer/footer";
 import {NextIntlClientProvider} from 'next-intl';
 import {getLocale, getMessages} from 'next-intl/server';
+import { SpeedInsights } from "@vercel/speed-insights/next";
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -15,6 +16,7 @@ export default async function RootLayout({
     <html  lang={locale} dir={isRtl}>
       <body className="font-IranSans">
         <NextIntlClientProvider messages={messages}>
+        <SpeedInsights/>
         <Navbar />
         {children}
         <Footer />
