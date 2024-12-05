@@ -1,7 +1,7 @@
 import {useLocale, useTranslations} from 'next-intl';
 import LocaleSwitcherSelect from './LocaleSwitcherSelect';
 
-export default function LocaleSwitcher() {
+export default function LocaleSwitcher({ className }: { className?: string }) {
   const t = useTranslations();
   const locale = useLocale();
 
@@ -21,6 +21,7 @@ export default function LocaleSwitcher() {
         }
       ]}
       label={t('label')}
+      className={className||''}
     />
   );
 }
