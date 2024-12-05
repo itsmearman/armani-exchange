@@ -1,17 +1,19 @@
 "use client";
 import React from "react";
-import { NavbarItem } from "./navbarItem";
+import NavbarItem  from "./navbarItem";
 import Link from "next/link";
 import Image from "next/image";
 // import Logo from "@/public/Logo1.png";
 import Logo from "@/public/Logo.png";
 import { usePathname } from "next/navigation";
 import { useWidth } from "@/src/components/windowDimensions";
+import { ProfileCircle } from "iconsax-react";
 
 export default function Navbar() {
-  const item = NavbarItem;
+  const item = NavbarItem();
   const slug = usePathname();
   const  width = useWidth();
+  
 
   return (
     <nav className="font-IranSans h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white">
@@ -29,9 +31,9 @@ export default function Navbar() {
           </Link>
         ))}
       </div>
-      <Link href={"/"}>
-        <Image src={Logo} width={150} height={100} alt="" className="invisible md:visible"/>
-      </Link>
+      <div  className="my-auto cursor-pointer w-[10rem]">
+        <ProfileCircle size={42} color="black" className="invisible md:visible mx-auto rtl:ml-0 ltr:mr-0"/>
+      </div>
     </nav>
   );
 }

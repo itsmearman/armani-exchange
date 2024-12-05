@@ -1,6 +1,39 @@
 {
     "notFound":"صفحه پیدا نشد",
-    "livePrice": "قییمت زنده",
+
+    "navabar":"",
+    "home":"خانه",
+    "blog":"بلاگ",
+    "aboutUs":"درباره ما",
+    "trade":"معامله",
+
+
+    "spot":"",
+    "notEnough":"موجودی کافی نیست !",
+    "tradeSystem":"سیستم خرید و فروش ارز دیجیتال",
+    "currency":"ارز",
+    "price":"قیمت",
+    "amount":"مقدار",
+    "type":"نوع",
+    "noOrder":"سفارشی وجود ندارد",
+    "buy":"خرید",
+    "sell":"فروش",
+    "enterCustomPrice":"لطفاً مبلغ یا مقدار ارز را وارد کنید!",
+    "justOneFieldComplete":"لطفاً فقط یکی از فیلدها (مبلغ یا مقدار ارز) را پر کنید!",
+    "Invalidate":"مقادیر واردشده معتبر نیستند!",
+    "tradeType":"نوع معامله:",
+    "cryptoCurrency":"ارز دیجیتال:",
+    "tradePrice":"مبلغ (دلار):",
+    "contractionPrice":"مبلغ معامله",
+    "tradeValue":"مقدار ارز",
+    "tradeValuePlaceholder":"مقدار ارز (واحد)",
+    "tradeValueCalculate":"مقدار ارز محاسبه‌شده:",
+    "tradePriceCalculate":"مبلغ محاسبه‌شده:",
+    "USD":"دلار",
+    "tradeDone":"انجام معامله",
+
+
+    "livePrice": "قیمت زنده",
     "bitcoin":"بیتکوین",
     "ethereum":"اتریوم",
     "fetching":"در حال دریافت قیمت",
@@ -8,5 +41,18 @@
     "bitcoinBalance":"موجودی بیت‌کوین",
     "ethereumBalance":"موجودی اتریوم",
     "orderList":"لیست سفارشات",
-    "homeText":"صفحه اصلی"
+    "homeText":"صفحه اصلی",
+    "phone":"شماره تماس : ",
+    "email":"ایمیل : ",
+
+
+
+
+
+
+
+
+
+    "footer":"",
+    "createdarman":"ساخته شده توسط آرمان"
 }

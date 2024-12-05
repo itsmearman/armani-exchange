@@ -30,10 +30,10 @@ const OrderList = ({ orders }:OrderListProps) => {
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead className="bg-gray-100">
             <tr>
-              <th className="border border-gray-300 px-4 py-2 text-gray-700">ارز</th>
-              <th className="border border-gray-300 px-4 py-2 text-gray-700">قیمت</th>
-              <th className="border border-gray-300 px-4 py-2 text-gray-700">مقدار</th>
-              <th className="border border-gray-300 px-4 py-2 text-gray-700">نوع</th>
+              <th className="border border-gray-300 px-4 py-2 text-gray-700">{t("currency")}</th>
+              <th className="border border-gray-300 px-4 py-2 text-gray-700">{t("price")}</th>
+              <th className="border border-gray-300 px-4 py-2 text-gray-700">{t("amount")}</th>
+              <th className="border border-gray-300 px-4 py-2 text-gray-700">{t("type")}</th>
               {/* <th className="border border-gray-300 px-4 py-2 text-gray-700">سود/زیان</th> */}
             </tr>
           </thead>
@@ -44,7 +44,7 @@ const OrderList = ({ orders }:OrderListProps) => {
                   colSpan={5}
                   className="border border-gray-300 px-4 py-4 text-center text-gray-600"
                 >
-                  سفارشی وجود ندارد
+                  {t("noOrder")}
                 </td>
               </tr>
             ) : (
@@ -59,12 +59,12 @@ const OrderList = ({ orders }:OrderListProps) => {
                 return (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="border border-gray-300 px-4 py-2 text-gray-800">
-                      {order.asset === "bitcoin" ? "بیت‌کوین" : "اتریوم"}
+                      {order.asset === "bitcoin" ? t("bitcoin") : t("ethereum") }
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-gray-800">{order.price}</td>
                     <td className="border border-gray-300 px-4 py-2 text-gray-800">{order.amount.toFixed(6)}</td>
                     <td className={`border border-gray-300 px-4 py-2 ${order.type === "buy" ? "text-green-700" : "text-red-700"}`}>
-                      {order.type === "buy" ? "خرید" : "فروش"}
+                      {order.type === "buy" ? t("buy")  : t("sell") }
                     </td>
                     {/* <td className={`border border-gray-300 px-4 py-2 ${profitLossClass}`}>
                       {profitLoss !== null ? `${profitLoss.toFixed(2)}%` : "در حال دریافت..."}
