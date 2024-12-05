@@ -3,15 +3,15 @@ import React from "react";
 function LivePrices({ prices }) {
   return (
     <div className="bg-white shadow rounded-lg p-6 items-center text-center w-full max-w-md">
-      <h2 className="text-lg font-bold text-black">قیمت زنده</h2>
+      <h2 className="text-lg font-bold text-black">{t("livePrice")}</h2>
       <p className="text-sm text-gray-900">
-          بیت‌کوین   : 
-          <strong className="font-light text-lg text-black">{prices.bitcoin ? ` ${prices.bitcoin} ` : "در حال دریافت..."}
+          {t("bitcoin")}   : 
+          <strong className="font-light text-lg text-black">{prices.bitcoin ? ` ${prices.bitcoin} ` : t("fetching")}
         </strong>
       </p>
       <p className="text-sm text-gray-900">
-          اتریوم  : 
-          <strong className="font-light text-lg text-black">{prices.ethereum ? ` ${prices.ethereum} ` : "در حال دریافت..."}
+          {t("ethereum")}  : 
+          <strong className="font-light text-lg text-black">{prices.ethereum ? ` ${prices.ethereum} ` : t("fetching")}
         </strong>
       </p>
     </div>

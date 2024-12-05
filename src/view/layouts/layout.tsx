@@ -10,8 +10,9 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const isRtl = locale === 'fa' || locale === 'ar' ? 'rtl' : 'ltr';
   return (
-    <html  lang={locale} >
+    <html  lang={locale} dir={isRtl}>
       <body className="font-IranSans">
         <NextIntlClientProvider messages={messages}>
         <Navbar />
