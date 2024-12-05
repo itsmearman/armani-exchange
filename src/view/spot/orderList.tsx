@@ -14,7 +14,7 @@ interface OrderListProps {
   orders: Order[];
   livePrices: LivePrices;
 }
-const OrderList = ({ orders, livePrices }:OrderListProps) => {
+const OrderList = ({ orders }:OrderListProps) => {
   const t = useTranslations();
   // const calculateProfitLossPercentage = (order) => {
   //   const currentPrice = parseFloat(livePrices[order.asset] || 0);

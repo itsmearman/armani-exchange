@@ -20,7 +20,7 @@ interface Order {
 }
 function CryptoTradingApp() {
   const [prices, setPrices] = useState<Prices>({ bitcoin: 0, ethereum: 0 });
-  const [cashBalance, setCashBalance] = useState<Number>(150000);
+  const [cashBalance, setCashBalance] = useState<number>(150000);
   const [cryptoBalance, setCryptoBalance] = useState<CryptoBalance>({
     bitcoin: 0,
     ethereum: 0,
