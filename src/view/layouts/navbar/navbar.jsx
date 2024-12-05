@@ -19,7 +19,7 @@ export default function Navbar() {
         <Image src={Logo} width={150} height={100} alt="" />
       </Link>
       <div className="my-[1.8rem] flex gap-x-8">
-        {item.map((data: any, index) => (
+        {item.map((data, index) => (
           <Link
             href={data.route}
             key={index}

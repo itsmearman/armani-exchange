@@ -1,8 +1,7 @@
 import React from "react";
-import { useTranslations } from "next-intl";
-const OrderList = ({ orders, livePrices }:any) => {
-  const t = useTranslations()
-  const calculateProfitLossPercentage = (order:any) => {
+
+const OrderList = ({ orders, livePrices }) => {
+  const calculateProfitLossPercentage = (order) => {
     const currentPrice = parseFloat(livePrices[order.asset] || 0);
     if (!currentPrice || !order.price) return null;
     const profitLoss = ((currentPrice - order.price) / order.price) * 100;
@@ -34,8 +33,8 @@ const OrderList = ({ orders, livePrices }:any) => {
                 </td>
               </tr>
             ) : (
-              orders.map((order:any) => {
-                const profitLoss:any = calculateProfitLossPercentage(order);
+              orders.map((order) => {
+                const profitLoss = calculateProfitLossPercentage(order);
                 const profitLossClass =
                   profitLoss > 0
                     ? "text-green-600 font-bold"
