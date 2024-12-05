@@ -15,6 +15,7 @@
     "@mui/material": "^6.1.7",
     "@mui/system": "^6.1.6",
     "@reduxjs/toolkit": "^2.3.0",
+    "@vercel/speed-insights": "^1.1.0",
     "axios": "^1.7.7",
     "chart.js": "^4.4.6",
     "iconsax-react": "^0.0.8",
