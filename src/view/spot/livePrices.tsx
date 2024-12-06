@@ -6,7 +6,7 @@ interface LivePricesProps {
 function LivePrices({ prices }:LivePricesProps) {
   const t = useTranslations();
   return (
-    <div className="bg-white shadow rounded-lg p-6 items-center text-center w-full max-w-md">
+    <div className="bg-white shadow rounded-lg p-6 items-center text-center w-full max-w-lg">
       <h2 className="text-lg font-bold text-black">{t("livePrice")}</h2>
       <p className="text-sm text-gray-900">
           {t("bitcoin")}   : 

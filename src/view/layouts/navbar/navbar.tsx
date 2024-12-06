@@ -28,7 +28,7 @@ export default function Navbar() {
             <Link
               href={data.route}
               key={index}
-              className=" justify-items-center cursor-pointer hover:text-gray-400"
+              className="flex flex-col items-center cursor-pointer hover:text-gray-400"
             >
               {width < 768 ? (data.route === slug ? (<>{data.imgActive}<span className="text-blue-600">{data.title}</span></>) : (<>{data.img}<span>{data.title}</span></>)) : (data.route === slug ? (<span className="text-blue-600">{data.title}</span>) : (<span>{data.title}</span>))}
             </Link>

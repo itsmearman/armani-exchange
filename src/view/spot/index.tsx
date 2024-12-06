@@ -5,11 +5,12 @@ import Balances from "./balances";
 import TradeForm from "./tradeForm";
 import OrderList from "./orderList";
 import { useTranslations } from "next-intl";
+import Modal from "@/src/components/modal";
 interface Prices { [key: string]: string | number }
 
 interface CryptoBalance {
   bitcoin: number;
-  ethereum: number; 
+  ethereum: number;
 }
 
 interface Order {
@@ -19,7 +20,7 @@ interface Order {
   amount: number;
   price: number;
 }
-function CryptoTradingApp() {
+function Spot() {
   const t = useTranslations();
   const [prices, setPrices] = useState<Prices>({ bitcoin: 0, ethereum: 0 });
   const [cashBalance, setCashBalance] = useState<number>(150000);
@@ -28,6 +29,8 @@ function CryptoTradingApp() {
     ethereum: 0,
   });
   const [orders, setOrders] = useState<Order[]>([]);
+  const [modalMessage, setModalMessage] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const ws = new WebSocket("wss://ws.coincap.io/prices?assets=bitcoin,ethereum");
@@ -42,17 +45,17 @@ function CryptoTradingApp() {
     const cost = price * amount;
     const cashBalanceNum = Number(cashBalance.toFixed(2));
 
-     if (type === "buy" && cost <= cashBalanceNum) {
-    setCashBalance((prev) => Number(prev.toFixed(6)) - cost);
-    setCryptoBalance((prev) => ({ ...prev, [asset]: prev[asset] + amount }));
-  } else if (type === "sell" && cryptoBalance[asset] >= amount) {
-    setCashBalance((prev) => Number(prev.toFixed(6)) + cost);
-    setCryptoBalance((prev) => ({ ...prev, [asset]: prev[asset] - amount }));
-  } else {
-    alert(t("notEnough"));
-    return;
-  }
-
+    if (type === "buy" && cost <= cashBalanceNum) {
+      setCashBalance((prev) => Number(prev.toFixed(6)) - cost);
+      setCryptoBalance((prev) => ({ ...prev, [asset]: prev[asset] + amount }));
+    } else if (type === "sell" && cryptoBalance[asset] >= amount) {
+      setCashBalance((prev) => Number(prev.toFixed(6)) + cost);
+      setCryptoBalance((prev) => ({ ...prev, [asset]: prev[asset] - amount }));
+    } else {
+      setModalMessage(t("notEnough"));
+      setIsModalOpen(true);
+      return;
+    }
 
     setOrders((prev) => [
       { id: Date.now(), type, asset, amount, price },
@@ -61,15 +64,20 @@ function CryptoTradingApp() {
   };
   return (
     <>
-      <div className="flex pt-12 flex-col items-center space-y-6 md:pt-24">
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        message={modalMessage}
+      />
+      <div className="flex pt-[7rem] flex-col items-center space-y-6 md:pt-24">
         <h1 className="text-2xl font-bold">{t("tradeSystem")}</h1>
         <Balances cashBalance={Number(cashBalance)} cryptoBalance={cryptoBalance} />
         <LivePrices prices={prices} />
         <TradeForm prices={prices} onTrade={handleTrade} cryptoBalance={cryptoBalance} cashBalance={Number(cashBalance)} />
-        <OrderList orders={orders} livePrices={prices}/>
+        <OrderList orders={orders} livePrices={prices} />
       </div>
     </>
   );
 }
 
-export default CryptoTradingApp;
+export default Spot;

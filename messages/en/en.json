@@ -4,11 +4,12 @@
     "navabar": "",
     "home": "Home",
     "blog": "Blog",
-    "aboutUs": "About Us",
+    "aboutUs": "AboutUs",
     "trade": "Trade",
     "label":"label",
     "fa":"Persian",
     "en":"English",
+    "close":"close",
 
     "spot": "",
     "notEnough": "Insufficient balance!",
