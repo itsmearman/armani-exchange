@@ -10,15 +10,29 @@ import { useWidth } from "@/src/components/windowDimensions";
 // import { ProfileCircle } from "iconsax-react";
 import LocaleSwitcher from "@/src/components/locale/LocaleSwitcher";
 import { Notification } from "iconsax-react";
-
+import Modal from "@/src/components/modal";
+import { useState } from "react";
+import { useTranslations } from "next-intl";
 export default function Navbar() {
   const item = NavbarItem();
   const slug = usePathname();
   const width = useWidth();
-
+  const [modalMessage, setModalMessage] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const t = useTranslations();
+const modalView = ()=>{
+  setModalMessage(t("noMessage"));
+  setIsModalOpen(true);
+  return;
+} 
 
   return (
     <>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        message={modalMessage}
+      />
       <nav className="h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white">
         <Link href={"/"} className="hidden md:block">
           <Image src={Logo} width={150} height={100} alt="" />
@@ -41,12 +55,13 @@ export default function Navbar() {
       </nav>
       <div className="h-[5rem] visible md:invisible fixed top-0  w-full flex px-6 shadow-lg justify-between bg-white">
         <div className="my-auto px-4">
-        <Notification
+          <Notification
+            onClick={modalView}
           size="32"
           color="black"
         />
-        </div>   
-          <Image src={LogoMD} width={100} alt="" className="mx-auto"/>
+        </div>
+        <Image src={LogoMD} width={100} alt="" className="mx-auto" />
         <div className="my-auto gap-4">
           <LocaleSwitcher />
         </div>
