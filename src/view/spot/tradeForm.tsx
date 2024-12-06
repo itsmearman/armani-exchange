@@ -50,7 +50,7 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
       return;
     }
 
-    const calculatedAmount = totalAmount
+    let calculatedAmount = totalAmount
       ? totalAmount / currentPrice // محاسبه مقدار ارز از مبلغ
       : cryptoQty; // استفاده از مقدار واردشده ارز
 
@@ -62,7 +62,15 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
       alert(t("Invalidate"));
       return;
     }
-
+    if (tradeType === "sell") {
+      const availableBalance = cryptoBalance[selectedAsset];
+      const adjustedAmount = Math.min(calculatedAmount, availableBalance);
+  
+      // Prevent negative balances
+      if (availableBalance - adjustedAmount < 0.000001) {
+        calculatedAmount = availableBalance; // Sell all remaining balance
+      }
+    }
     onTrade(tradeType, selectedAsset, calculatedAmount,
       // calculatedTotal
     );

@@ -56,11 +56,11 @@ export default function LocaleSwitcherSelect({
             {items.map((item) => (
               <li
                 key={item.value}
-                className={`flex px-3 py-2 cursor-pointer hover:bg-blue-100 gap-2 ${item.value === selectedValue ? 'font-bold text-green-500' : 'text-gray-900'
+                className={`flex px-3 py-2 cursor-pointer hover:bg-blue-100 gap-2 ${item.value === selectedValue ? 'font-bold text-green-500 bg-blue-100' : 'text-gray-900'
                   }`}
                 onClick={() => handleSelect(item.value)}
               >
-                <Flag code={item.code} width={35} />
+                <Flag code={item.code} width={35}/>
                 <span className="hidden md:inline">
                 {item.label}
                 </span>

@@ -61,7 +61,7 @@ function CryptoTradingApp() {
   };
   return (
     <>
-      <div className="flex pt-12 flex-col items-center space-y-6 md:pt-24">
+      <div className="flex pt-[7rem] flex-col items-center space-y-6 md:pt-24">
         <h1 className="text-2xl font-bold">{t("tradeSystem")}</h1>
         <Balances cashBalance={Number(cashBalance)} cryptoBalance={cryptoBalance} />
         <LivePrices prices={prices} />
