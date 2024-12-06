@@ -95,7 +95,7 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
   };
 
   return (
-    <div className="bg-white shadow rounded-lg p-6 w-full max-w-md space-y-4">
+    <div className="bg-white shadow rounded-lg p-6 w-full max-w-lg space-y-4">
       <div>
         <label className="block text-sm font-medium text-gray-700">
           {t("tradeType")}
