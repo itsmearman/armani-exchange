@@ -7,8 +7,8 @@ interface ModalProps {
 }
 
 export default function Modal({ isOpen, onClose, message }:ModalProps) {
-  if (!isOpen) return null;
   const t = useTranslations();
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
