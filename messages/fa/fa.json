@@ -1,5 +1,13 @@
 {
     "notFound":"صفحه پیدا نشد",
+    "HomeTitle":"صرافی آرمانی",
+    "HomeTitleDescription":"بزرگترین صرافی در جهان",
+    "SpotTitle":"معامله لحظه‌ای",
+    "SpotTitleDescription":"صفحه معاملات لحظه‌ای",
+    "AboutUsTitle":"درباره ما",
+    "AboutUsTitleDescription":"صفحه اطلاعات توسعه دهنده",
+    "NotFoundTitle":"صفحه یافت نشد",
+    "NotFoundTitleDescription":"صفحه یافت نشد",
 
     "navabar":"",
     "home":"خانه",

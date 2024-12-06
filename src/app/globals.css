@@ -28,6 +28,12 @@
   font-weight: 600;
 }
 
+@font-face {
+  font-family: "English";
+  src: url("../../public/fonts/SourGummy.ttf");
+  font-weight: 600;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

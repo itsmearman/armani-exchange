@@ -1,5 +1,13 @@
 {
     "notFound": "Page not found",
+    "HomeTitle":"Armani Exchange",
+    "HomeTitleDescription":"Biggest Exchange in World",
+    "SpotTitle":"Spot Trade",
+    "SpotTitleDescription":"Spot Trading Page",
+    "AboutUsTitle":"About Us",
+    "AboutUsTitleDescription":"About Developer",
+    "NotFoundTitle":"Not Found",
+    "NotFoundTitleDescription":"Not Found Page",
 
     "navabar": "",
     "home": "Home",
