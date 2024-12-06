@@ -43,10 +43,17 @@
     "bitcoinBalance": "Bitcoin Balance",
     "ethereumBalance": "Ethereum Balance",
     "orderList": "Order List",
-    "homeText": "Homepage",
     "phone": "Phone Number: ",
     "email": "Email: ",
 
     "footer": "",
-    "createdarman": "Created by Arman"
+    "createdarman": "Created by Arman",
+
+
+
+    
+  "homeText": "Welcome to Arman Exchange",
+  "homeWelcomeText": "To access the trading page, you can use the button below.",
+  "homeHelperText": "Or go to the trading section from menu.",
+  "homeSpotButtonText":"enter trade section"
 }
