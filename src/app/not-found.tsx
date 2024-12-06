@@ -1,10 +1,9 @@
 import React from 'react'
 import NotFoundView from '../view/notFound'
 import { getTranslations } from "next-intl/server";
-import type { Metadata } from "next";
 
-export async function generateMetadata({ locale }: { locale: string }): Promise<Metadata> {
-  const t = await getTranslations(locale);
+export async function generateMetadata() {
+  const t = await getTranslations();
   
   return {
     title: t("NotFoundTitle"),

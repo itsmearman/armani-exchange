@@ -1,10 +1,9 @@
 import React from 'react'
-import AbutUsVeiw from '@/src/view/about-us'
+import AbutUsView from '@/src/view/about-us'
 import { getTranslations } from "next-intl/server";
-import type { Metadata } from "next";
 
-export async function generateMetadata({ locale }: { locale: string }): Promise<Metadata> {
-  const t = await getTranslations(locale);
+export async function generateMetadata() {
+  const t = await getTranslations();
   
   return {
     title: t("AboutUsTitle"),
@@ -13,6 +12,6 @@ export async function generateMetadata({ locale }: { locale: string }): Promise<
 }
 export default function AboutUs() {
   return (
-    <AbutUsVeiw/>
+    <AbutUsView/>
   )
 }
