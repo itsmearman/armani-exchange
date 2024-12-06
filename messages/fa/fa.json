@@ -1,5 +1,13 @@
 {
     "notFound":"صفحه پیدا نشد",
+    "HomeTitle":"صرافی آرمانی",
+    "HomeTitleDescription":"بزرگترین صرافی در جهان",
+    "SpotTitle":"معامله لحظه‌ای",
+    "SpotTitleDescription":"صفحه معاملات لحظه‌ای",
+    "AboutUsTitle":"درباره ما",
+    "AboutUsTitleDescription":"صفحه اطلاعات توسعه دهنده",
+    "NotFoundTitle":"صفحه یافت نشد",
+    "NotFoundTitleDescription":"صفحه یافت نشد",
 
     "navabar":"",
     "home":"خانه",
@@ -10,6 +18,7 @@
     "fa":"فارسی",
     "en":"انگلیسی",
     "close":"بستن",
+    "noMessage":"پیامی موجود نیست !",
 
 
     "spot":"",
@@ -45,7 +54,6 @@
     "bitcoinBalance":"موجودی بیت‌کوین",
     "ethereumBalance":"موجودی اتریوم",
     "orderList":"لیست سفارشات",
-    "homeText":"صفحه اصلی",
     "phone":"شماره تماس : ",
     "email":"ایمیل : ",
 
@@ -54,9 +62,13 @@
 
 
 
-
-
-
     "footer":"",
-    "createdarman":"ساخته شده توسط آرمان"
+    "createdarman":"ساخته شده توسط آرمان",
+
+
+
+    "homeText":"به صرافی آرمانی خوش آمدید",
+    "homeWelcomeText":"برای وارد شدن به صفحه ترید میتوانید از دکمه زیر استفاده کنید",
+    "homeHelperText":"و یا از طریق منو وارد بخش معامله شوید",
+    "homeSpotButtonText":"ورود به بخش معامله"
 }

@@ -10,6 +10,7 @@ const config: Config = {
   theme: {
     fontFamily: {
       IranSans: "IranSans",
+      English:"English",
     },
     extend: {
       colors: {

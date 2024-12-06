@@ -1,13 +1,15 @@
 import Home from "@/src/view/index";
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Armani Exchange",
-  description: "Biggest Exchange in Asia",
-};
+export async function generateMetadata() {
+  const t = await getTranslations();
+  
+  return {
+    title: t("HomeTitle"),
+    description: t("HomeTitleDescription"),
+  };
+}
 
 export default function HomePage() {
-  return (
-    <Home/>
-  );
+  return <Home />;
 }
