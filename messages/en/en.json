@@ -9,6 +9,7 @@
     "label":"label",
     "fa":"Persian",
     "en":"English",
+    "close":"close",
 
     "spot": "",
     "notEnough": "Insufficient balance!",
