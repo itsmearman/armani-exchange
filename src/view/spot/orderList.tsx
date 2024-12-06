@@ -24,7 +24,7 @@ const OrderList = ({ orders }:OrderListProps) => {
   // };
 
   return (
-    <div className="bg-white shadow rounded-lg p-6 w-full max-w-lg space-y-4">
+    <div className="bg-white shadow rounded-lg p-6 w-full max-w-lg space-y-4 pb-[5rem] md:pb-6">
       <h2 className="text-lg font-bold text-gray-800 mb-4">{t("orderList")}</h2>
       <div className="overflow-x-auto">
         <table className="table-auto w-full border-collapse border border-gray-300">
