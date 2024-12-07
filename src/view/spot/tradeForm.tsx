@@ -42,6 +42,11 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
   const handleSubmit = () => {
     const totalAmount = parseFloat(tradeAmount);
     const cryptoQty = parseFloat(cryptoAmount);
+    if (cryptoQty || totalAmount > 0 && cryptoQty || totalAmount < 0.000001) {
+      setModalMessage(t("minValueMessage", { min: "0.000001" }));
+      setIsModalOpen(true);
+      return;
+    }
 
     if ((!totalAmount && !cryptoQty) || currentPrice <= 0) {
       setModalMessage(t("enterCustomPrice"));

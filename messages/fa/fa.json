@@ -24,6 +24,7 @@
     "spot":"",
     "notEnough":"موجودی کافی نیست !",
     "tradeSystem":"سیستم خرید و فروش ارز دیجیتال",
+    "minValueMessage":"مقدار وارد شده کمتر از حد مجاز",
     "currency":"ارز",
     "price":"قیمت",
     "amount":"مقدار",

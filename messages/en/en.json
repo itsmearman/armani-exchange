@@ -23,6 +23,7 @@
     "spot": "",
     "notEnough": "Insufficient balance!",
     "tradeSystem": "Cryptocurrency Trading System",
+    "minValueMessage": "The entered value is less than the minimum allowed",
     "currency": "Currency",
     "price": "Price",
     "amount": "Amount",
