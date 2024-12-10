@@ -10,11 +10,8 @@
 The goal of this project is to create a simple simulator for a digital currency exchange platform, allowing users to buy and sell various cryptocurrencies. This exchange simulates real-time market data and enables users to perform transactions based on live market conditions.
 
 ## Key Features:
-1. **Homepage**: Displays the real-time status of various cryptocurrencies, including their prices and price changes.
-2. **Buy and Sell Cryptocurrencies**: Users can buy and sell digital currencies by selecting specific cryptocurrencies and specifying the amount for the transaction.
-3. **Cryptocurrency Details**: Users can view detailed information about each cryptocurrency, such as market trends, historical prices, and relevant news.
+1.**Buy and Sell Cryptocurrencies**: Users can buy and sell digital currencies by selecting specific cryptocurrencies and specifying the amount for the transaction.
 4. **User Account Overview**: Users can view their account balance and transaction history, tracking their cryptocurrency holdings.
-5. **Graphs and Charts**: Interactive charts and graphs are used to visualize price changes of cryptocurrencies over time.
 6. **Responsive Design**: The project is designed to be responsive, ensuring it works seamlessly across different devices, including mobile and desktop screens.
 
 ## Technical Features:
