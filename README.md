@@ -26,7 +26,7 @@ The goal of this project is to create a simple simulator for a digital currency 
 
 <br>
 also if you have suggestion or criticism :
-<br><br>
+
 <a href="mailto: arman.t.tehrani@gmail.com">![Gmail](https://img.shields.io/badge/Gmail-D14836?logo=gmail&logoColor=white)</a>
 <a href="https://www.linkedin.com/in/arman-tabibzade-tehrani-00b414220">![LinkedIn](https://img.shields.io/badge/Linkedin-%230077B5.svg?logo=linkedin&logoColor=white)</a>
 
