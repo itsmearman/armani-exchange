@@ -2,22 +2,22 @@ import React, { useState } from "react";
 import { useTranslations } from "next-intl";
 import Modal from "@/src/components/modal";
 interface TradeFormProps {
-  prices: { [key: string]: string | number }; // قیمت ارزها (bitcoin, ethereum)
+  prices: { [key: string]: string | number }; // Prices of cryptocurrencies (bitcoin, ethereum)
   onTrade: (
     type: "buy" | "sell", asset: "bitcoin" | "ethereum", amount: number
   ) => void;
   cryptoBalance: {
     bitcoin: number;
     ethereum: number;
-  }; // موجودی ارزهای دیجیتال
-  cashBalance: number; // موجودی نقدی
+  }; // Balance of cryptocurrencies
+  cashBalance: number; // Cash balance
 }
 function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormProps) {
   const t = useTranslations();
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
   const [selectedAsset, setSelectedAsset] = useState<"bitcoin" | "ethereum">("bitcoin");
-  const [tradeAmount, setTradeAmount] = useState<string>(""); // مبلغ معامله
-  const [cryptoAmount, setCryptoAmount] = useState<string>(""); // مقدار ارز
+  const [tradeAmount, setTradeAmount] = useState<string>(""); // Trade amount
+  const [cryptoAmount, setCryptoAmount] = useState<string>(""); // Cryptocurrency amount
   const [modalMessage, setModalMessage] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const currentPrice = typeof prices[selectedAsset] === 'number'
@@ -40,13 +40,10 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
   };
   // Handle submit for trade
   const handleSubmit = () => {
-    const totalAmount = parseFloat(tradeAmount);
-    const cryptoQty = parseFloat(cryptoAmount);
-    if (cryptoQty || totalAmount > 0 && cryptoQty || totalAmount < 0.000001) {
-      setModalMessage(t("minValueMessage", { min: "0.000001" }));
-      setIsModalOpen(true);
-      return;
-    }
+    const totalAmount = parseFloat(parseFloat(tradeAmount).toFixed(2));
+    const cryptoQty = parseFloat(parseFloat(cryptoAmount).toFixed(6));
+
+    
 
     if ((!totalAmount && !cryptoQty) || currentPrice <= 0) {
       setModalMessage(t("enterCustomPrice"));
@@ -61,18 +58,19 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
     }
 
     let calculatedAmount = totalAmount
-      ? totalAmount / currentPrice // محاسبه مقدار ارز از مبلغ
-      : cryptoQty; // استفاده از مقدار واردشده ارز
+      ? totalAmount / currentPrice // Calculate cryptocurrency amount from trade amount
+      : cryptoQty; // Use the entered cryptocurrency amount
 
     const calculatedTotal = cryptoQty
-      ? cryptoQty * currentPrice // محاسبه مبلغ از مقدار ارز
-      : totalAmount; // استفاده از مبلغ واردشده
+      ? cryptoQty * currentPrice // Calculate trade amount from cryptocurrency amount
+      : totalAmount; // Use the entered trade amount
 
     if (calculatedAmount <= 0 || calculatedTotal <= 0) {
       setModalMessage(t("Invalidate"));
       setIsModalOpen(true);
       return;
     }
+
     if (tradeType === "sell") {
       const availableBalance = cryptoBalance[selectedAsset];
       const adjustedAmount = Math.min(calculatedAmount, availableBalance);
@@ -80,6 +78,11 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
       // Prevent negative balances
       if (availableBalance - adjustedAmount < 0.000001) {
         calculatedAmount = availableBalance; // Sell all remaining balance
+      }
+      if (!availableBalance || availableBalance < cryptoQty - 0.000001) {
+        setModalMessage(t("notEnough")); // Display insufficient balance message
+        setIsModalOpen(true);
+        return;
       }
     }
     onTrade(tradeType, selectedAsset, calculatedAmount,
