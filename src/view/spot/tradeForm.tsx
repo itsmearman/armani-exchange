@@ -12,7 +12,7 @@ interface TradeFormProps {
   }; // Balance of cryptocurrencies
   cashBalance: number; // Cash balance
 }
-function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormProps) {
+export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormProps) {
   const t = useTranslations();
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
   const [selectedAsset, setSelectedAsset] = useState<"bitcoin" | "ethereum">("bitcoin");
@@ -220,5 +220,3 @@ function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormPro
     </>
   );
 }
-
-export default TradeForm;
