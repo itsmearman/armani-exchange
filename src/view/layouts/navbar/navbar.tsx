@@ -13,6 +13,7 @@ import { Notification } from "iconsax-react";
 import Modal from "@/src/components/modal";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+
 export default function Navbar() {
   const item = NavbarItem();
   const slug = usePathname();
