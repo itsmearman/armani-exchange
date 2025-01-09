@@ -27,7 +27,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface Order {
   id: number;
   type: "buy" | "sell";
-  asset: "bitcoin" | "ethereum";
+  asset: "bitcoin" | "ethereum" | "cardano";
   amount: number;
   price: number;
 }
