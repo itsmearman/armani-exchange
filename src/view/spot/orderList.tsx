@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 interface Order {
   id: number;
   type: "buy" | "sell";
-  asset: "bitcoin" | "ethereum" | "cardano";
+  asset: string;
   amount: number;
   price: number;
 }

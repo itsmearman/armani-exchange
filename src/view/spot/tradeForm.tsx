@@ -7,9 +7,7 @@ interface TradeFormProps {
     type: "buy" | "sell", asset: "bitcoin" | "ethereum" | "cardano", amount: number
   ) => void;
   cryptoBalance: {
-    bitcoin: number;
-    ethereum: number;
-    cardano: number;
+    [key: string]: number;
   };
   cashBalance: number;
 }

@@ -3,9 +3,6 @@ import { useTranslations } from "next-intl";
 interface BalancesProps {
   cashBalance: number;
   cryptoBalance: {
-    bitcoin: number;
-    ethereum: number;
-    cardano: number;
     [key: string]: number;
   };
 }
