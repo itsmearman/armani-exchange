@@ -12,7 +12,7 @@ interface Gate {
 export const HamburgerMenu = ({
   className,
   color = "#000000",
-}: Gate): JSX.Element => {
+}: Gate) => {
   return (
     <svg
       className={className}
@@ -41,7 +41,7 @@ export const HamburgerMenu = ({
 export const HamburgerMenuclose = ({
   className,
   color = "#0001",
-}: Gate): JSX.Element => {
+}: Gate) => {
   return (
     <svg
       className={className}

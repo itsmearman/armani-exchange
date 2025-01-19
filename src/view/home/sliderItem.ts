@@ -1,8 +1,9 @@
-import { useTranslations } from 'next-intl'
+import { useTranslations } from "next-intl";
 export default function SliderItem(){
-const Slider = [
+    const t = useTranslations();
+    const Slider = [
     {
-        title:"title1",
+        title: t("firstHomeSlider"),
         color:"206,17,17",
         route:"/spot",
     },

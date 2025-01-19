@@ -37,14 +37,19 @@ export default function App() {
     <div className="py-[8rem]">
       <Swiper
         effect={"cards"}
+        loop={true}
         grabCursor={true}
         modules={[EffectCards]}
         className="w-60 h-80"
       >
         {slider.map((data,index)=>(
-        <SwiperSlide key={index} className={`content-center text-center align-middle items-center rounded-[18px] text-2xl font-bold text-white bg-[rgb(${data.color})]`}>
+        <SwiperSlide key={index} 
+        style={{ backgroundColor: `rgb(${data.color})` }}
+        className="content-center text-center align-middle items-center rounded-[18px] text-xl font-bold text-white">
           <Link href={data.route}>
+          <button className="w-10/12 h-10 bg-blue-900 rounded-[18px] hover:bg-blue-700 hover:text-blue-200 shadow-xl">
           {data.title}
+          </button>
           </Link>
         </SwiperSlide>
         ))
