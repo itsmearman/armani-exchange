@@ -11,7 +11,7 @@ export default function Modal({ isOpen, onClose, message }:ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-10">
       <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-md p-4">
         <p className="text-lg text-center text-gray-800">{message}</p>
         <div className="flex justify-center mt-6">

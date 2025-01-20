@@ -6,11 +6,13 @@ export default function SliderItem(){
         title: t("firstHomeSlider"),
         color:"206,17,17",
         route:"/spot",
+        img:"/assets/slider/9041216.png"
     },
     {
-        title:"title2",
+        title: t("secondHomeSlider"),
         color:"0,140,255",
         route:"/about-us",
+        img:"/assets/slider/2272825.png"
     },
     // {
     //     title:"title3",

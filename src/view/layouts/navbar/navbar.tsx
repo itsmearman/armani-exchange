@@ -33,7 +33,7 @@ const modalView = ()=>{
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
       />
-      <nav className="h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white">
+      <nav className="h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white z-10">
         <Link href={"/"} className="hidden md:block">
           <Image src={Logo} width={150} height={100} alt="" />
         </Link>
@@ -53,7 +53,7 @@ const modalView = ()=>{
           {/* <ProfileCircle size={42} color="black" className="invisible md:visible mx-auto rtl:ml-0 ltr:mr-0" /> */}
         </div>
       </nav>
-      <div className="h-[5rem] visible md:invisible fixed top-0  w-full flex px-6 shadow-lg justify-between bg-white">
+      <div className="h-[5rem] fixed top-0 w-full flex px-6 shadow-lg justify-between bg-white">
         <div className="my-auto px-4">
           <Notification
             onClick={modalView}
