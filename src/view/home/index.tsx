@@ -4,7 +4,7 @@ import Link from 'next/link';
 export default function HomeTrade() {
     const t = useTranslations();
     return (
-        <div className="h-svh pt-[8rem] px-8">
+        <div className="h-[95svh] pt-[8rem] px-8">
             <div className="grid gap-y-10">
                 <p className="text-center font-bold text-2xl text-green-600">
                     {t("homeText")}
