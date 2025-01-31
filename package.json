@@ -9,10 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
+    "@emotion/react": "^11.0.0-rc.0",
+    "@emotion/styled": "^11.3.0",
     "@mui/base": "^5.0.0-beta.61",
-    "@mui/material": "^6.1.7",
+    "@mui/material": "^6.3.0",
     "@mui/system": "^6.1.6",
     "@reduxjs/toolkit": "^2.4.0",
     "@vercel/analytics": "^1.4.1",
@@ -22,24 +22,25 @@
     "iconsax-react": "^0.0.8",
     "next": "15.0.2",
     "next-intl": "^3.25.3",
-    "react": "19.0.0-rc-02c0e824-20241028",
+    "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
-    "react-dom": "19.0.0-rc-02c0e824-20241028",
+    "react-dom": "^18.3.1",
     "react-redux": "^9.1.2",
     "react-world-flags": "^1.6.0",
     "redux": "^5.0.1",
     "redux-ui": "^0.1.1",
+    "swiper": "^11.2.1",
     "swr": "^2.2.5"
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
     "@types/react-world-flags": "^1.6.0",
     "eslint": "^8",
     "eslint-config-next": "15.0.2",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5.7.3"
   }
 }
