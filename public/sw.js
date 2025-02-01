@@ -1,5 +1,5 @@
 const CACHE_NAME = "pwa-cache-v1";
-const OFFLINE_PAGE = "s/offline.tsx";
+const OFFLINE_PAGE = "/offline.tsx";
 
 const CACHE_ASSETS = [
     OFFLINE_PAGE,
