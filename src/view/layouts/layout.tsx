@@ -17,6 +17,7 @@ export default async function RootLayout({
   const isRtl = locale === "fa" || locale === "ar" ? "rtl" : "ltr";
   return (
     <html lang={locale} dir={isRtl}>
+      <link rel="manifest" href="/manifest.json" />
       <body className={`${locale == "fa" ? "font-IranSans" : "font-English"}`}>
         <NextIntlClientProvider messages={messages}>
           <SpeedInsights />
