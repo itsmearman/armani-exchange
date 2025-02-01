@@ -1,5 +1,5 @@
 import React from 'react'
-import NotFoundView from '@/src/view/notFound'
+import OfflineView from '@/src/view/offline'
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata() {
@@ -12,6 +12,6 @@ export async function generateMetadata() {
 }
 export default function NotFound() {
   return (
-    <NotFoundView/>
+    <OfflineView/>
   )
 }
