@@ -3,13 +3,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface PricesState {
   bitcoin: number;
   ethereum: number;
-  cardano: number;
 }
 
 const initialState: PricesState = {
   bitcoin: 0, 
   ethereum: 0,
-  cardano: 0,
 };
 
 const pricesSlice = createSlice({
