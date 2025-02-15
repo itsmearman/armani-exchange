@@ -8,7 +8,6 @@ interface BalancesProps {
 }
 
 function Balances({ cashBalance, cryptoBalance }: BalancesProps) {
-  const cryptoKeys = Object.keys(cryptoBalance);
 
   const t = useTranslations();
   return (
@@ -19,14 +18,6 @@ function Balances({ cashBalance, cryptoBalance }: BalancesProps) {
           $ {cashBalance.toFixed(2)}{" "}
         </strong>
       </p>
-      {/* {cryptoKeys.map((key) => (
-        <p className="text-sm text-gray-800" key={key}>
-          {t(key)}:
-          <strong className="font-light text-lg text-black">
-          {key ? ` ${cryptoBalance[key].toFixed(6)} ` : t("fetching")}{t(`${key}symbol`)} 
-          </strong>
-        </p>
-      ))} */}
       <p className="text-sm text-gray-800">
           {t("bitcoinBalance")} : 
         <strong className="font-light text-lg text-black">BTC {cryptoBalance.bitcoin.toFixed(6)}{" "}</strong>
