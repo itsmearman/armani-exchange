@@ -4,7 +4,7 @@ import Modal from "@/src/components/modal";
 interface TradeFormProps {
   prices: { [key: string]: string | number }; // Prices of cryptocurrencies (bitcoin, ethereum)
   onTrade: (
-    type: "buy" | "sell", asset: "bitcoin" | "ethereum" | "cardano", amount: number
+    type: "buy" | "sell", asset: "bitcoin" | "ethereum" , amount: number
   ) => void;
   cryptoBalance: {
     [key: string]: number;
@@ -14,7 +14,7 @@ interface TradeFormProps {
 export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormProps) {
   const t = useTranslations();
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
-  const [selectedAsset, setSelectedAsset] = useState<"bitcoin" | "ethereum" | "cardano">("bitcoin");
+  const [selectedAsset, setSelectedAsset] = useState<"bitcoin" | "ethereum">("bitcoin");
   const [tradeAmount, setTradeAmount] = useState<string>(""); // Trade amount
   const [cryptoAmount, setCryptoAmount] = useState<string>(""); // Cryptocurrency amount
   const [modalMessage, setModalMessage] = useState<string>("");
@@ -27,7 +27,7 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
 
   const handleAssetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
-    if (value === "bitcoin" || value === "ethereum" || value === "cardano") {
+    if (value === "bitcoin" || value === "ethereum" ) {
       setSelectedAsset(value);
     }
   };
@@ -57,12 +57,12 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
     }
 
     let calculatedAmount = totalAmount
-      ? totalAmount / currentPrice // Calculate cryptocurrency amount from trade amount
-      : cryptoQty; // Use the entered cryptocurrency amount
+      ? totalAmount / currentPrice
+      : cryptoQty;
 
     const calculatedTotal = cryptoQty
-      ? cryptoQty * currentPrice // Calculate trade amount from cryptocurrency amount
-      : totalAmount; // Use the entered trade amount
+      ? cryptoQty * currentPrice
+      : totalAmount;
 
     if (calculatedAmount <= 0 || calculatedTotal <= 0) {
       setModalMessage(t("Invalidate"));
@@ -74,12 +74,11 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
       const availableBalance = cryptoBalance[selectedAsset];
       const adjustedAmount = Math.min(calculatedAmount, availableBalance);
 
-      // Prevent negative balances
       if (availableBalance - adjustedAmount < 0.000001) {
-        calculatedAmount = availableBalance; // Sell all remaining balance
+        calculatedAmount = availableBalance;
       }
       if (!availableBalance || availableBalance < cryptoQty - 0.000001) {
-        setModalMessage(t("notEnough")); // Display insufficient balance message
+        setModalMessage(t("notEnough"));
         setIsModalOpen(true);
         return;
       }
@@ -94,10 +93,10 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
 
   // Handle click on the balance and set the input value
   const handleBalanceClick = () => {
-    const formattedAmount = cryptoBalance[selectedAsset].toFixed(6); // Format the value to 6 decimal places
+    const formattedAmount = cryptoBalance[selectedAsset].toFixed(6);
     // setAmount(formattedAmount); // Update the state with the formatted amount
-    setCryptoAmount(formattedAmount); // Set the input field with the formatted amount
-    setTradeAmount(""); // Clear the trade amount input
+    setCryptoAmount(formattedAmount);
+    setTradeAmount(""); 
   };
 
   const handleCashClick = () => {
@@ -106,7 +105,8 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
     setTradeAmount(formattedAmount); // Set the input field with the formatted amount
     setCryptoAmount(""); // Clear the crypto amount input
   };
-
+  console.log(cryptoBalance);
+  
   return (
     <>
       <Modal
@@ -177,6 +177,7 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
               className="text-gray-400 hover:text-gray-700 cursor-pointer"
               onClick={handleBalanceClick}
             >
+              
               {tradeType === "buy" ? "" : cryptoBalance[selectedAsset].toFixed(6)}
             </div>
           </label>
