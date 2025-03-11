@@ -4,7 +4,7 @@ import Modal from "@/src/components/modal";
 interface TradeFormProps {
   prices: { [key: string]: string | number }; // Prices of cryptocurrencies (bitcoin, ethereum)
   onTrade: (
-    type: "buy" | "sell", asset: "bitcoin" | "ethereum" , amount: number
+    type: "buy" | "sell", asset: string, amount: number
   ) => void;
   cryptoBalance: {
     [key: string]: number;
@@ -14,7 +14,7 @@ interface TradeFormProps {
 export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormProps) {
   const t = useTranslations();
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
-  const [selectedAsset, setSelectedAsset] = useState<"bitcoin" | "ethereum">("bitcoin");
+  const [selectedAsset, setSelectedAsset] = useState<string>(Object.keys(cryptoBalance)[0] || "bitcoin");
   const [tradeAmount, setTradeAmount] = useState<string>(""); // Trade amount
   const [cryptoAmount, setCryptoAmount] = useState<string>(""); // Cryptocurrency amount
   const [modalMessage, setModalMessage] = useState<string>("");
@@ -27,9 +27,7 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
 
   const handleAssetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
-    if (value === "bitcoin" || value === "ethereum" ) {
-      setSelectedAsset(value);
-    }
+    setSelectedAsset(value);
   };
   const handleTradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
