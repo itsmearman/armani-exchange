@@ -7,6 +7,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import Client from "./client";
 
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -18,11 +19,11 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={isRtl}>
       <link rel="manifest" href="/manifest.json" />
-      <body className={`${locale == "fa" ? "font-IranSans" : "font-English"}`}>
+      <body className={`${locale == "fa" ? "font-IranSans" : "font-English"} bg-white dark:bg-gray-900 text-black dark:text-white`}>
         <NextIntlClientProvider messages={messages}>
+          <Client>
           <SpeedInsights />
           <Analytics />
-          <Client>
             <Navbar />
             {children}
             <Footer />

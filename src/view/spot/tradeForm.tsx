@@ -4,7 +4,7 @@ import Modal from "@/src/components/modal";
 interface TradeFormProps {
   prices: { [key: string]: string | number }; // Prices of cryptocurrencies (bitcoin, ethereum)
   onTrade: (
-    type: "buy" | "sell", asset: "bitcoin" | "ethereum" , amount: number
+    type: "buy" | "sell", asset: string, amount: number
   ) => void;
   cryptoBalance: {
     [key: string]: number;
@@ -14,7 +14,7 @@ interface TradeFormProps {
 export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormProps) {
   const t = useTranslations();
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
-  const [selectedAsset, setSelectedAsset] = useState<"bitcoin" | "ethereum">("bitcoin");
+  const [selectedAsset, setSelectedAsset] = useState<string>(Object.keys(cryptoBalance)[0] || "bitcoin");
   const [tradeAmount, setTradeAmount] = useState<string>(""); // Trade amount
   const [cryptoAmount, setCryptoAmount] = useState<string>(""); // Cryptocurrency amount
   const [modalMessage, setModalMessage] = useState<string>("");
@@ -27,9 +27,7 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
 
   const handleAssetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
-    if (value === "bitcoin" || value === "ethereum" ) {
-      setSelectedAsset(value);
-    }
+    setSelectedAsset(value);
   };
   const handleTradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -105,7 +103,6 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
     setTradeAmount(formattedAmount); // Set the input field with the formatted amount
     setCryptoAmount(""); // Clear the crypto amount input
   };
-  console.log(cryptoBalance);
   
   return (
     <>
@@ -114,15 +111,15 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
       />
-      <div className="bg-white shadow rounded-lg p-6 w-full max-w-lg space-y-4">
+      <div className="shadow-md dark:shadow-white/50 rounded-lg p-6 w-full max-w-lg space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium">
             {t("tradeType")}
           </label>
           <select
             value={tradeType}
             onChange={handleTradeChange}
-            className="w-full mt-1 border border-gray-300 rounded-lg p-2"
+            className="w-full mt-1 border border-gray-300 dark:border-gray-700 rounded-lg p-2  dark:bg-gray-900"
           >
             <option value="buy">{t("buy")}</option>
             <option value="sell">{t("sell")}</option>
@@ -130,13 +127,13 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium ">
             {t("cryptoCurrency")}
           </label>
           <select
             value={selectedAsset}
             onChange={handleAssetChange}
-            className="w-full mt-1 border border-gray-300 rounded-lg p-2"
+            className="w-full mt-1 border dark:border-gray-700 rounded-lg p-2  dark:bg-gray-900"
           >
             {Object.keys(cryptoBalance).map((asset) => (
               <option key={asset} value={asset}>
@@ -147,10 +144,10 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
         </div>
 
         <div>
-          <label className="flex justify-between text-sm font-medium text-gray-700">
+          <label className="flex justify-between text-sm font-medium ">
             <div>{t("tradePrice")}</div>
             <div
-              className="text-gray-400 hover:text-gray-700 cursor-pointer"
+              className="text-gray-400 hover:text-gray-700 cursor-pointer "
               onClick={handleCashClick}
             >
               {tradeType === "buy" ? cashBalance.toFixed(2) : ""}
@@ -164,14 +161,14 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
               setCryptoAmount(""); // Clear the crypto amount input
             }}
             placeholder={t("contractionPrice")}
-            className="w-full mt-1 border border-gray-300 rounded-lg p-2"
+            className="w-full mt-1 border dark:border-gray-700 rounded-lg p-2  dark:bg-gray-900"
             step="0.01"
             min="0.00"
           />
         </div>
 
         <div>
-          <label className="flex justify-between text-sm font-medium text-gray-700">
+          <label className="flex justify-between text-sm font-medium">
             <div>{t("tradeValue")}</div>
             <div
               className="text-gray-400 hover:text-gray-700 cursor-pointer"
@@ -189,7 +186,7 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
               setTradeAmount(""); // Clear the trade amount input
             }}
             placeholder={t("tradeValuePlaceholder")}
-            className="w-full mt-1 border border-gray-300 rounded-lg p-2"
+            className="w-full mt-1 border dark:border-gray-700 rounded-lg p-2  dark:bg-gray-900"
             step="0.000001"
             min="0.000000"
           />

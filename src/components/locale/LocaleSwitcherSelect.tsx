@@ -41,22 +41,22 @@ export default function LocaleSwitcherSelect({
       {/* Dropdown Trigger */}
       <button
         aria-label={label}
-        className={`flex items-center justify-between rounded-md p-2 border transition-colors hover:bg-slate-200 ${isPending ? 'pointer-events-none opacity-60' : ''
+        className={`flex items-center justify-between rounded-md p-2 border border-gray-300 dark:border-gray-700 transition-colors hover:bg-slate-200 dark:hover:bg-slate-800 ${isPending ? 'pointer-events-none opacity-60' : ''
           }`}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <span className='flex gap-2'><Flag code={items.find((item) => item.value === selectedValue)?.code }  width={40}/><span className="hidden md:inline">{items.find((item) => item.value === selectedValue)?.label || 'Select'}</span></span>
-        <ArrowDown2 size={18} color='black' className={`hidden md:inline ${isOpen ? "rotate-180" : ""}`} />
+        <ArrowDown2 size={18} className={`hidden md:inline ${isOpen ? "rotate-180" : ""} stroke-black dark:stroke-white`} />
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute mt-2 w-full bg-white shadow-md rounded-md border">
+        <div className="absolute bg-white dark:bg-gray-900 mt-2 w-full shadow-md rounded-md border border-gray-300 dark:border-gray-700">
           <ul className="py-1">
             {items.map((item) => (
               <li
                 key={item.value}
-                className={`flex px-3 py-2 cursor-pointer hover:bg-blue-100 gap-2 ${item.value === selectedValue ? 'font-bold text-green-600 bg-blue-100' : 'text-gray-900'
+                className={`flex px-3 py-2 cursor-pointer hover:bg-blue-100 gap-2 ${item.value === selectedValue ? 'font-bold text-green-600 bg-blue-100' : ''
                   }`}
                 onClick={() => handleSelect(item.value)}
               >

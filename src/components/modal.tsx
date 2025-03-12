@@ -13,8 +13,8 @@ export default function CustomModal({ isOpen, onClose, message }: ModalProps) {
 
   return (
     <Modal open={isOpen} onClose={onClose}>
-      <div  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-xs bg-white shadow-2xl p-4 rounded-lg">
-        <p className="text-center text-black">
+      <div  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-xs bg-white dark:bg-gray-900 shadow-2xl p-4 rounded-lg">
+        <p className="text-center">
           {message}
         </p>
         <div className="flex justify-center mt-14" >

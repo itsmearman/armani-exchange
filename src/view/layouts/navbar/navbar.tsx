@@ -13,6 +13,7 @@ import { Notification } from "iconsax-react";
 import Modal from "@/src/components/modal";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import ThemeSwitcher from "@/src/components/theme/ThemeSwitcher";
 
 export default function Navbar() {
   const item = NavbarItem();
@@ -34,18 +35,19 @@ const modalView = ()=>{
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
       />
-      <nav className="h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white">
+      <nav className="h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900">
         <Link href={"/"} className="hidden md:block">
           <Image src={Logo} width={150} height={100} alt="" />
         </Link>
+        <ThemeSwitcher />
         <div className="my-[1rem] md:my-[1.8rem] flex gap-x-8 mx-auto">
           {item.map((data, index) => (
             <Link
-              href={data.route}
-              key={index}
-              className="flex flex-col items-center cursor-pointer hover:text-gray-400"
+            href={data.route}
+            key={index}
+            className="flex flex-col items-center cursor-pointer text-black dark:text-white hover:text-gray-400"
             >
-              {width < 768 ? (data.route === slug ? (<>{data.imgActive}<span className="text-blue-600">{data.title}</span></>) : (<>{data.img}<span>{data.title}</span></>)) : (data.route === slug ? (<span className="text-blue-600">{data.title}</span>) : (<span>{data.title}</span>))}
+              {width < 768 ? (data.route === slug ? (<>{data.imgActive}<span className="text-blue-600 dark:text-green-500">{data.title}</span></>) : (<>{data.img}<span>{data.title}</span></>)) : (data.route === slug ? (<span className="text-blue-600 dark:text-green-500">{data.title}</span>) : (<span>{data.title}</span>))}
             </Link>
           ))}
         </div>
@@ -54,12 +56,12 @@ const modalView = ()=>{
           {/* <ProfileCircle size={42} color="black" className="invisible md:visible mx-auto rtl:ml-0 ltr:mr-0" /> */}
         </div>
       </nav>
-      <div className="h-[5rem] visible md:invisible fixed top-0  w-full flex px-6 shadow-lg justify-between bg-white">
+      <div className="h-[5rem] visible md:invisible fixed top-0  w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900">
         <div className="my-auto px-4">
           <Notification
-            onClick={modalView}
+          onClick={modalView}
           size="32"
-          color="black"
+          className="stroke-black dark:stroke-white"
         />
         </div>
         <Image src={LogoMD} width={100} alt="" className="mx-auto" />

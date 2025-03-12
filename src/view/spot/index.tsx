@@ -1,28 +1,32 @@
 "use client";
-
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { updatePrices, setPricesState } from "@/src/store/slices/pricesSlice";
 import {
+  React,
+  useEffect,
+  useDispatch,
+  useSelector,
+  updatePrices,
+  setPricesState,
   updateCashBalance,
   updateCryptoBalance,
   setBalancesState,
-} from "@/src/store/slices/balancesSlice";
-import { addOrder, setOrdersState } from "@/src/store/slices/ordersSlice";
-import { openModal, closeModal } from "@/src/store/slices/modalSlice";
+  addOrder,
+  setOrdersState,
+  openModal,
+  closeModal,
+  LivePrices,
+  Balances,
+  TradeForm,
+  OrderList,
+  Modal,
+  useTranslations,
+} from "./imports";
 import { RootState } from "@/src/store/store";
-import LivePrices from "./livePrices";
-import Balances from "./balances";
-import TradeForm from "./tradeForm";
-import OrderList from "./orderList";
-import Modal from "@/src/components/modal";
-import { useTranslations } from "next-intl";
 
 function Spot() {
   const t = useTranslations();
   const dispatch = useDispatch();
 
-  const { bitcoin, ethereum } = useSelector(
+  const { bitcoin, ethereum, cardano } = useSelector(
     (state: RootState) => state.prices
   );
   const { cashBalance, cryptoBalance } = useSelector(
@@ -61,26 +65,24 @@ function Spot() {
   }, [orders]);
 
   useEffect(() => {
-    localStorage.setItem("prices", JSON.stringify({ bitcoin, ethereum }));
-  }, [bitcoin, ethereum]);
+    localStorage.setItem(
+      "prices",
+      JSON.stringify({ bitcoin, ethereum, cardano })
+    );
+  }, [bitcoin, ethereum, cardano]);
 
   useEffect(() => {
     const ws = new WebSocket(
-      "wss://ws.coincap.io/prices?assets=bitcoin,ethereum"
+      "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,cardano"
     );
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-        dispatch(
-          updatePrices(
-            data
-        )
-        );
+      dispatch(updatePrices(data));
     };
-    ws.onopen = ()=>{
+    ws.onopen = () => {
       console.log("WebSocket opened");
-      
-    }
+    };
 
     ws.onclose = () => {
       console.warn("WebSocket closed. Reconnecting...");
@@ -89,15 +91,24 @@ function Spot() {
     return () => {
       ws.close();
     };
-  }, [dispatch, crypto]);
+  }, [dispatch]);
 
-  const handleTrade = (
-    type: "buy" | "sell",
-    asset: "bitcoin" | "ethereum",
-    amount: number
-  ) => {
-    const price =
-      asset === "bitcoin" ? bitcoin : ethereum;
+  const handleTrade = (type: "buy" | "sell", asset: string, amount: number) => {
+    let price: number;
+
+    // بررسی مقدار asset و انتخاب قیمت مناسب
+    if (asset === "bitcoin") {
+      price = bitcoin;
+    } else if (asset === "ethereum") {
+      price = ethereum;
+    } else if (asset === "cardano") {
+      price = cardano;
+    } else {
+      // اگر ارز دیجیتال شناخته شده نباشد
+      dispatch(openModal(t("unknownCrypto")));
+      return;
+    }
+
     const cost = price * amount;
 
     if (type === "buy" && cost <= cashBalance) {
@@ -122,16 +133,19 @@ function Spot() {
         message={message}
       />
       <div className="flex pt-[7rem] flex-col items-center space-y-6 md:pt-24">
-        <h1 className="text-2xl font-bold">{t("tradeSystem")}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-center">{t("tradeSystem")}</h1>
         <Balances cashBalance={cashBalance} cryptoBalance={cryptoBalance} />
-        <LivePrices prices={{ bitcoin, ethereum}} />
+        <LivePrices prices={{ bitcoin, ethereum, cardano }} />
         <TradeForm
-          prices={{ bitcoin, ethereum}}
+          prices={{ bitcoin, ethereum, cardano }}
           onTrade={handleTrade}
           cryptoBalance={cryptoBalance}
           cashBalance={cashBalance}
         />
-        <OrderList orders={orders} livePrices={{ bitcoin, ethereum}} />
+        <OrderList
+          orders={orders}
+          livePrices={{ bitcoin, ethereum, cardano }}
+        />
       </div>
     </>
   );
