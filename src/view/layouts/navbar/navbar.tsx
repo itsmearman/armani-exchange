@@ -13,6 +13,7 @@ import { Notification } from "iconsax-react";
 import Modal from "@/src/components/modal";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import ThemeSwitcher from "@/src/components/theme/ThemeSwitcher";
 
 export default function Navbar() {
   const item = NavbarItem();
@@ -34,18 +35,19 @@ const modalView = ()=>{
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
       />
-      <nav className="h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white">
+      <nav className="h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900">
         <Link href={"/"} className="hidden md:block">
           <Image src={Logo} width={150} height={100} alt="" />
         </Link>
         <div className="my-[1rem] md:my-[1.8rem] flex gap-x-8 mx-auto">
+        <ThemeSwitcher />
           {item.map((data, index) => (
             <Link
-              href={data.route}
-              key={index}
-              className="flex flex-col items-center cursor-pointer hover:text-gray-400"
+            href={data.route}
+            key={index}
+            className="flex flex-col items-center cursor-pointer text-black dark:text-white hover:text-gray-400"
             >
-              {width < 768 ? (data.route === slug ? (<>{data.imgActive}<span className="text-blue-600">{data.title}</span></>) : (<>{data.img}<span>{data.title}</span></>)) : (data.route === slug ? (<span className="text-blue-600">{data.title}</span>) : (<span>{data.title}</span>))}
+              {width < 768 ? (data.route === slug ? (<>{data.imgActive}<span className="text-blue-600 dark:text-green-500">{data.title}</span></>) : (<>{data.img}<span>{data.title}</span></>)) : (data.route === slug ? (<span className="text-blue-600 dark:text-green-500">{data.title}</span>) : (<span>{data.title}</span>))}
             </Link>
           ))}
         </div>

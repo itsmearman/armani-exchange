@@ -29,21 +29,21 @@ const OrderList = ({ orders }: OrderListProps) => {
   // };
 
   return (
-    <div className="bg-white shadow rounded-lg p-6 w-full max-w-lg space-y-4 pb-[5rem] md:pb-6">
-      <h2 className="text-lg font-bold text-gray-800 mb-4">{t("orderList")}</h2>
+    <div className="shadow-md dark:shadow-white/50 rounded-lg p-6 w-full max-w-lg space-y-4 pb-[5rem] md:pb-6">
+      <h2 className="text-lg font-bold  mb-4">{t("orderList")}</h2>
       <div className="overflow-x-auto">
-        <table className="table-auto w-full border-collapse border border-gray-300">
-          <thead className="bg-gray-100">
+        <table className="table-auto w-full border-collapse border border-gray-300 dark:border-gray-700 ">
+          <thead>
             <tr>
               {tableHead.map((data, index) => (
                 <th
                   key={index}
-                  className="border border-gray-300 px-4 py-2 text-gray-700"
+                  className="border border-gray-300 dark:border-gray-700 px-4 py-2 "
                 >
                   {t(`${data}`)}
                 </th>
               ))}
-              {/* <th className="border border-gray-300 px-4 py-2 text-gray-700">سود/زیان</th> */}
+              {/* <th className="border  px-4 py-2 ">سود/زیان</th> */}
             </tr>
           </thead>
           <tbody>
@@ -51,7 +51,7 @@ const OrderList = ({ orders }: OrderListProps) => {
               <tr>
                 <td
                   colSpan={5}
-                  className="border border-gray-300 px-4 py-4 text-center text-gray-600"
+                  className="border border-gray-300 dark:border-gray-700 px-4 py-4 text-center"
                 >
                   {t("noOrder")}
                 </td>
@@ -67,23 +67,23 @@ const OrderList = ({ orders }: OrderListProps) => {
                 //     : "text-gray-600";
                 return (
                   <tr key={order.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-2 text-gray-800">
+                    <td className="border border-gray-300 dark:border-gray-700 px-4 py-2 ">
                       {t(`${order.asset}`)}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2 text-gray-800">
+                    <td className="border border-gray-300 dark:border-gray-700 px-4 py-2 ">
                       {order.price}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2 text-gray-800">
+                    <td className="border border-gray-300 dark:border-gray-700 px-4 py-2 ">
                       {order.amount.toFixed(6)}
                     </td>
                     <td
-                      className={`border border-gray-300 px-4 py-2 ${
+                      className={`border border-gray-300 dark:border-gray-700 px-4 py-2 ${
                         order.type === "buy" ? "text-green-700" : "text-red-700"
                       }`}
                     >
                       {order.type === "buy" ? t("buy") : t("sell")}
                     </td>
-                    {/* <td className={`border border-gray-300 px-4 py-2 ${profitLossClass}`}>
+                    {/* <td className={`border  px-4 py-2 ${profitLossClass}`}>
                       {profitLoss !== null ? `${profitLoss.toFixed(2)}%` : "در حال دریافت..."}
                     </td> */}
                   </tr>

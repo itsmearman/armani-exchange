@@ -12,17 +12,17 @@ function Balances({ cashBalance, cryptoBalance }: BalancesProps) {
   const t = useTranslations();
 
   return (
-    <div className="bg-white shadow rounded-lg p-6 w-full max-w-lg items-center text-center">
-      <p className="text-sm text-gray-800">
+    <div className="shadow-md dark:shadow-white/50 rounded-lg p-6 w-full max-w-lg items-center text-center">
+      <p className="text-sm">
           {t("balance") + " " + t("cash")} :
-          <strong className="font-light text-lg text-black">
+          <strong className="font-light text-lg">
             {cashBalance.toFixed(2)}{" "}
           </strong>
         </p>
       {Object.entries(cryptoBalance).map(([currency, amount], index) => (
-        <p key={index} className="text-sm text-gray-800">
+        <p key={index} className="text-sm">
           {t("balance") + " " + t(`${currency}`)} :
-          <strong className="font-light text-lg text-black">
+          <strong className="font-light text-lg">
             {amount.toFixed(currency === "bitcoin" ? 6 : 4)}{" "}
           </strong>
         </p>

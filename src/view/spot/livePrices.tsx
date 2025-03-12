@@ -11,13 +11,13 @@ function LivePrices({ prices }: LivePricesProps) {
   const cryptoKeys = Object.keys(prices); // Extract the keys from the prices object
 
   return (
-    <div className="bg-white shadow rounded-lg p-6 items-center text-center w-full max-w-lg">
-      <h2 className="text-lg font-bold text-black">{t("livePrice")}</h2>
+    <div className="shadow-md dark:shadow-white/50 rounded-lg p-6 items-center text-center w-full max-w-lg">
+      <h2 className="text-lg font-bold ">{t("livePrice")}</h2>
       {/* <TradeViewChart pair="BTCBUSD" /> */}
       {cryptoKeys.map((key) => (
-        <p className="text-sm text-gray-900" key={key}>
+        <p className="text-sm" key={key}>
           {t(key)}:
-          <strong className="font-light text-lg text-black">
+          <strong className="font-light text-lg ">
             {prices[key] ? ` ${prices[key]} ` : t("fetching")}
           </strong>
         </p>
