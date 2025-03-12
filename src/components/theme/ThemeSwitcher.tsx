@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import { LightMode, DarkMode } from "../icons";
 
 export default function ThemeSwitcher() {
   const [theme, setTheme] = useState(() => {
@@ -24,9 +25,9 @@ export default function ThemeSwitcher() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2 bg-gray-200 dark:bg-gray-800 text-black dark:text-white rounded"
+      className="p-2  text-black dark:text-white rounded"
     >
-      {theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode"}
+      {theme === "light" ? <LightMode/> : <DarkMode/>}
     </button>
   );
 }
