@@ -1,4 +1,4 @@
-import Spot from "@/src/view/spot/index";
+import { Spot } from "@/src/view/spot/index";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata() {
