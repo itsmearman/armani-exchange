@@ -56,7 +56,7 @@ const modalView = ()=>{
           {/* <ProfileCircle size={42} color="black" className="invisible md:visible mx-auto rtl:ml-0 ltr:mr-0" /> */}
         </div>
       </nav>
-      <div className="h-[5rem] visible md:invisible fixed top-0  w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900">
+      <div className="h-[5rem] visible md:invisible fixed top-0  w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10">
         <div className="my-auto px-4">
           <Notification
           onClick={modalView}

@@ -1,211 +1,348 @@
-'use client';
-import React, { useEffect, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
-import Link from 'next/link';
-import * as THREE from 'three';
+"use client";
+import React, { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import Link from "next/link";
+import * as THREE from "three";
+import items from "./items";
+import { updatePrices, useDispatch, useSelector } from "../spot/imports";
+import { RootState } from "@/src/store/store";
 
 export default function HomeTrade() {
-    const t = useTranslations();
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [isLoaded, setIsLoaded] = useState(false);
-    
-    // Three.js animation setup
-    useEffect(() => {
-        if (!canvasRef.current) return;
-        
-        // Scene setup
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({
-            canvas: canvasRef.current,
-            alpha: true,
-            antialias: true
-        });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        
-        // Create floating coins
-        const coinGeometry = new THREE.CylinderGeometry(1, 1, 0.2, 32);
-        const coinMaterial = new THREE.MeshStandardMaterial({ 
-            color: 0x22c55e, // Green color matching your theme
-            metalness: 0.8,
-            roughness: 0.3,
-        });
-        
-        const coins: THREE.Mesh[] = [];
-        for (let i = 0; i < 15; i++) {
-            const coin = new THREE.Mesh(coinGeometry, coinMaterial);
-            coin.position.x = (Math.random() - 0.5) * 20;
-            coin.position.y = (Math.random() - 0.5) * 20;
-            coin.position.z = (Math.random() - 0.5) * 20 - 10;
-            coin.rotation.x = Math.random() * Math.PI;
-            coin.rotation.y = Math.random() * Math.PI;
-            
-            // Store random rotation speeds
-            coin.userData = {
-                rotationSpeedX: (Math.random() - 0.5) * 0.01,
-                rotationSpeedY: (Math.random() - 0.5) * 0.01,
-                floatSpeed: Math.random() * 0.005 + 0.002
-            };
-            
-            scene.add(coin);
-            coins.push(coin);
+  const t = useTranslations();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const dispatch = useDispatch();
+  
+  // دریافت قیمت‌ها از Redux store
+  const { bitcoin, ethereum, cardano } = useSelector(
+    (state: RootState) => state.prices
+  );
+  
+  // برای نمایش تغییرات قیمت
+  const [priceChanges, setPriceChanges] = useState({
+    bitcoin: { value: 0, isUp: true },
+    ethereum: { value: 0, isUp: true },
+    cardano: { value: 0, isUp: true }
+  });
+  
+  // ذخیره قیمت‌های قبلی برای محاسبه تغییرات
+  const prevPrices = useRef({ bitcoin: 0, ethereum: 0, cardano: 0 });
+
+  // محاسبه تغییرات قیمت
+  useEffect(() => {
+    if (prevPrices.current.bitcoin > 0) {
+      setPriceChanges({
+        bitcoin: {
+          value: ((bitcoin - prevPrices.current.bitcoin) / prevPrices.current.bitcoin) * 100,
+          isUp: bitcoin >= prevPrices.current.bitcoin
+        },
+        ethereum: {
+          value: ((ethereum - prevPrices.current.ethereum) / prevPrices.current.ethereum) * 100,
+          isUp: ethereum >= prevPrices.current.ethereum
+        },
+        cardano: {
+          value: ((cardano - prevPrices.current.cardano) / prevPrices.current.cardano) * 100,
+          isUp: cardano >= prevPrices.current.cardano
         }
-        
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(5, 5, 5);
-        scene.add(directionalLight);
-        
-        camera.position.z = 15;
-        
-        // Handle window resize
-        const handleResize = () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        };
-        
-        window.addEventListener('resize', handleResize);
-        
-        // Animation loop
-        const animate = () => {
-            requestAnimationFrame(animate);
-            
-            // Animate each coin
-            coins.forEach(coin => {
-                coin.rotation.x += coin.userData.rotationSpeedX;
-                coin.rotation.y += coin.userData.rotationSpeedY;
-                coin.position.y += Math.sin(Date.now() * coin.userData.floatSpeed) * 0.01;
-            });
-            
-            renderer.render(scene, camera);
-        };
-        
-        animate();
-        setIsLoaded(true);
-        
-        // Cleanup
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            renderer.dispose();
-            coins.forEach(coin => {
-                coin.geometry.dispose();
-                if (coin.material instanceof THREE.Material) {
-                    coin.material.dispose();
-                }
-            });
-        };
-    }, []);
+      });
+    }
     
-    return (
-        <div className="min-h-screen overflow-hidden">
-            {/* Three.js Canvas Background */}
-            <canvas 
-                ref={canvasRef} 
-                className="absolute top-0 left-0 w-full h-full -z-10"
-            />
-            
-            {/* Content */}
-            <div className="pt-[8rem] px-4 md:px-8 max-w-7xl mx-auto">
-                {/* Hero Section */}
-                <div className="flex flex-col md:flex-row items-center justify-between">
-                    <div className="md:w-1/2 text-center md:text-left mb-10 md:mb-0">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                            <span className="text-green-600">{t("homeText")}</span>
-                        </h1>
-                        <p className="text-xl md:text-2xl mb-8 text-blue-600">
-                            {t("homeWelcomeText")}
+    // بروزرسانی قیمت‌های قبلی
+    prevPrices.current = { bitcoin, ethereum, cardano };
+  }, [bitcoin, ethereum, cardano]);
+
+  // Three.js animation setup
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    // Scene setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvasRef.current,
+      alpha: true,
+      antialias: true,
+    });
+
+    // Set initial size
+    const updateSize = () => {
+      if (containerRef.current) {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      }
+    };
+    
+    updateSize();
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Create floating coins - adjust number based on screen size
+    const coinCount = window.innerWidth < 768 ? 8 : 15;
+    const coinSize = window.innerWidth < 768 ? 0.8 : 1;
+
+    const coinGeometry = new THREE.CylinderGeometry(coinSize, coinSize, 0.2, 32);
+    const coinMaterial = new THREE.MeshStandardMaterial({
+      color: 0x22c55e, // Green color matching your theme
+      metalness: 0.8,
+      roughness: 0.3,
+    });
+
+    const coins: THREE.Mesh[] = [];
+    for (let i = 0; i < coinCount; i++) {
+      const coin = new THREE.Mesh(coinGeometry, coinMaterial);
+      // Adjust position range based on screen size
+      const positionRange = window.innerWidth < 768 ? 15 : 20;
+      coin.position.x = (Math.random() - 0.5) * positionRange;
+      coin.position.y = (Math.random() - 0.5) * positionRange;
+      coin.position.z = (Math.random() - 0.5) * positionRange - 10;
+      coin.rotation.x = Math.random() * Math.PI;
+      coin.rotation.y = Math.random() * Math.PI;
+
+      // Store random rotation speeds
+      const speedFactor = window.innerWidth < 768 ? 0.7 : 1;
+      coin.userData = {
+        rotationSpeedX: (Math.random() - 0.5) * 0.01 * speedFactor,
+        rotationSpeedY: (Math.random() - 0.5) * 0.01 * speedFactor,
+        floatSpeed: Math.random() * 0.005 * speedFactor + 0.002,
+      };
+
+      scene.add(coin);
+      coins.push(coin);
+    }
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(5, 5, 5);
+    scene.add(directionalLight);
+
+    // Adjust camera position based on screen size
+    camera.position.z = window.innerWidth < 768 ? 12 : 15;
+
+    // Handle window resize
+    const handleResize = () => {
+      updateSize();
+      
+      // Adjust camera position based on screen size
+      camera.position.z = window.innerWidth < 768 ? 12 : 15;
+      
+      // Adjust coin visibility based on screen size
+      coins.forEach((coin, index) => {
+        if (window.innerWidth < 768 && index >= 8) {
+          coin.visible = false;
+        } else {
+          coin.visible = true;
+        }
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Animation loop
+    const animate = () => {
+      requestAnimationFrame(animate);
+
+      // Animate each coin
+      coins.forEach((coin) => {
+        if (coin.visible) {
+          coin.rotation.x += coin.userData.rotationSpeedX;
+          coin.rotation.y += coin.userData.rotationSpeedY;
+          coin.position.y +=
+            Math.sin(Date.now() * coin.userData.floatSpeed) * 0.01;
+        }
+      });
+
+      renderer.render(scene, camera);
+    };
+
+    animate();
+    setIsLoaded(true);
+    
+    // WebSocket connection for live prices
+    const ws = new WebSocket(
+      "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,cardano"
+    );
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      dispatch(updatePrices(data));
+    };
+    
+    ws.onopen = () => {
+      console.log("WebSocket opened");
+    };
+
+    ws.onclose = () => {
+      console.warn("WebSocket closed. Reconnecting...");
+    };
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      renderer.dispose();
+      coins.forEach((coin) => {
+        coin.geometry.dispose();
+        if (coin.material instanceof THREE.Material) {
+          coin.material.dispose();
+        }
+      });
+      ws.close();
+    };
+  }, [dispatch]);
+  
+  const Items = items();
+  
+  // تابع فرمت‌کننده قیمت
+  const formatPrice = (price: number) => {
+    if (price > 1000) {
+      return `$${price.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+    } else if (price > 1) {
+      return `$${price}`;
+    } else {
+      return `$${price}`;
+    }
+  };
+  
+  // تابع برای نمایش تغییرات قیمت
+  const formatChange = (change: number, isUp: boolean) => {
+    const absChange = Math.abs(change);
+    const formattedChange = absChange > 0.00001 ? absChange.toFixed(3) : "0.00";
+    return `${isUp ? '+' : '-'}${formattedChange}%`;
+  };
+
+  return (
+    <div ref={containerRef} className="min-h-screen overflow-hidden">
+      {/* Three.js Canvas Background */}
+      <canvas
+        ref={canvasRef}
+        className="absolute top-0 left-0 w-full h-full -z-10"
+      />
+
+      {/* Content */}
+      <div className="pt-16 md:pt-24 px-4 md:px-8 max-w-7xl mx-auto">
+        {/* Hero Section */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="w-full md:w-1/2 text-center md:rtl:text-right md:ltr:text-left">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6">
+              <span className="text-green-600">{t("homeText")}</span>
+            </h1>
+            <p className="text-lg sm:text-xl md:text-2xl mb-6 md:mb-8 text-blue-600">
+              {t("homeWelcomeText")}
+            </p>
+            <Link
+              href="/spot"
+              className="inline-block px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-green-500 text-white font-medium hover:bg-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              {t("homeSpotButtonText")}
+            </Link>
+            <p className="mt-3 md:mt-4 text-blue-500 text-sm sm:text-base">
+              {t("homeHelperText")}
+            </p>
+          </div>
+
+          {/* Live Prices Card */}
+          <div className="w-full md:w-1/2 max-w-md mt-8 md:mt-0">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-4 sm:p-6 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
+              <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-green-600">
+                {t("livePrice")}
+              </h2>
+
+              {/* Live Prices */}
+              <div className="space-y-3 sm:space-y-4">
+                {[
+                  { 
+                    name: t("bitcoin"), 
+                    symbol: t("bitcoinsymbol"), 
+                    price: bitcoin, 
+                    change: priceChanges.bitcoin.value,
+                    isUp: priceChanges.bitcoin.isUp
+                  },
+                  { 
+                    name: t("ethereum"), 
+                    symbol: t("ethereumsymbol"), 
+                    price: ethereum, 
+                    change: priceChanges.ethereum.value,
+                    isUp: priceChanges.ethereum.isUp
+                  },
+                  { 
+                    name: t("cardano"), 
+                    symbol: t("cardanosymbol"), 
+                    price: cardano, 
+                    change: priceChanges.cardano.value,
+                    isUp: priceChanges.cardano.isUp
+                  },
+                ].map((coin, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  >
+                    <div className="flex items-center">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mx-2 sm:mx-3">
+                        <span className="font-bold text-xs sm:text-sm text-blue-600 dark:text-blue-400">
+                          {coin.symbol.charAt(0)}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm sm:text-base">{coin.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {coin.symbol}
                         </p>
-                        <Link 
-                            href="/spot" 
-                            className="inline-block px-8 py-3 rounded-full bg-green-500 text-white font-medium hover:bg-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
-                        >
-                            {t("homeSpotButtonText")}
-                        </Link>
-                        <p className="mt-4 text-blue-500">
-                            {t("homeHelperText")}
-                        </p>
+                      </div>
                     </div>
-                    
-                    {/* Stats Card */}
-                    <div className="md:w-1/2 max-w-md">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
-                            <h2 className="text-xl font-bold mb-4 text-green-600">بازار ارزهای دیجیتال</h2>
-                            
-                            {/* Market Stats */}
-                            <div className="space-y-4">
-                                {[
-                                    { name: 'بیتکوین', symbol: 'BTC', price: '$43,256.78', change: '+2.4%', color: 'text-green-500' },
-                                    { name: 'اتریوم', symbol: 'ETH', price: '$3,287.45', change: '+1.8%', color: 'text-green-500' },
-                                    { name: 'کاردانو', symbol: 'ADA', price: '$0.58', change: '-0.7%', color: 'text-red-500' }
-                                ].map((coin, index) => (
-                                    <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                        <div className="flex items-center">
-                                            <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mx-3">
-                                                <span className="font-bold text-blue-600 dark:text-blue-400">{coin.symbol.charAt(0)}</span>
-                                            </div>
-                                            <div>
-                                                <p className="font-medium">{coin.name}</p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400">{coin.symbol}</p>
-                                            </div>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="font-medium">{coin.price}</p>
-                                            <p className={`text-xs ${coin.color}`}>{coin.change}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                    <div className="text-right">
+                      <p className="font-medium text-sm sm:text-base">
+                        {coin.price ? formatPrice(coin.price) : t("fetching")}
+                      </p>
+                      <p className={`text-xs ${coin.isUp ? 'text-green-500' : 'text-red-500'}`}>
+                        {coin.price ? formatChange(coin.change, coin.isUp) : ''}
+                      </p>
                     </div>
-                </div>
-                
-                {/* Feature Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-                    {[
-                        {
-                            title: 'معاملات آسان',
-                            description: 'خرید و فروش ارزهای دیجیتال با چند کلیک ساده',
-                            icon: (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            )
-                        },
-                        {
-                            title: 'قیمت‌های لحظه‌ای',
-                            description: 'دسترسی به قیمت‌های لحظه‌ای ارزهای دیجیتال',
-                            icon: (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                </svg>
-                            )
-                        },
-                        {
-                            title: 'امنیت بالا',
-                            description: 'معاملات امن با بالاترین استانداردهای امنیتی',
-                            icon: (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
-                            )
-                        }
-                    ].map((feature, index) => (
-                        <div key={index} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 transform transition-all duration-300 hover:scale-105">
-                            <div className="text-green-600 dark:text-green-500 mb-4">
-                                {feature.icon}
-                            </div>
-                            <h3 className="text-xl font-bold mb-2 text-blue-600">{feature.title}</h3>
-                            <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
-                        </div>
-                    ))}
-                </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                <Link
+                  href="/spot"
+                  className="block w-full text-center py-2 rounded-lg bg-blue-500 text-white text-sm hover:bg-blue-600 transition-colors"
+                >
+                  {t("trade")}
+                </Link>
+              </div>
             </div>
+          </div>
         </div>
-    )
+
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mt-12 md:mt-16 mb-20 md:mb-8">
+          {Items.map((feature, index) => (
+            <div
+              key={index}
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 transform transition-all duration-300 hover:scale-105"
+            >
+              <div className="text-green-600 dark:text-green-500 mb-3 sm:mb-4">
+                {feature.icon}
+              </div>
+              <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2 text-blue-600">
+                {feature.title}
+              </h3>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+                {feature.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
