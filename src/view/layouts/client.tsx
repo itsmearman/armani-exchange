@@ -2,12 +2,15 @@
 import React, { useEffect } from "react";
 import { Provider } from "react-redux";
 import { store } from "@/src/store/store";
+import { SessionProvider } from "next-auth/react";
 
 export default function Client({
   children,
-}: Readonly<{
+  requireAuth = false,
+}: {
   children: React.ReactNode;
-}>) {
+  requireAuth?: boolean;
+}) {
   useEffect(() => {
     if (
       localStorage.theme === "dark" ||
@@ -19,5 +22,9 @@ export default function Client({
       document.documentElement.classList.remove("dark");
     }
   }, []);
-  return <Provider store={store}>{children}</Provider>;
+  return (
+    <SessionProvider>
+      <Provider store={store}>{children}</Provider>
+    </SessionProvider>
+  );
 }

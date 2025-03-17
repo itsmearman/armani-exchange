@@ -21,10 +21,10 @@ export default async function RootLayout({
       <link rel="manifest" href="/manifest.json" />
       <body className={`${locale == "fa" ? "font-IranSans" : "font-English"} bg-white dark:bg-gray-900 text-black dark:text-white`}>
         <NextIntlClientProvider messages={messages}>
-          <Client>
-          <SpeedInsights />
-          <Analytics />
-            <Navbar />
+          <Navbar/>
+          <Client requireAuth={false}>
+            <SpeedInsights />
+            <Analytics />
             {children}
             <Footer />
           </Client>

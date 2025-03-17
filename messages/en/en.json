@@ -19,6 +19,8 @@
     "en":"English",
     "close":"close",
     "noMessage":"No message here !",
+    "login": "Login",
+    "logout": "Logout",
 
     "spot": "",
     "notEnough": "Insufficient balance!",

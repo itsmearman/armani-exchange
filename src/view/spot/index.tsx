@@ -21,8 +21,9 @@ import {
   useTranslations,
 } from "./imports";
 import { RootState } from "@/src/store/store";
+import Client from "../layouts/client";
 
-function Spot() {
+function SpotContent() {
   const t = useTranslations();
   const dispatch = useDispatch();
 
@@ -151,4 +152,10 @@ function Spot() {
   );
 }
 
-export default Spot;
+export default function Spot() {
+  return (
+    <Client requireAuth={true}>
+      <SpotContent />
+    </Client>
+  );
+}
