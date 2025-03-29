@@ -229,7 +229,7 @@ export default function HomeTrade() {
       />
 
       {/* Content */}
-      <div className="pt-16 md:pt-24 px-4 md:px-8 max-w-7xl mx-auto">
+      <div className="pt-24 px-4 md:px-8 max-w-7xl mx-auto">
         {/* Hero Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="w-full md:w-1/2 text-center md:rtl:text-right md:ltr:text-left">

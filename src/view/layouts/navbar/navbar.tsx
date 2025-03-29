@@ -35,7 +35,7 @@ const modalView = ()=>{
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
       />
-      <nav className="h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900">
+      <nav className="h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10">
         <Link href={"/"} className="hidden md:block">
           <Image src={Logo} width={150} height={100} alt="" />
         </Link>
