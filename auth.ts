@@ -1,86 +1,97 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
+import bcrypt from "bcryptjs";
 
-// This would typically come from your database
+// برای محیط توسعه - در پروژه واقعی از دیتابیس استفاده کنید
 const USERS = [
   {
     id: "1",
     email: "test@example.com",
-    // This is 'password123' hashed with bcrypt
-    // password: "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LHZzpZCHWVUbvCGTi",
-    password: "password123",
-    name: "Test User",
+    password: "$2b$10$mKgiSHMGVBjwvz.7YOMoGuVahUx3f4VKy8JPyalPM36onn.dlFD3y",
+    // password:"password123",
+    name: "Test User 1",
+  },
+  {
+    id: "2",
+    email: "afggf@sgf",
+    password: "$2y$10$NIb6qI.OQghDVpy5MQ.zKO2cANrlN6YM6hEKkr4Seje0ldaMZrvW.",
+    // password:"password123",
+    name: "Test User 2",
   },
 ];
 
-export const { auth, handlers } = NextAuth({
+export const authConfig = {
   providers: [
     Credentials({
       name: "Credentials",
       credentials: {
-        email: {
-          label: "Email",
-          type: "text",
-          placeholder: "test@example.com",
-        },
-        password: { label: "Password", type: "password" },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
         try {
+          // 1. بررسی وجود ایمیل و رمز
           if (!credentials?.email || !credentials?.password) {
-            throw new Error("Missing credentials");
+            throw new Error("لطفا ایمیل و رمز عبور را وارد کنید");
           }
 
-          // In a real application, you would fetch this from your database
-          const user = USERS.find((user) => user.email === credentials.email);
+          // 2. پیدا کردن کاربر
+          // در پروژه واقعی: const user = await getUserByEmail(credentials.email);
+          const user = USERS.find(user => user.email === credentials.email);
 
-          if (!user) {
-            throw new Error(
-              "User not found. Please check your email or sign up."
-            );
+          if (!user?.email || !user.password) {
+            throw new Error("کاربری با این ایمیل یافت نشد");
           }
 
-          const isPasswordValid = await (credentials.password as string,
-          user.password);
+          // 3. مقایسه رمز عبور
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password as string,
+            user.password
+          ) ;
 
           if (!isPasswordValid) {
-            throw new Error("Invalid password. Please try again.");
+            throw new Error("رمز عبور اشتباه است");
           }
 
+          // 4. برگرداندن اطلاعات کاربر
           return {
             id: user.id,
             email: user.email,
             name: user.name,
           };
         } catch (error) {
-          // Log the error for debugging (in a real app, use proper logging)
           console.error("Authentication error:", error);
-          // Rethrow the error to be handled by NextAuth
           throw error;
         }
       },
     }),
   ],
   pages: {
-    signIn: "/auth/signin",
+    signIn: '/login',
+    error: '/login', // صفحه برای نمایش خطاهای احراز هویت
   },
-  // Add callbacks to handle errors
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 روز
+  },
   callbacks: {
     async jwt({ token, user }) {
-      return { ...token, ...user };
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+      }
+      return token;
     },
     async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+      }
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
-});
+} satisfies NextAuthConfig;
 
-export type Session = {
-  user: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-  };
-};
+export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);

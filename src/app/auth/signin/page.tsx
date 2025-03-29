@@ -1,8 +1,9 @@
 'use client';
 
-import { signIn , signOut } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState, FormEvent } from 'react';
+
 
 export default function SignIn() {
     const router = useRouter();
@@ -48,7 +49,7 @@ export default function SignIn() {
             setIsLoading(false);
         }
     };
-
+      
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
@@ -60,7 +61,7 @@ export default function SignIn() {
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     {error && (
                         <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                            <span className="block sm:inline">{error}</span>
+                            <span className="block sm:inline">WTF</span>
                         </div>
                     )}
                     <div className="rounded-md shadow-sm -space-y-px">
