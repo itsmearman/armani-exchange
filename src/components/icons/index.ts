@@ -2,5 +2,8 @@ export{
     HamburgerMenu,
     HamburgerMenuclose,
     LightMode,
-    DarkMode
+    DarkMode,
+    Trade,
+    Price,
+    Security
 }from './icons'

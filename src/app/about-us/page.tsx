@@ -1,5 +1,5 @@
 import React from 'react'
-import AbutUsView from '@/src/view/about-us'
+import { AbutUsVeiw } from '@/src/view/about-us'
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata() {
@@ -12,6 +12,6 @@ export async function generateMetadata() {
 }
 export default function AboutUs() {
   return (
-    <AbutUsView/>
+    <AbutUsVeiw/>
   )
 }

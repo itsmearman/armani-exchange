@@ -17,6 +17,7 @@
     "@mui/material": "^6.1.7",
     "@mui/system": "^6.1.6",
     "@reduxjs/toolkit": "^2.4.0",
+    "@types/three": "^0.174.0",
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.1.0",
     "axios": "^1.7.7",
@@ -34,7 +35,8 @@
     "react-world-flags": "^1.6.0",
     "redux": "^5.0.1",
     "redux-ui": "^0.1.1",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "three": "^0.174.0"
   },
   "devDependencies": {
     "@types/next-pwa": "^5.6.9",

@@ -1,5 +1,5 @@
 import React from 'react'
-import NotFoundView from '../view/notFound'
+import { NotFoundView } from '../view/notFound'
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata() {
