@@ -11,7 +11,6 @@ export default function HomeTrade() {
   const t = useTranslations();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
   const dispatch = useDispatch();
   
   // دریافت قیمت‌ها از Redux store
@@ -158,7 +157,7 @@ export default function HomeTrade() {
           coin.rotation.x += coin.userData.rotationSpeedX;
           coin.rotation.y += coin.userData.rotationSpeedY;
           coin.position.y +=
-            Math.sin(Date.now() * coin.userData.floatSpeed) * 0.01;
+            Math.sin(Date.now() * coin.userData.floatSpeed) * 0.04;
         }
       });
 
@@ -166,7 +165,6 @@ export default function HomeTrade() {
     };
 
     animate();
-    setIsLoaded(true);
     
     // WebSocket connection for live prices
     const ws = new WebSocket(
@@ -304,7 +302,7 @@ export default function HomeTrade() {
                         {coin.price ? formatPrice(coin.price) : t("fetching")}
                       </p>
                       <p className={`text-xs ${coin.isUp ? 'text-green-500' : 'text-red-500'}`}>
-                        {isLoaded? "isloadeding" : coin.price ? formatChange(coin.change, coin.isUp) : ''}
+                        {coin.price ? formatChange(coin.change, coin.isUp) : ''}
                       </p>
                     </div>
                   </div>
