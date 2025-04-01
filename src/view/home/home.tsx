@@ -304,7 +304,7 @@ export default function HomeTrade() {
                         {coin.price ? formatPrice(coin.price) : t("fetching")}
                       </p>
                       <p className={`text-xs ${coin.isUp ? 'text-green-500' : 'text-red-500'}`}>
-                        {coin.price ? formatChange(coin.change, coin.isUp) : ''}
+                        {isLoaded? "isloadeding" : coin.price ? formatChange(coin.change, coin.isUp) : ''}
                       </p>
                     </div>
                   </div>
