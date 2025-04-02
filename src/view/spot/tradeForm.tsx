@@ -39,9 +39,6 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
   const handleSubmit = () => {
     const totalAmount = parseFloat(parseFloat(tradeAmount).toFixed(2));
     const cryptoQty = parseFloat(parseFloat(cryptoAmount).toFixed(6));
-
-    
-
     if ((!totalAmount && !cryptoQty) || currentPrice <= 0) {
       setModalMessage(t("enterCustomPrice"));
       setIsModalOpen(true);
@@ -53,21 +50,17 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
       setIsModalOpen(true);
       return;
     }
-
     let calculatedAmount = totalAmount
       ? totalAmount / currentPrice
       : cryptoQty;
-
     const calculatedTotal = cryptoQty
       ? cryptoQty * currentPrice
       : totalAmount;
-
     if (calculatedAmount <= 0 || calculatedTotal <= 0) {
       setModalMessage(t("Invalidate"));
       setIsModalOpen(true);
       return;
     }
-
     if (tradeType === "sell") {
       const availableBalance = cryptoBalance[selectedAsset];
       const adjustedAmount = Math.min(calculatedAmount, availableBalance);
@@ -84,7 +77,8 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
     onTrade(tradeType, selectedAsset, calculatedAmount,
       // calculatedTotal
     );
-
+    setIsModalOpen(true);
+    setModalMessage("DoneTrade")
     setTradeAmount("");
     setCryptoAmount("");
   };
