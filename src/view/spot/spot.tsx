@@ -21,6 +21,9 @@ import {
   useTranslations,
 } from "./imports";
 import { RootState } from "@/src/store/store";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { supabase } from '@/lib/supabaseClient'
 
 function Spot() {
   const t = useTranslations();
@@ -124,6 +127,28 @@ function Spot() {
 
     dispatch(addOrder({ id: Date.now(), type, asset, amount, price }));
   };
+
+
+    const router = useRouter()
+    const [loading, setLoading] = useState(true)
+  
+    useEffect(() => {
+      const checkAuth = async () => {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+  
+        if (!session) {
+          router.replace('/') // یا هر صفحه‌ای برای ورود
+        } else {
+          setLoading(false)
+        }
+      }
+  
+      checkAuth()
+    }, [router])
+  
+    if (loading) return <p>در حال بررسی وضعیت ورود...</p>
 
   return (
     <>
