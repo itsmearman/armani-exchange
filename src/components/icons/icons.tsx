@@ -132,7 +132,7 @@ export const Trade = ({ className = "w-8 h-8" }: Gate): JSX.Element => {
 };
 
 
-export const Price = (): JSX.Element => {
+export const Price = ({ className = "w-8 h-8" }: Gate): JSX.Element => {
   return (
 <svg
 xmlns="http://www.w3.org/2000/svg"
@@ -151,7 +151,7 @@ stroke="currentColor"
 };
 
 
-export const Security = (): JSX.Element => {
+export const Security = ({ className = "w-8 h-8" }: Gate): JSX.Element => {
   return (
 <svg
 xmlns="http://www.w3.org/2000/svg"
