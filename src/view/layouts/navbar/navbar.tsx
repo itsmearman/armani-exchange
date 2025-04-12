@@ -18,7 +18,7 @@ import {
 } from "./imports"
 import { useRouter } from "next/navigation";
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
-import { supabase } from '@/lib/supabaseClient'
+// import { supabase } from '@/lib/supabaseClient'
 // const {
 //   data: { session },
 // } = await supabase.auth.getSession()
@@ -36,14 +36,9 @@ export default function Navbar() {
 
   const router = useRouter()
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut()
-
-    if (error) {
-      console.error('❌ خطا در خروج:', error.message)
-    } else {
+      await supabase.auth.signOut()
       router.refresh()
       router.push('/login')
-    }
   }
   const modalView = () => {
     setModalMessage(t("noMessage"));
