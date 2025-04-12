@@ -24,6 +24,8 @@ export default function LoginForm() {
     } else {
       router.push('/spot')
     }
+    ("🔄 فرم ورود ارسال شد")
+
   }
 
   return (

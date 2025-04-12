@@ -84,5 +84,6 @@
     "homeText":"به صرافی آرمانی خوش آمدید",
     "homeWelcomeText":"برای وارد شدن به صفحه ترید میتوانید از دکمه زیر استفاده کنید",
     "homeHelperText":"و یا از طریق منو وارد بخش معامله شوید",
-    "homeSpotButtonText":"ورود به بخش معامله"
+    "homeSpotButtonText":"ورود به بخش معامله",
+    "registerSession":"در حال بررسی وضعیت ورود..."
 }

@@ -1,19 +1,27 @@
 "use client";
-import React from "react";
-import NavbarItem from "./navbarItem";
-import Link from "next/link";
-import Image from "next/image";
-import LogoMD from "@/public/Logo1.png";
-import Logo from "@/public/Logo.png";
-import { usePathname } from "next/navigation";
-import { useWidth } from "@/src/components/windowDimensions";
-// import { ProfileCircle } from "iconsax-react";
-import LocaleSwitcher from "@/src/components/locale/LocaleSwitcher";
-import { Notification } from "iconsax-react";
-import Modal from "@/src/components/modal";
-import { useState } from "react";
-import { useTranslations } from "next-intl";
-import ThemeSwitcher from "@/src/components/theme/ThemeSwitcher";
+import {
+  React,
+  NavbarItem,
+  Link,
+  Image,
+  LogoMD,
+  Logo,
+  usePathname,
+  useWidth,
+  ProfileCircle,
+  Notification,
+  LocaleSwitcher,
+  Modal,
+  useState,
+  useTranslations,
+  ThemeSwitcher
+} from "./imports"
+
+// import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { supabase } from '@/lib/supabaseClient'
+const {
+  data: { session },
+} = await supabase.auth.getSession()
 
 export default function Navbar() {
   const item = NavbarItem();
@@ -22,11 +30,15 @@ export default function Navbar() {
   const [modalMessage, setModalMessage] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const t = useTranslations();
-const modalView = ()=>{
-  setModalMessage(t("noMessage"));
-  setIsModalOpen(true);
-  return;
-} 
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    window.location.href = '/login'
+  }
+  const modalView = () => {
+    setModalMessage(t("noMessage"));
+    setIsModalOpen(true);
+    return;
+  }
 
   return (
     <>
@@ -43,26 +55,34 @@ const modalView = ()=>{
         <div className="my-[1rem] md:my-[1.8rem] flex gap-x-8 mx-auto">
           {item.map((data, index) => (
             <Link
-            href={data.route}
-            key={index}
-            className="flex flex-col items-center cursor-pointer text-black dark:text-white hover:text-gray-400"
+              href={data.route}
+              key={index}
+              className="flex flex-col items-center cursor-pointer text-black dark:text-white hover:text-gray-400"
             >
               {width < 768 ? (data.route === slug ? (<>{data.imgActive}<span className="text-blue-600 dark:text-green-500">{data.title}</span></>) : (<>{data.img}<span>{data.title}</span></>)) : (data.route === slug ? (<span className="text-blue-600 dark:text-green-500">{data.title}</span>) : (<span>{data.title}</span>))}
             </Link>
           ))}
         </div>
         <div className="hidden md:block my-auto gap-4">
-          <LocaleSwitcher />
-          {/* <ProfileCircle size={42} color="black" className="invisible md:visible mx-auto rtl:ml-0 ltr:mr-0" /> */}
+          {/* <LocaleSwitcher /> */}
+          {session ? (
+            <div className="flex flex-col items-center">
+              <ProfileCircle size={42} color="black" className="invisible md:visible mx-auto" />
+              <span className="text-black dark:text-white">{session.user?.email}</span>
+              <button className="text-red-500" onClick={handleLogout}>logout</button>
+            </div>
+          ) : (
+            <Link href="/signin" className="text-blue-600 dark:text-green-500">ورود</Link> // دکمه ورود
+          )}
         </div>
       </nav>
       <div className="h-[5rem] visible md:invisible fixed top-0  w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10">
         <div className="my-auto px-4">
           <Notification
-          onClick={modalView}
-          size="32"
-          className="stroke-black dark:stroke-white"
-        />
+            onClick={modalView}
+            size="32"
+            className="stroke-black dark:stroke-white"
+          />
         </div>
         <Image src={LogoMD} width={100} alt="" className="mx-auto" />
         <div className="my-auto gap-4">

@@ -21,7 +21,7 @@ import {
   useTranslations,
 } from "./imports";
 import { RootState } from "@/src/store/store";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { supabase } from '@/lib/supabaseClient'
 
@@ -148,7 +148,7 @@ function Spot() {
       checkAuth()
     }, [router])
   
-    if (loading) return <p>در حال بررسی وضعیت ورود...</p>
+    if (loading) return <p>{t("registerSession")}</p>
 
   return (
     <>

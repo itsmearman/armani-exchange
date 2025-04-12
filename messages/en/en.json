@@ -73,5 +73,6 @@
   "homeText": "Welcome to Arman Exchange",
   "homeWelcomeText": "To access the trading page, you can use the button below.",
   "homeHelperText": "Or go to the trading section from menu.",
-  "homeSpotButtonText":"enter trade section"
+  "homeSpotButtonText":"enter trade section",
+   "registerSession":"Checking"
 }
