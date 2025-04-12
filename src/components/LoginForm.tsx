@@ -16,16 +16,11 @@ export default function LoginForm() {
       email,
       password,
     })
-    console.log('Login clicked:', { email, password })
-
     if (error) {
-      console.log('Login error:', error.message)
       setError('ایمیل یا رمز اشتباه است.')
     } else {
       router.push('/spot')
     }
-    ("🔄 فرم ورود ارسال شد")
-
   }
 
   return (
