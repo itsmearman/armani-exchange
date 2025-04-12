@@ -16,23 +16,34 @@ import {
   useTranslations,
   ThemeSwitcher
 } from "./imports"
-
-// import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useRouter } from "next/navigation";
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { supabase } from '@/lib/supabaseClient'
-const {
-  data: { session },
-} = await supabase.auth.getSession()
+// const {
+//   data: { session },
+// } = await supabase.auth.getSession()
 
 export default function Navbar() {
+  const session = useSession()
+  const supabase = useSupabaseClient()
+
   const item = NavbarItem();
   const slug = usePathname();
   const width = useWidth();
   const [modalMessage, setModalMessage] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const t = useTranslations();
+
+  const router = useRouter()
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    window.location.href = '/login'
+    const { error } = await supabase.auth.signOut()
+
+    if (error) {
+      console.error('❌ خطا در خروج:', error.message)
+    } else {
+      router.refresh()
+      router.push('/login')
+    }
   }
   const modalView = () => {
     setModalMessage(t("noMessage"));
