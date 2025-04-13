@@ -10,21 +10,22 @@ import {
   useWidth,
   ProfileCircle,
   Notification,
-  LocaleSwitcher,
+  // LocaleSwitcher,
   Modal,
   useState,
   useTranslations,
-  ThemeSwitcher
+  ThemeSwitcher,
 } from "./imports"
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 // import { supabase } from '@/lib/supabaseClient'
 // const {
 //   data: { session },
 // } = await supabase.auth.getSession()
 
 export default function Navbar() {
-  const session = useSession()
+  // const session = useSession()
   const supabase = useSupabaseClient()
 
   const item = NavbarItem();
@@ -34,6 +35,26 @@ export default function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const t = useTranslations();
 
+  const [username, setUsername] = useState<string | null>(null)
+
+  useEffect(() => {
+    const getUserProfile = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', session.user.id)
+        .single()
+
+      if (data && !error) {
+        setUsername(data.username)
+      }
+    }
+
+    getUserProfile()
+  })
   const router = useRouter()
   const handleLogout = async () => {
       await supabase.auth.signOut()
@@ -71,14 +92,14 @@ export default function Navbar() {
         </div>
         <div className="hidden md:block my-auto gap-4">
           {/* <LocaleSwitcher /> */}
-          {session ? (
+          {username ? (
             <div className="flex flex-col items-center">
               <ProfileCircle size={42} color="black" className="invisible md:visible mx-auto" />
-              <span className="text-black dark:text-white">{session.user?.email}</span>
+              <span className="text-black dark:text-white">{username}</span>
               <button className="text-red-500" onClick={handleLogout}>logout</button>
             </div>
           ) : (
-            <Link href="/signin" className="text-blue-600 dark:text-green-500">ورود</Link> // دکمه ورود
+            <Link href="/login" className="text-blue-600 dark:text-green-500">ورود</Link> // دکمه ورود
           )}
         </div>
       </nav>
@@ -92,7 +113,16 @@ export default function Navbar() {
         </div>
         <Image src={LogoMD} width={100} alt="" className="mx-auto" />
         <div className="my-auto gap-4">
-          <LocaleSwitcher />
+          {/* <LocaleSwitcher /> */}
+          {username ? (
+            <div className="flex flex-col items-center">
+              <ProfileCircle size={42} color="black" className="invisible md:visible mx-auto" />
+              <span className="text-black dark:text-white">{username}</span>
+              <button className="text-red-500" onClick={handleLogout}>logout</button>
+            </div>
+          ) : (
+            <Link href="/login" className="text-blue-600 dark:text-green-500 p-4">ورود</Link> // دکمه ورود
+          )}
         </div>
       </div>
     </>
