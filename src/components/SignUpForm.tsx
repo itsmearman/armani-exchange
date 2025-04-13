@@ -16,7 +16,7 @@
 //       email,
 //       password,
 //     })
-    
+
 //     if (!signUpError && signUpData?.user) {
 //       const { error: insertError } = await supabase
 //         .from('profiles')
@@ -25,7 +25,7 @@
 //           username: yourUsername, // مقدار انتخابی کاربر
 //         })
 //         setMessage('لینک تأیید به ایمیل شما ارسال شد.')x
-    
+
 //       if (insertError) console.error("❌ خطا در ذخیره username:", insertError)
 //     }
 
@@ -109,7 +109,7 @@ export default function SignUpForm() {
 
     const { error: profileError } = await supabase
       .from('profiles')
-      .insert({ id: user.id, username ,email: user.email })
+      .insert({ id: user.id, username, email: user.email })
 
     if (profileError) return setError('ثبت نام انجام شد اما خطا در ذخیره نام کاربری')
 
@@ -118,14 +118,14 @@ export default function SignUpForm() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-    <form onSubmit={handleSignUp} className="space-y-4">
-      <input value={username} onChange={e => setUsername(e.target.value)} placeholder="نام کاربری" className="border p-2 w-full" required />
-      <input value={email} onChange={e => setEmail(e.target.value)} placeholder="ایمیل" type="email" className="border p-2 w-full" required />
-      <input value={password} onChange={e => setPassword(e.target.value)} placeholder="رمز عبور" type="password" className="border p-2 w-full" required />
-      <button type="submit" className="bg-blue-600 text-white p-2 w-full rounded">ثبت نام</button>
-      {error && <p className="text-red-500">{error}</p>}
-    </form>
-    <p>حساب دارید؟ <a className='text-blue-500 font-bold' href="/login">وارد </a> شوید</p>
+      <form onSubmit={handleSignUp} className="space-y-4">
+        <input value={username} onChange={e => setUsername(e.target.value)} placeholder="نام کاربری" className="border p-2 w-full" required />
+        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="ایمیل" type="email" className="border p-2 w-full" required />
+        <input value={password} onChange={e => setPassword(e.target.value)} placeholder="رمز عبور" type="password" className="border p-2 w-full" required />
+        <button type="submit" className="bg-blue-600 text-white p-2 w-full rounded">ثبت نام</button>
+        {error && <p className="text-red-500">{error}</p>}
+      </form>
+      <p>حساب دارید؟ <a className='text-blue-500 font-bold' href="/login">وارد </a> شوید</p>
     </div>
   )
 }

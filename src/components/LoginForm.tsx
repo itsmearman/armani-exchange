@@ -78,11 +78,14 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleLogin} className="space-y-4">
-      <input value={email} onChange={e => setEmail(e.target.value)} placeholder="ایمیل" type="email" className="border p-2 w-full" required />
-      <input value={password} onChange={e => setPassword(e.target.value)} placeholder="رمز عبور" type="password" className="border p-2 w-full" required />
-      <button type="submit" className="bg-blue-600 text-white p-2 w-full rounded">ورود</button>
-      {error && <p className="text-red-500">{error}</p>}
-    </form>
+    <div className="flex flex-col items-center justify-center">
+      <form onSubmit={handleLogin} className="space-y-4">
+        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="ایمیل" type="email" className="border p-2 w-full" required />
+        <input value={password} onChange={e => setPassword(e.target.value)} placeholder="رمز عبور" type="password" className="border p-2 w-full" required />
+        <button type="submit" className="bg-blue-600 text-white p-2 w-full rounded">ورود</button>
+        {error && <p className="text-red-500">{error}</p>}
+      </form>
+      <p>حساب ندارید؟ <a className='text-blue-500 font-bold' href="/signup">ثبت نام </a> کنید</p>
+    </div>
   )
 }
