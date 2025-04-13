@@ -18,7 +18,6 @@ import {
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import { setUserLocale } from '@/src/components/locale/locale'
 
 export default function Navbar() {
   const supabase = useSupabaseClient()
@@ -54,7 +53,7 @@ export default function Navbar() {
 
     getUserProfile()
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
+    supabase.auth.onAuthStateChange(
       async (event) => {
         if (event === 'SIGNED_OUT') {
           setUsername(null)
