@@ -68,13 +68,15 @@ export default function LoginForm() {
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    await supabase.auth.signInWithPassword({
+    const { error: err } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
-
+    if(err){
+      console.log(error)
+    }
     router.refresh()
-    router.push('/spot')
+    router.push('/spot')  
   }
 
   return (
