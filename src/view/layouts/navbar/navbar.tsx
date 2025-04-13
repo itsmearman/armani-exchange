@@ -10,7 +10,7 @@ import {
   useWidth,
   ProfileCircle,
   Notification,
-  LocaleSwitcher,
+  // LocaleSwitcher,
   Modal,
   useState,
   useTranslations,
@@ -18,7 +18,7 @@ import {
 } from "./imports"
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 // import { supabase } from '@/lib/supabaseClient'
 // const {
 //   data: { session },
@@ -54,7 +54,7 @@ export default function Navbar() {
     }
 
     getUserProfile()
-  }, [])
+  })
   const router = useRouter()
   const handleLogout = async () => {
       await supabase.auth.signOut()

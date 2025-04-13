@@ -62,7 +62,7 @@ import { supabase } from '@/lib/supabaseClient'
 export default function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [error] = useState<string | null>(null)
   const router = useRouter()
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
