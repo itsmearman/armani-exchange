@@ -11,8 +11,8 @@ export async function generateMetadata() {
 
 export default function LoginPage() {
   return (
-    <div className="max-w-md mx-auto mt-20">
-      <h1 className="text-xl font-bold mb-4">ورود</h1>
+    <div className="max-w-md mx-auto mt-28">
+      <h1 className="text-xl font-bold mb-4 text-center">ورود</h1>
       <LoginForm />
     </div>
   )

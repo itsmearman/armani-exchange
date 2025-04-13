@@ -1,5 +1,5 @@
 'use client'
-import { useState, FormEvent ,useEffect} from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
@@ -51,27 +51,30 @@ export default function SignUpForm() {
   }, [router]);
 
   return (
-    <form onSubmit={handleSignUp} className="space-y-4">
-      <input
-        type="email"
-        placeholder="ایمیل"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="border p-2 w-full"
-      />
-      <input
-        type="password"
-        placeholder="رمز عبور"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="border p-2 w-full"
-      />
-      <div className='w-full flex justify-center pb-5'>
-      <button type="submit" className="w-11/12 bg-blue-500 text-white p-2 rounded">
-        ثبت‌نام
-      </button>
-      {message && <p>{message}</p>}
-      </div>
-    </form>
+    <div className="flex flex-col items-center justify-center">
+      <form onSubmit={handleSignUp} className="space-y-4 w-10/12 md:w-full">
+        <input
+          type="email"
+          placeholder="ایمیل"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="border p-2 w-full"
+        />
+        <input
+          type="password"
+          placeholder="رمز عبور"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border p-2 w-full"
+        />
+        <div className='w-full flex justify-center pb-5'>
+          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
+            ثبت‌نام
+          </button>
+          {message && <p>{message}</p>}
+        </div>
+      </form>
+      <p>حساب دارید؟ <a className='text-blue-500 font-bold' href="/login">وارد </a> شوید</p>
+    </div>
   )
 }

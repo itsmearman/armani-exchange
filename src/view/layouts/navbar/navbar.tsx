@@ -78,7 +78,7 @@ export default function Navbar() {
               <button className="text-red-500" onClick={handleLogout}>logout</button>
             </div>
           ) : (
-            <Link href="/signin" className="text-blue-600 dark:text-green-500">ورود</Link> // دکمه ورود
+            <Link href="/login" className="text-blue-600 dark:text-green-500">ورود</Link> // دکمه ورود
           )}
         </div>
       </nav>
@@ -92,7 +92,16 @@ export default function Navbar() {
         </div>
         <Image src={LogoMD} width={100} alt="" className="mx-auto" />
         <div className="my-auto gap-4">
-          <LocaleSwitcher />
+          {/* <LocaleSwitcher /> */}
+          {session ? (
+            <div className="flex flex-col items-center">
+              <ProfileCircle size={42} color="black" className="invisible md:visible mx-auto" />
+              <span className="text-black dark:text-white">{session.user?.email}</span>
+              <button className="text-red-500" onClick={handleLogout}>logout</button>
+            </div>
+          ) : (
+            <Link href="/login" className="text-blue-600 dark:text-green-500 p-4">ورود</Link> // دکمه ورود
+          )}
         </div>
       </div>
     </>

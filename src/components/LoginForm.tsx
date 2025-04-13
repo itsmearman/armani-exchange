@@ -24,27 +24,33 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleLogin} className="space-y-4">
-      <input
-        type="email"
-        placeholder="ایمیل"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="border p-2 w-full"
-        required
-      />
-      <input
-        type="password"
-        placeholder="رمز عبور"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="border p-2 w-full"
-        required
-      />
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-        ورود
-      </button>
-      {error && <p className="text-red-500">{error}</p>}
-    </form>
+    <div className="flex flex-col items-center justify-center ">
+      <form onSubmit={handleLogin} className="space-y-4 w-10/12 md:w-full">
+        <input
+          type="email"
+          placeholder="ایمیل"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="border p-2 w-full"
+          required
+        />
+        <input
+          type="password"
+          placeholder="رمز عبور"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border p-2 w-full"
+          required
+        />
+        <div className='w-full flex justify-center pb-5'>
+
+          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
+            ورود
+          </button>
+          {error && <p className="text-red-500">{error}</p>}
+        </div>
+      </form>
+      <p>حساب ندارید؟ <a className='text-blue-500 font-bold' href="/signup">ثبت نام </a> کنید</p>
+    </div>
   )
 }
