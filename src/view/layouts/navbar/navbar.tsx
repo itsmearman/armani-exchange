@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import {
   React,
   NavbarItem,
@@ -10,32 +10,29 @@ import {
   useWidth,
   ProfileCircle,
   Notification,
-  // LocaleSwitcher,
   Modal,
   useState,
   useTranslations,
   ThemeSwitcher,
-} from "./imports"
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+} from './imports'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-// import { supabase } from '@/lib/supabaseClient'
-// const {
-//   data: { session },
-// } = await supabase.auth.getSession()
+import { setUserLocale } from '@/src/components/locale/locale'
 
 export default function Navbar() {
-  // const session = useSession()
   const supabase = useSupabaseClient()
 
-  const item = NavbarItem();
-  const slug = usePathname();
-  const width = useWidth();
-  const [modalMessage, setModalMessage] = useState<string>("");
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const t = useTranslations();
+  const item = NavbarItem()
+  const slug = usePathname()
+  const width = useWidth()
+  const [modalMessage, setModalMessage] = useState<string>('')
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const t = useTranslations()
 
   const [username, setUsername] = useState<string | null>(null)
+
+  const router = useRouter()
 
   useEffect(() => {
     const getUserProfile = async () => {
@@ -50,21 +47,37 @@ export default function Navbar() {
 
       if (data && !error) {
         setUsername(data.username)
+      } else {
+        setUsername(null)
       }
     }
 
     getUserProfile()
-  })
-  const router = useRouter()
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event) => {
+        if (event === 'SIGNED_OUT') {
+          setUsername(null)
+        } else if (event === 'SIGNED_IN') {
+          await getUserProfile()
+        }
+      }
+    )
+  }, [supabase])
+
   const handleLogout = async () => {
-      await supabase.auth.signOut()
-      router.refresh()
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      console.error(error.message)
+    } else {
       router.push('/login')
+    }
   }
+
   const modalView = () => {
-    setModalMessage(t("noMessage"));
-    setIsModalOpen(true);
-    return;
+    setModalMessage(t('noMessage'))
+    setIsModalOpen(true)
+    return
   }
 
   return (
@@ -74,57 +87,72 @@ export default function Navbar() {
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
       />
-      <nav className="h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10">
-        <Link href={"/"} className="hidden md:block">
-          <Image src={Logo} width={150} height={100} alt="" />
+      <nav className='h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10'>
+        <Link href={'/'} className='hidden md:block'>
+          <Image src={Logo} width={150} height={100} alt='' />
         </Link>
         <ThemeSwitcher />
-        <div className="my-[1rem] md:my-[1.8rem] flex gap-x-8 mx-auto">
+        <div className='my-[1rem] md:my-[1.8rem] flex gap-x-8 mx-auto'>
           {item.map((data, index) => (
             <Link
               href={data.route}
               key={index}
-              className="flex flex-col items-center cursor-pointer text-black dark:text-white hover:text-gray-400"
+              className='flex flex-col items-center cursor-pointer text-black dark:text-white hover:text-gray-400'
             >
-              {width < 768 ? (data.route === slug ? (<>{data.imgActive}<span className="text-blue-600 dark:text-green-500">{data.title}</span></>) : (<>{data.img}<span>{data.title}</span></>)) : (data.route === slug ? (<span className="text-blue-600 dark:text-green-500">{data.title}</span>) : (<span>{data.title}</span>))}
+              {width < 768
+                ? data.route === slug
+                  ? (
+                    <>
+                      {data.imgActive}
+                      <span className='text-blue-600 dark:text-green-500'>{data.title}</span>
+                    </>
+                  )
+                  : (
+                    <>
+                      {data.img}
+                      <span>{data.title}</span>
+                    </>
+                  )
+                : data.route === slug
+                  ? <span className='text-blue-600 dark:text-green-500'>{data.title}</span>
+                  : <span>{data.title}</span>}
             </Link>
           ))}
         </div>
-        <div className="hidden md:block my-auto gap-4">
-          {/* <LocaleSwitcher /> */}
+        <div className='hidden md:block my-auto gap-4'>
           {username ? (
-            <div className="flex flex-col items-center">
-              <ProfileCircle size={42} color="black" className="invisible md:visible mx-auto" />
-              <span className="text-black dark:text-white">{username}</span>
-              <button className="text-red-500" onClick={handleLogout}>logout</button>
+            <div className='flex flex-col items-center'>
+              <ProfileCircle size={42} color='black' className='invisible md:visible mx-auto' />
+              <span className='text-black dark:text-white'>{username}</span>
+              <button className='text-red-500' onClick={handleLogout}>خروج</button>
             </div>
           ) : (
-            <Link href="/login" className="text-blue-600 dark:text-green-500">ورود</Link> // دکمه ورود
+            <Link href='/login' className='text-blue-600 dark:text-green-500'>ورود</Link>
           )}
         </div>
       </nav>
-      <div className="h-[5rem] visible md:invisible fixed top-0  w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10">
-        <div className="my-auto px-4">
+
+      <div className='h-[5rem] visible md:invisible fixed top-0  w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10'>
+        <div className='my-auto px-4'>
           <Notification
             onClick={modalView}
-            size="32"
-            className="stroke-black dark:stroke-white"
+            size='32'
+            className='stroke-black dark:stroke-white'
           />
         </div>
-        <Image src={LogoMD} width={100} alt="" className="mx-auto" />
-        <div className="my-auto gap-4">
-          {/* <LocaleSwitcher /> */}
+        <Image src={LogoMD} width={100} alt='' className='mx-auto' />
+        <div className='my-auto gap-4'>
           {username ? (
-            <div className="flex flex-col items-center">
-              <ProfileCircle size={42} color="black" className="invisible md:visible mx-auto" />
-              <span className="text-black dark:text-white">{username}</span>
-              <button className="text-red-500" onClick={handleLogout}>logout</button>
+            <div className='flex flex-col items-center'>
+              <ProfileCircle size={42} color='black' className='invisible md:visible mx-auto' />
+              <span className='text-black dark:text-white'>{username}</span>
+              <button className='text-red-500' onClick={handleLogout}>خروج</button>
             </div>
           ) : (
-            <Link href="/login" className="text-blue-600 dark:text-green-500 p-4">ورود</Link> // دکمه ورود
+            <Link href='/login' className='text-blue-600 dark:text-green-500 p-4'>ورود</Link>
           )}
         </div>
       </div>
     </>
-  );
+  )
 }
