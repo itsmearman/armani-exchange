@@ -171,3 +171,65 @@ function Spot() {
 }
 
 export default Spot;
+
+// // import { useDispatch, useSelector } from "react-redux";
+// import { RootState } from "@/src/store/store";
+// // import { addOrder, updateCashBalance, updateCryptoBalance, openModal, closeModal } from "@/src/store";
+// // import { Balances, LivePrices, TradeForm, OrderList, Modal } from "./components";
+// import useLivePrices from "@/src/hooks/useLivePrices";
+// import useSyncLocalStorage from "@/src/hooks/useSyncLocalStorage";
+// import useAuthGuard from "@/src/hooks/useAuthGuard";
+
+// function Spot() {
+//   const dispatch = useDispatch();
+//   const t = useTranslations();
+
+//   useLivePrices();
+//   useSyncLocalStorage();
+//   useAuthGuard();
+
+//   const { bitcoin, ethereum, cardano } = useSelector((state: RootState) => state.prices);
+//   const { cashBalance, cryptoBalance } = useSelector((state: RootState) => state.balances);
+//   const orders = useSelector((state: RootState) => state.orders);
+//   const { isOpen, message } = useSelector((state: RootState) => state.modal);
+
+//   const handleTrade = (type: "buy" | "sell", asset: string, amount: number) => {
+//     const price = { bitcoin, ethereum, cardano }[asset];
+//     if (!price) return dispatch(openModal(t("unknownCrypto")));
+
+//     const cost = price * amount;
+
+//     if (type === "buy" && cost <= cashBalance) {
+//       dispatch(updateCashBalance(cashBalance - cost));
+//       dispatch(updateCryptoBalance({ asset, amount }));
+//     } else if (type === "sell" && cryptoBalance[asset] >= amount) {
+//       dispatch(updateCashBalance(cashBalance + cost));
+//       dispatch(updateCryptoBalance({ asset, amount: -amount }));
+//     } else {
+//       dispatch(openModal(t("notEnough")));
+//       return;
+//     }
+
+//     dispatch(addOrder({ id: Date.now(), type, asset, amount, price }));
+//   };
+
+//   return (
+//     <>
+//       <Modal isOpen={isOpen} onClose={() => dispatch(closeModal())} message={message} />
+//       <div className="flex pt-[7rem] flex-col items-center space-y-6 md:pt-24">
+//         <h1 className="text-xl sm:text-2xl font-bold text-center">{t("tradeSystem")}</h1>
+//         <Balances cashBalance={cashBalance} cryptoBalance={cryptoBalance} />
+//         <LivePrices prices={{ bitcoin, ethereum, cardano }} />
+//         <TradeForm
+//           prices={{ bitcoin, ethereum, cardano }}
+//           onTrade={handleTrade}
+//           cryptoBalance={cryptoBalance}
+//           cashBalance={cashBalance}
+//         />
+//         <OrderList orders={orders} livePrices={{ bitcoin, ethereum, cardano }} />
+//       </div>
+//     </>
+//   );
+// }
+
+// export default Spot;

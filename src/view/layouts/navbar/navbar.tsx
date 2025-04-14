@@ -18,7 +18,6 @@ import {
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import LoadPage from '@/src/components/Loading'
 
 export default function Navbar() {
   const supabase = useSupabaseClient()
@@ -30,7 +29,6 @@ export default function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const t = useTranslations()
   const [username, setUsername] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -58,18 +56,14 @@ export default function Navbar() {
 
     supabase.auth.onAuthStateChange(
       async (event) => {
-        setLoading(true)
         if (event === 'SIGNED_OUT') {
           setUsername(null)
-          setLoading(false)
         } else if (event === 'SIGNED_IN') {
           await getUserProfile()
-          setLoading(false)
         }
       }
     )
   }, [supabase])
-  if (loading) return <LoadPage />
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut()
