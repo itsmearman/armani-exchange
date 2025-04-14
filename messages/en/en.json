@@ -74,5 +74,9 @@
   "homeWelcomeText": "To access the trading page, you can use the button below.",
   "homeHelperText": "Or go to the trading section from menu.",
   "homeSpotButtonText":"enter trade section",
-   "registerSession":"Checking"
+  "registerSession":"Checking",
+  "welcome":"wellcum",
+  "login":"Login / Signin",
+  "logout":"Logout",
+  "LoadingMessage":"Loading ..."
 }

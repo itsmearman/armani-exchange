@@ -58,15 +58,18 @@
 import { useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import LoadPage from './Loading'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error] = useState<string | null>(null)
+  const [error , setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setLoading(true)
 
     const { error: err } = await supabase.auth.signInWithPassword({
       email,
@@ -74,10 +77,13 @@ export default function LoginForm() {
     })
     if(err){
       console.log(error)
+      setError('ایمیل یا رمز اشتباه است.')
+      setLoading(false)
     }
     router.refresh()
     router.push('/spot')  
   }
+  if (loading) return <LoadPage />
 
   return (
     <div className="flex flex-col items-center justify-center">

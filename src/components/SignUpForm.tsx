@@ -90,6 +90,7 @@
 import { useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import LoadPage from './Loading'
 
 export default function SignUpForm() {
   const [email, setEmail] = useState('')
@@ -97,9 +98,11 @@ export default function SignUpForm() {
   const [username, setUsername] = useState('')
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
 
   const handleSignUp = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setLoading(true)
 
     const { data, error: signUpError } = await supabase.auth.signUp({ email, password })
     if (signUpError) return setError(signUpError.message)
@@ -111,10 +114,14 @@ export default function SignUpForm() {
       .from('profiles')
       .insert({ id: user.id, username, email: user.email })
 
-    if (profileError) return setError('ثبت نام انجام شد اما خطا در ذخیره نام کاربری')
+    if (profileError) {
+      setLoading(false)
+      return setError('ثبت نام انجام شد اما خطا در ذخیره نام کاربری')
+    }
 
     router.push('/spot')
   }
+  if (loading) return <LoadPage />
 
   return (
     <div className="flex flex-col items-center justify-center">
