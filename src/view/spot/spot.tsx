@@ -22,7 +22,6 @@ import {
 } from "./imports";
 import { RootState } from "@/src/store/store";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { supabase } from '@/lib/supabaseClient'
 
 function Spot() {
@@ -130,7 +129,6 @@ function Spot() {
 
 
     const router = useRouter()
-    const [loading, setLoading] = useState(true)
   
     useEffect(() => {
       const checkAuth = async () => {
@@ -140,15 +138,11 @@ function Spot() {
   
         if (!session) {
           router.replace('/') // یا هر صفحه‌ای برای ورود
-        } else {
-          setLoading(false)
         }
       }
   
       checkAuth()
     }, [router])
-  
-    if (loading) return <p>{t("registerSession")}</p>
 
   return (
     <>

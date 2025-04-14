@@ -85,5 +85,9 @@
     "homeWelcomeText":"برای وارد شدن به صفحه ترید میتوانید از دکمه زیر استفاده کنید",
     "homeHelperText":"و یا از طریق منو وارد بخش معامله شوید",
     "homeSpotButtonText":"ورود به بخش معامله",
-    "registerSession":"در حال بررسی وضعیت ورود..."
+    "registerSession":"در حال بررسی وضعیت ورود...",
+    "welcome":"خوش آمدی",
+    "login":"ورود",
+    "logout":"خروج",
+    "LoadingMessage":"در حال بازگذاری ..."
 }

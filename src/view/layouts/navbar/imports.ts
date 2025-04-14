@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import NavbarItem from "./navbarItem";
 import Link from "next/link";

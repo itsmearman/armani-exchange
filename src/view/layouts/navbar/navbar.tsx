@@ -8,7 +8,7 @@ import {
   Logo,
   usePathname,
   useWidth,
-  ProfileCircle,
+  // ProfileCircle,
   Notification,
   Modal,
   useState,
@@ -18,6 +18,7 @@ import {
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import LoadPage from '@/src/components/Loading'
 
 export default function Navbar() {
   const supabase = useSupabaseClient()
@@ -28,15 +29,17 @@ export default function Navbar() {
   const [modalMessage, setModalMessage] = useState<string>('')
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const t = useTranslations()
-
   const [username, setUsername] = useState<string | null>(null)
-
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
     const getUserProfile = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return
+      if (!session) {
+    setUsername(null)
+    return
+  }
 
       const { data, error } = await supabase
         .from('profiles')
@@ -55,14 +58,18 @@ export default function Navbar() {
 
     supabase.auth.onAuthStateChange(
       async (event) => {
+        setLoading(true)
         if (event === 'SIGNED_OUT') {
           setUsername(null)
+          setLoading(false)
         } else if (event === 'SIGNED_IN') {
           await getUserProfile()
+          setLoading(false)
         }
       }
     )
   }, [supabase])
+  if (loading) return <LoadPage />
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut()
@@ -121,12 +128,11 @@ export default function Navbar() {
         <div className='hidden md:block my-auto gap-4'>
           {username ? (
             <div className='flex flex-col items-center'>
-              <ProfileCircle size={42} color='black' className='invisible md:visible mx-auto' />
-              <span className='text-black dark:text-white'>{username}</span>
-              <button className='text-red-500' onClick={handleLogout}>خروج</button>
+              <span className='text-black dark:text-white'>{username}{t("welcome")}</span>
+              <button className='text-red-500' onClick={handleLogout}>{t("logout")}</button>
             </div>
           ) : (
-            <Link href='/login' className='text-blue-600 dark:text-green-500'>ورود</Link>
+            <Link href='/login' className='text-blue-600 dark:text-green-500'>{t("login")}</Link>
           )}
         </div>
       </nav>
@@ -143,12 +149,11 @@ export default function Navbar() {
         <div className='my-auto gap-4'>
           {username ? (
             <div className='flex flex-col items-center'>
-              <ProfileCircle size={42} color='black' className='invisible md:visible mx-auto' />
-              <span className='text-black dark:text-white'>{username}</span>
-              <button className='text-red-500' onClick={handleLogout}>خروج</button>
+              <span className='text-black dark:text-white'>{username}{t("welcome")}</span>
+              <button className='text-red-500' onClick={handleLogout}>{t("logout")}</button>
             </div>
           ) : (
-            <Link href='/login' className='text-blue-600 dark:text-green-500 p-4'>ورود</Link>
+            <Link href='/login' className='text-blue-600 dark:text-green-500 p-4'>{t("login")}</Link>
           )}
         </div>
       </div>
