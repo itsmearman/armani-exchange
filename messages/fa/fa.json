@@ -89,5 +89,8 @@
     "welcome":"خوش آمدی",
     "login":"ورود",
     "logout":"خروج",
+    "noAccount":"حساب کاربری ندارید؟",
+    "register":"ثبت نام",
+    "fuck":"کنید",
     "LoadingMessage":"در حال بازگذاری ..."
 }

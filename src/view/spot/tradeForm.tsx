@@ -4,7 +4,7 @@ import Modal from "@/src/components/modal";
 interface TradeFormProps {
   prices: { [key: string]: string | number }; // Prices of cryptocurrencies (bitcoin, ethereum)
   onTrade: (
-    type: "buy" | "sell", asset: string, amount: number
+    type: "buy" | "sell", asset: string , amount: number
   ) => void;
   cryptoBalance: {
     [key: string]: number;
