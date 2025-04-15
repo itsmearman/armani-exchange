@@ -1,7 +1,7 @@
 "use client";
 import {
   React,
-  // useEffect,
+  useEffect,
   useDispatch,
   useSelector,
   // updatePrices,
@@ -174,25 +174,23 @@ import {
 
 // import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/src/store/store";
-// import { addOrder, updateCashBalance, updateCryptoBalance, openModal, closeModal } from "@/src/store";
-// import { Balances, LivePrices, TradeForm, OrderList, Modal } from "./components";
-import useLivePrices from "@/src/hooks/useLivePrices";
-import useSyncLocalStorage from "@/src/hooks/useSyncLocalStorage";
-import useAuthGuard from "@/src/hooks/useAuthGuard";
+import { useRouter } from "next/navigation";
+import { supabase } from '@/lib/supabaseClient'
 
 function Spot() {
-  const dispatch = useDispatch();
   const t = useTranslations();
+  const dispatch = useDispatch();
 
-  useLivePrices();
-  useSyncLocalStorage();
-  useAuthGuard();
-
-  const { bitcoin, ethereum, cardano } = useSelector((state: RootState) => state.prices);
-  const { cashBalance, cryptoBalance } = useSelector((state: RootState) => state.balances);
+  const { bitcoin, ethereum, cardano } = useSelector(
+    (state: RootState) => state.prices
+  );
+  const { cashBalance, cryptoBalance } = useSelector(
+    (state: RootState) => state.balances
+  );
   const orders = useSelector((state: RootState) => state.orders);
   const { isOpen, message } = useSelector((state: RootState) => state.modal);
 
+  // Load data from localStorage on component mount
   const handleTrade = (type: "buy" | "sell", asset: string, amount: number) => {
     const validAssets = ["bitcoin", "ethereum", "cardano"] as const;
     type CryptoAsset = typeof validAssets[number]; // "bitcoin" | "ethereum" | "cardano"
@@ -220,9 +218,30 @@ function Spot() {
     dispatch(addOrder({ id: Date.now(), type, asset, amount, price }));
   };
 
+
+    const router = useRouter()
+  
+    useEffect(() => {
+      const checkAuth = async () => {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+  
+        if (!session) {
+          router.replace('/') // یا هر صفحه‌ای برای ورود
+        }
+      }
+  
+      checkAuth()
+    }, [router])
+
   return (
     <>
-      <Modal isOpen={isOpen} onClose={() => dispatch(closeModal())} message={message} />
+      <Modal
+        isOpen={isOpen}
+        onClose={() => dispatch(closeModal())}
+        message={message}
+      />
       <div className="flex pt-[7rem] flex-col items-center space-y-6 md:pt-24">
         <h1 className="text-xl sm:text-2xl font-bold text-center">{t("tradeSystem")}</h1>
         <Balances cashBalance={cashBalance} cryptoBalance={cryptoBalance} />
@@ -233,7 +252,10 @@ function Spot() {
           cryptoBalance={cryptoBalance}
           cashBalance={cashBalance}
         />
-        <OrderList orders={orders} livePrices={{ bitcoin, ethereum, cardano }} />
+        <OrderList
+          orders={orders}
+          livePrices={{ bitcoin, ethereum, cardano }}
+        />
       </div>
     </>
   );
