@@ -6,7 +6,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import Client from "./client";
-
+import NextTopLoader from 'nextjs-toploader';
 
 export default async function RootLayout({
   children,
@@ -24,6 +24,7 @@ export default async function RootLayout({
           <SpeedInsights />
           <Analytics />
           <Client>
+            <NextTopLoader/>
             <Navbar />
             {children}
             <Footer />
