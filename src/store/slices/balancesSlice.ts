@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { useEffect, useState } from "react";
+import { supabase } from '@/lib/supabaseClient';
 
 interface BalancesState {
   cashBalance: number;
@@ -6,7 +8,7 @@ interface BalancesState {
 }
 
 const initialState: BalancesState = {
-  cashBalance: 150000,
+  cashBalance: 0,
   cryptoBalance: { bitcoin: 0, ethereum: 0 , cardano: 0},
 };
 
@@ -21,7 +23,7 @@ const balancesSlice = createSlice({
       state,
       action: PayloadAction<{ asset: "bitcoin" | "ethereum" | "cardano"; amount: number }>
     ) {
-      state.cryptoBalance[action.payload.asset] += action.payload.amount;
+      state.cryptoBalance[action.payload.asset] = action.payload.amount;
     },
     setBalancesState(state, action: PayloadAction<BalancesState>) {
       return action.payload;

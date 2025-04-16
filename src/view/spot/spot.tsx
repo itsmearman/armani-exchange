@@ -23,6 +23,7 @@ import {
 import { RootState } from "@/src/store/store";
 import { useRouter } from "next/navigation";
 import { supabase } from '@/lib/supabaseClient'
+import { useBalanceSync } from "@/src/hooks/useBalanceSync";
 
 function Spot() {
   const t = useTranslations();
@@ -31,6 +32,7 @@ function Spot() {
   const { bitcoin, ethereum, cardano } = useSelector(
     (state: RootState) => state.prices
   );
+  useBalanceSync();
   const { cashBalance, cryptoBalance } = useSelector(
     (state: RootState) => state.balances
   );
@@ -95,7 +97,7 @@ function Spot() {
     };
   }, [dispatch]);
 
-  const handleTrade = (type: "buy" | "sell", asset: string, amount: number) => {
+  const handleTrade = async (type: "buy" | "sell", asset: string, amount: number) => {
     let price: number;
 
     // بررسی مقدار asset و انتخاب قیمت مناسب
@@ -125,6 +127,34 @@ function Spot() {
     }
 
     dispatch(addOrder({ id: Date.now(), type, asset, amount, price }));
+    // 🔐 گرفتن session برای دسترسی به user.id
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user.id;
+
+  if (!userId) return;
+
+  // 🧠 مقدار جدید حساب‌ها
+  const updatedCash = type === "buy"
+    ? cashBalance - cost
+    : cashBalance + cost;
+
+  const updatedCrypto = {
+    ...cryptoBalance,
+    [asset]: type === "buy"
+      ? cryptoBalance[asset] + amount
+      : cryptoBalance[asset] - amount
+  };
+
+  // 🔄 به‌روزرسانی در Supabase
+  await supabase
+    .from("profiles")
+    .update({
+      cash_balance: updatedCash,
+      bitcoin_balance: updatedCrypto.bitcoin,
+      ethereum_balance: updatedCrypto.ethereum,
+      cardano_balance: updatedCrypto.cardano,
+    })
+    .eq("id", userId);
   };
 
 
