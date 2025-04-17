@@ -78,7 +78,7 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
       // calculatedTotal
     );
     setIsModalOpen(true);
-    setModalMessage("DoneTrade")
+    setModalMessage("tradeDone")
     setTradeAmount("");
     setCryptoAmount("");
   };
