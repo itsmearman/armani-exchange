@@ -1,6 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { useEffect, useState } from "react";
-import { supabase } from '@/lib/supabaseClient';
 
 interface BalancesState {
   cashBalance: number;
