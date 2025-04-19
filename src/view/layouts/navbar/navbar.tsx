@@ -21,56 +21,67 @@ import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
 export default function Navbar() {
   const supabase = useSupabaseClient()
-
   const item = NavbarItem()
   const slug = usePathname()
   const width = useWidth()
+  const t = useTranslations()
+  const router = useRouter()
   const [modalMessage, setModalMessage] = useState<string>('')
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-  const t = useTranslations()
   const [username, setUsername] = useState<string | null>(null)
-  const router = useRouter()
 
-  useEffect(() => {
-    const getUserProfile = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-    setUsername(null)
-    return
-  }
+  // گرفتن username از جدول profiles
+  const fetchUserProfile = async () => {
+    const { data: { session } } = await supabase.auth.getSession()
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', session.user.id)
-        .single()
-
-      if (data && !error) {
-        setUsername(data.username)
-      } else {
-        setUsername(null)
-      }
+    if (!session) {
+      setUsername(null)
+      return
     }
 
-    getUserProfile()
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('id', session.user.id)
+      .single()
 
-    supabase.auth.onAuthStateChange(
-      async (event) => {
-        if (event === 'SIGNED_OUT') {
-          setUsername(null)
-        } else if (event === 'SIGNED_IN') {
-          await getUserProfile()
-        }
+    if (data && !error) {
+      setUsername(data.username)
+    } else {
+      setUsername(null)
+    }
+  }
+
+  useEffect(() => {
+    fetchUserProfile()
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event) => {
+      if (event === 'SIGNED_IN') {
+        await fetchUserProfile()
+      } else if (event === 'SIGNED_OUT') {
+        setUsername(null)
       }
-    )
+    })
+
+    return () => {
+      authListener?.subscription.unsubscribe()
+    }
   }, [supabase])
 
+  // بررسی مجدد وضعیت کاربر در هر تغییر مسیر
+  useEffect(() => {
+    fetchUserProfile()
+  }, [slug])
+
+  // خروج از حساب
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut()
     if (error) {
-      console.error(error.message)
+      console.error('Logout Error:', error.message)
     } else {
       router.push('/login')
+      router.refresh()
+      setUsername(null)
     }
   }
 
@@ -79,6 +90,7 @@ export default function Navbar() {
     setIsModalOpen(true)
     return
   }
+  
 
   return (
     <>
