@@ -24,7 +24,6 @@ import {
   supabase,
   useBalanceSync,
 } from "./imports";
-import { useState } from "react";
 
 function Spot() {
   const t = useTranslations();
@@ -144,7 +143,6 @@ function Spot() {
 
 
   const router = useRouter()
-  const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -154,8 +152,6 @@ function Spot() {
 
       if (!session) {
         router.replace('/') // یا هر صفحه‌ای برای ورود
-      } else {
-        setCheckingAuth(false);
       }
     }
 
