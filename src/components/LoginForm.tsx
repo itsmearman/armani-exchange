@@ -81,7 +81,9 @@ export default function LoginForm() {
       console.log(error)
       setError('ایمیل یا رمز اشتباه است.')
       setLoading(false)
+      return
     }
+    await new Promise(res => setTimeout(res, 500))
     router.refresh()
     router.push('/spot')  
   }
