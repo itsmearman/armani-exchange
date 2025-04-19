@@ -21,9 +21,11 @@ import {
   useTranslations,
   RootState,
   useRouter,
-  supabase, 
+  supabase,
   useBalanceSync,
 } from "./imports";
+import { useState } from "react";
+import LoadPage from "@/src/components/Loading";
 
 function Spot() {
   const t = useTranslations();
@@ -39,64 +41,45 @@ function Spot() {
   const orders = useSelector((state: RootState) => state.orders);
   const { isOpen, message } = useSelector((state: RootState) => state.modal);
 
-  // Load data from localStorage on component mount
   useEffect(() => {
     const storedBalances = localStorage.getItem("balances");
     const storedOrders = localStorage.getItem("orders");
     const storedPrices = localStorage.getItem("prices");
 
-    if (storedBalances) {
-      dispatch(setBalancesState(JSON.parse(storedBalances)));
-    }
-    if (storedOrders) {
-      dispatch(setOrdersState(JSON.parse(storedOrders)));
-    }
-    if (storedPrices) {
-      dispatch(setPricesState(JSON.parse(storedPrices)));
-    }
+    if (storedBalances) dispatch(setBalancesState(JSON.parse(storedBalances)));
+    if (storedOrders) dispatch(setOrdersState(JSON.parse(storedOrders)));
+    if (storedPrices) dispatch(setPricesState(JSON.parse(storedPrices)));
   }, [dispatch]);
 
-  // Save data to localStorage whenever relevant state changes
-  // Load from localStorage
-useEffect(() => {
-  const storedBalances = localStorage.getItem("balances");
-  const storedOrders = localStorage.getItem("orders");
-  const storedPrices = localStorage.getItem("prices");
+  // Save to localStorage
+  useEffect(() => {
+    localStorage.setItem(
+      "balances",
+      JSON.stringify({ cashBalance, cryptoBalance })
+    );
+    localStorage.setItem("orders", JSON.stringify(orders));
+    localStorage.setItem(
+      "prices",
+      JSON.stringify({ bitcoin, ethereum, cardano })
+    );
+  }, [cashBalance, cryptoBalance, orders, bitcoin, ethereum, cardano]);
 
-  if (storedBalances) dispatch(setBalancesState(JSON.parse(storedBalances)));
-  if (storedOrders) dispatch(setOrdersState(JSON.parse(storedOrders)));
-  if (storedPrices) dispatch(setPricesState(JSON.parse(storedPrices)));
-}, [dispatch]);
+  // WebSocket
+  useEffect(() => {
+    const ws = new WebSocket(
+      "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,cardano"
+    );
 
-// Save to localStorage
-useEffect(() => {
-  localStorage.setItem(
-    "balances",
-    JSON.stringify({ cashBalance, cryptoBalance })
-  );
-  localStorage.setItem("orders", JSON.stringify(orders));
-  localStorage.setItem(
-    "prices",
-    JSON.stringify({ bitcoin, ethereum, cardano })
-  );
-}, [cashBalance, cryptoBalance, orders, bitcoin, ethereum, cardano]);
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      dispatch(updatePrices(data));
+    };
 
-// WebSocket
-useEffect(() => {
-  const ws = new WebSocket(
-    "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,cardano"
-  );
+    ws.onopen = () => console.log("WebSocket opened");
+    ws.onclose = () => console.warn("WebSocket closed. Reconnecting...");
 
-  ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    dispatch(updatePrices(data));
-  };
-
-  ws.onopen = () => console.log("WebSocket opened");
-  ws.onclose = () => console.warn("WebSocket closed. Reconnecting...");
-
-  return () => ws.close();
-}, [dispatch]);
+    return () => ws.close();
+  }, [dispatch]);
 
 
 
@@ -131,52 +114,55 @@ useEffect(() => {
 
     dispatch(addOrder({ id: Date.now(), type, asset, amount, price }));
     // 🔐 گرفتن session برای دسترسی به user.id
-  const { data: { session } } = await supabase.auth.getSession();
-  const userId = session?.user.id;
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user.id;
 
-  if (!userId) return;
+    if (!userId) return;
 
-  // 🧠 مقدار جدید حساب‌ها
-  const updatedCash = type === "buy"
-    ? cashBalance - cost
-    : cashBalance + cost;
+    // 🧠 مقدار جدید حساب‌ها
+    const updatedCash = type === "buy"
+      ? cashBalance - cost
+      : cashBalance + cost;
 
-  const updatedCrypto = {
-    ...cryptoBalance,
-    [asset]: type === "buy"
-      ? cryptoBalance[asset] + amount
-      : cryptoBalance[asset] - amount
+    const updatedCrypto = {
+      ...cryptoBalance,
+      [asset]: type === "buy"
+        ? cryptoBalance[asset] + amount
+        : cryptoBalance[asset] - amount
+    };
+
+    // 🔄 به‌روزرسانی در Supabase
+    await supabase
+      .from("profiles")
+      .update({
+        cash_balance: updatedCash,
+        bitcoin_balance: updatedCrypto.bitcoin,
+        ethereum_balance: updatedCrypto.ethereum,
+        cardano_balance: updatedCrypto.cardano,
+      })
+      .eq("id", userId);
   };
 
-  // 🔄 به‌روزرسانی در Supabase
-  await supabase
-    .from("profiles")
-    .update({
-      cash_balance: updatedCash,
-      bitcoin_balance: updatedCrypto.bitcoin,
-      ethereum_balance: updatedCrypto.ethereum,
-      cardano_balance: updatedCrypto.cardano,
-    })
-    .eq("id", userId);
-  };
 
+  const router = useRouter()
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-    const router = useRouter()
-  
-    useEffect(() => {
-      const checkAuth = async () => {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession()
-  
-        if (!session) {
-          router.replace('/') // یا هر صفحه‌ای برای ورود
-        }
+  useEffect(() => {
+    const checkAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+
+      if (!session) {
+        router.replace('/') // یا هر صفحه‌ای برای ورود
+      } else {
+        setCheckingAuth(false);
       }
-  
-      checkAuth()
-    }, [router])
+    }
 
+    checkAuth()
+  }, [router])
+  if (checkingAuth) return <LoadPage />;
   return (
     <>
       <Modal
