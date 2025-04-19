@@ -19,11 +19,11 @@ import {
   OrderList,
   Modal,
   useTranslations,
+  RootState,
+  useRouter,
+  supabase, 
+  useBalanceSync,
 } from "./imports";
-import { RootState } from "@/src/store/store";
-import { useRouter } from "next/navigation";
-import { supabase } from '@/lib/supabaseClient'
-import { useBalanceSync } from "@/src/hooks/useBalanceSync";
 
 function Spot() {
   const t = useTranslations();
@@ -57,45 +57,48 @@ function Spot() {
   }, [dispatch]);
 
   // Save data to localStorage whenever relevant state changes
-  useEffect(() => {
-    localStorage.setItem(
-      "balances",
-      JSON.stringify({ cashBalance, cryptoBalance })
-    );
-  }, [cashBalance, cryptoBalance]);
+  // Load from localStorage
+useEffect(() => {
+  const storedBalances = localStorage.getItem("balances");
+  const storedOrders = localStorage.getItem("orders");
+  const storedPrices = localStorage.getItem("prices");
 
-  useEffect(() => {
-    localStorage.setItem("orders", JSON.stringify(orders));
-  }, [orders]);
+  if (storedBalances) dispatch(setBalancesState(JSON.parse(storedBalances)));
+  if (storedOrders) dispatch(setOrdersState(JSON.parse(storedOrders)));
+  if (storedPrices) dispatch(setPricesState(JSON.parse(storedPrices)));
+}, [dispatch]);
 
-  useEffect(() => {
-    localStorage.setItem(
-      "prices",
-      JSON.stringify({ bitcoin, ethereum, cardano })
-    );
-  }, [bitcoin, ethereum, cardano]);
+// Save to localStorage
+useEffect(() => {
+  localStorage.setItem(
+    "balances",
+    JSON.stringify({ cashBalance, cryptoBalance })
+  );
+  localStorage.setItem("orders", JSON.stringify(orders));
+  localStorage.setItem(
+    "prices",
+    JSON.stringify({ bitcoin, ethereum, cardano })
+  );
+}, [cashBalance, cryptoBalance, orders, bitcoin, ethereum, cardano]);
 
-  useEffect(() => {
-    const ws = new WebSocket(
-      "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,cardano"
-    );
+// WebSocket
+useEffect(() => {
+  const ws = new WebSocket(
+    "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,cardano"
+  );
 
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      dispatch(updatePrices(data));
-    };
-    ws.onopen = () => {
-      console.log("WebSocket opened");
-    };
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    dispatch(updatePrices(data));
+  };
 
-    ws.onclose = () => {
-      console.warn("WebSocket closed. Reconnecting...");
-    };
+  ws.onopen = () => console.log("WebSocket opened");
+  ws.onclose = () => console.warn("WebSocket closed. Reconnecting...");
 
-    return () => {
-      ws.close();
-    };
-  }, [dispatch]);
+  return () => ws.close();
+}, [dispatch]);
+
+
 
   const handleTrade = async (type: "buy" | "sell", asset: string, amount: number) => {
     let price: number;

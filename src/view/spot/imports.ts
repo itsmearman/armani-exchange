@@ -15,9 +15,14 @@ import TradeForm from "./tradeForm";
 import OrderList from "./orderList";
 import Modal from "@/src/components/modal";
 import { useTranslations } from "next-intl";
+import { RootState } from "@/src/store/store";
+import { useRouter } from "next/navigation";
+import { supabase } from '@/lib/supabaseClient'
+import { useBalanceSync } from "@/src/hooks/useBalanceSync";
 
 export {
   React,
+  type RootState,
   useEffect,
   useDispatch,
   useSelector,
@@ -36,4 +41,7 @@ export {
   OrderList,
   Modal,
   useTranslations,
+  useRouter,
+  supabase,
+  useBalanceSync,
 };
