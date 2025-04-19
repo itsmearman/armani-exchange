@@ -25,7 +25,6 @@ import {
   useBalanceSync,
 } from "./imports";
 import { useState } from "react";
-import LoadPage from "@/src/components/Loading";
 
 function Spot() {
   const t = useTranslations();
@@ -162,7 +161,6 @@ function Spot() {
 
     checkAuth()
   }, [router])
-  if (checkingAuth) return <LoadPage />;
   return (
     <>
       <Modal
