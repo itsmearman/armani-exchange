@@ -18,23 +18,46 @@ export default function HomeTrade() {
     (state: RootState) => state.prices
   );
   
-    useEffect(() => {
-      const ws = new WebSocket(
-        "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,cardano"
-      );
+    // useEffect(() => {
+    //   const ws = new WebSocket(
+    //     "wss://stream.binance.com:9443/ws/btcusdt@trade"
+    //   );
 
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        dispatch(updatePrices(data));
-      };
+    //   ws.onmessage = (event) => {
+    //     const data = JSON.parse(event.data);
+    //     dispatch(updatePrices(data));
+    //   };
 
-      ws.onopen = () => console.log("WebSocket opened");
-      ws.onclose = () => console.warn("WebSocket closed. Reconnecting...");
+    //   ws.onopen = () => console.log("WebSocket opened" );
+    //   ws.onclose = () => console.warn("WebSocket closed. Reconnecting...");
 
-      return () => ws.close();
-    }, [dispatch]);
+    //   return () => ws.close();
+    // }, [dispatch]);
     
     // برای نمایش تغییرات قیمت
+    useEffect(() => {
+      const fetchPrices = async () => {
+        try {
+          const res = await fetch("/api/prices");
+          const data = await res.json();
+    
+          dispatch(updatePrices({
+            bitcoin: data.bitcoin.usd,
+            ethereum: data.ethereum.usd,
+            cardano: data.cardano.usd
+          }));
+        } catch (err) {
+          console.error("Error fetching prices:", err);
+        }
+      };
+    
+      fetchPrices();
+      const interval = setInterval(fetchPrices, 10000);
+    
+      return () => clearInterval(interval);
+    }, [dispatch]);
+    
+    
     const [priceChanges, setPriceChanges] = useState({
       bitcoin: { value: 0, isUp: true },
       ethereum: { value: 0, isUp: true },
