@@ -66,12 +66,12 @@ export default function Navbar() {
     return () => {
       authListener?.subscription.unsubscribe()
     }
-  }, [supabase])
+  }, [])
 
   // بررسی مجدد وضعیت کاربر در هر تغییر مسیر
   useEffect(() => {
     fetchUserProfile()
-  }, [slug])
+  }, [])
 
   // خروج از حساب
   const handleLogout = async () => {
