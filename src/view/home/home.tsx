@@ -56,39 +56,7 @@ export default function HomeTrade() {
     
       return () => clearInterval(interval);
     }, [dispatch]);
-    
-    
-    const [priceChanges, setPriceChanges] = useState({
-      bitcoin: { value: 0, isUp: true },
-      ethereum: { value: 0, isUp: true },
-      cardano: { value: 0, isUp: true }
-    });
-
-    // ذخیره قیمت‌های قبلی برای محاسبه تغییرات
-    const prevPrices = useRef({ bitcoin: 0, ethereum: 0, cardano: 0 });
-
-    // محاسبه تغییرات قیمت
-    useEffect(() => {
-      if (prevPrices.current.bitcoin > 0) {
-        setPriceChanges({
-          bitcoin: {
-            value: ((bitcoin - prevPrices.current.bitcoin) / prevPrices.current.bitcoin) * 100,
-            isUp: bitcoin >= prevPrices.current.bitcoin
-          },
-          ethereum: {
-            value: ((ethereum - prevPrices.current.ethereum) / prevPrices.current.ethereum) * 100,
-            isUp: ethereum >= prevPrices.current.ethereum
-          },
-          cardano: {
-            value: ((cardano - prevPrices.current.cardano) / prevPrices.current.cardano) * 100,
-            isUp: cardano >= prevPrices.current.cardano
-          }
-        });
-      }
-
-      // بروزرسانی قیمت‌های قبلی
-      prevPrices.current = { bitcoin, ethereum, cardano };
-    }, [bitcoin, ethereum, cardano]);
+ 
 
     // Three.js animation setup
     useEffect(() => {
@@ -232,12 +200,6 @@ export default function HomeTrade() {
       }
     };
 
-    // تابع برای نمایش تغییرات قیمت
-    const formatChange = (change: number, isUp: boolean) => {
-      const absChange = Math.abs(change);
-      const formattedChange = absChange > 0.00001 ? absChange.toFixed(3) : "0.00";
-      return `${isUp ? '+' : '-'}${formattedChange}%`;
-    };
 
     return (
       <div ref={containerRef} className="min-h-screen overflow-hidden">
@@ -283,22 +245,16 @@ export default function HomeTrade() {
                       name: t("bitcoin"),
                       symbol: t("bitcoinsymbol"),
                       price: bitcoin,
-                      change: priceChanges.bitcoin.value,
-                      isUp: priceChanges.bitcoin.isUp
                     },
                     {
                       name: t("ethereum"),
                       symbol: t("ethereumsymbol"),
                       price: ethereum,
-                      change: priceChanges.ethereum.value,
-                      isUp: priceChanges.ethereum.isUp
                     },
                     {
                       name: t("cardano"),
                       symbol: t("cardanosymbol"),
                       price: cardano,
-                      change: priceChanges.cardano.value,
-                      isUp: priceChanges.cardano.isUp
                     },
                   ].map((coin, index) => (
                     <div
@@ -321,9 +277,6 @@ export default function HomeTrade() {
                       <div className="text-right">
                         <p className="font-medium text-sm sm:text-base">
                           {coin.price ? formatPrice(coin.price) : t("fetching")}
-                        </p>
-                        <p className={`text-xs ${coin.isUp ? 'text-green-500' : 'text-red-500'}`}>
-                          {coin.price ? formatChange(coin.change, coin.isUp) : ''}
                         </p>
                       </div>
                     </div>
