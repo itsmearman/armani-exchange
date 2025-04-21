@@ -27,8 +27,7 @@ export default function LoginForm() {
       setLoading(false)
       return
     }
-    await new Promise(res => setTimeout(res, 500))
-    router.refresh()
+    await new Promise(res => setTimeout(res, 100))
     router.push('/spot')  
   }
   if (loading) return <LoadPage />
