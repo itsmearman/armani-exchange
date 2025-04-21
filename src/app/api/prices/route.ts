@@ -1,4 +1,3 @@
-// Next.js 13+ (app router)
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -9,7 +8,7 @@ export async function GET() {
 
     const data = await res.json();
     return NextResponse.json(data);
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch prices" }, { status: 500 });
   }
 }
