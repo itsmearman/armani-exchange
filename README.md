@@ -10,9 +10,13 @@
 The goal of this project is to create a simple simulator for a digital currency exchange platform, allowing users to buy and sell various cryptocurrencies. This exchange simulates real-time market data and enables users to perform transactions based on live market conditions.
 
 ## Key Features:
-1.**Buy and Sell Cryptocurrencies**: Users can buy and sell digital currencies by selecting specific cryptocurrencies and specifying the amount for the transaction.
-4. **User Account Overview**: Users can view their account balance and transaction history, tracking their cryptocurrency holdings.
-6. **Responsive Design**: The project is designed to be responsive, ensuring it works seamlessly across different devices, including mobile and desktop screens.
+1. **Buy and Sell Cryptocurrencies**: Users can buy and sell digital currencies by selecting specific cryptocurrencies and specifying the amount for the transaction.
+<br>
+2. **User Account Overview**: Users can view their account balance and transaction history, tracking their cryptocurrency holdings.
+<br>
+3. **Responsive Design**: The project is designed to be responsive, ensuring it works seamlessly across different devices, including mobile and desktop screens.
+<br>
+4. **User Profile** : Users can have own profile and signin with them email and take 150,000 $ test money.
 
 ## Technical Features:
 - **Next.js**: Utilized to build a Server-Side Rendered (SSR) application, ensuring fast initial loading and better SEO performance.
