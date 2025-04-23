@@ -11,11 +11,8 @@ The goal of this project is to create a simple simulator for a digital currency 
 
 ## Key Features:
 1. **Buy and Sell Cryptocurrencies**: Users can buy and sell digital currencies by selecting specific cryptocurrencies and specifying the amount for the transaction.
-<br>
 2. **User Account Overview**: Users can view their account balance and transaction history, tracking their cryptocurrency holdings.
-<br>
 3. **Responsive Design**: The project is designed to be responsive, ensuring it works seamlessly across different devices, including mobile and desktop screens.
-<br>
 4. **User Profile** : Users can have own profile and signin with them email and take 150,000 $ test money.
 
 ## Technical Features:
