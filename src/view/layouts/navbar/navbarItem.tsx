@@ -1,4 +1,6 @@
-import {Home2,DocumentText,Profile2User,Trade} from 'iconsax-react'
+import {Home2,
+    // DocumentText,
+    Profile2User,Trade} from 'iconsax-react'
 import { useTranslations } from 'next-intl'
 export default function NavbarItem(){
 const t = useTranslations()

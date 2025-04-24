@@ -9,11 +9,12 @@ import {
   usePathname,
   useWidth,
   // ProfileCircle,
-  Notification,
-  Modal,
+  // Notification,
+  // Modal,
   useState,
   useTranslations,
   ThemeSwitcher,
+  LocaleSwitcher,
 } from './imports'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -26,8 +27,8 @@ export default function Navbar() {
   const width = useWidth()
   const t = useTranslations()
   const router = useRouter()
-  const [modalMessage, setModalMessage] = useState<string>('')
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  // const [modalMessage, setModalMessage] = useState<string>('')
+  // const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [username, setUsername] = useState<string | null>(null)
 
   // گرفتن username از جدول profiles
@@ -85,20 +86,20 @@ export default function Navbar() {
     }
   }
 
-  const modalView = () => {
-    setModalMessage(t('noMessage'))
-    setIsModalOpen(true)
-    return
-  }
+  // const modalView = () => {
+  //   setModalMessage(t('noMessage'))
+  //   setIsModalOpen(true)
+  //   return
+  // }
 
 
   return (
     <>
-      <Modal
+      {/* <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
-      />
+      /> */}
       <nav className='h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10'>
         <Link href={'/'} className='hidden md:block my-auto'>
           <Image src={Logo} width={80} height={50} alt='' />
@@ -147,10 +148,7 @@ export default function Navbar() {
 
       <div className='h-[5rem] visible md:invisible fixed top-0  w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10'>
         <div className='my-auto px-4'>
-          <Notification
-            onClick={modalView}
-            size='32'
-            className='stroke-black dark:stroke-white'
+          <LocaleSwitcher
           />
         </div>
         <Image src={LogoMD} width={100} alt='' className='mx-auto' />
