@@ -9,11 +9,12 @@ import {
   usePathname,
   useWidth,
   // ProfileCircle,
-  Notification,
-  Modal,
+  // Notification,
+  // Modal,
   useState,
   useTranslations,
   ThemeSwitcher,
+  LocaleSwitcher,
 } from './imports'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -26,8 +27,8 @@ export default function Navbar() {
   const width = useWidth()
   const t = useTranslations()
   const router = useRouter()
-  const [modalMessage, setModalMessage] = useState<string>('')
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  // const [modalMessage, setModalMessage] = useState<string>('')
+  // const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [username, setUsername] = useState<string | null>(null)
 
   // گرفتن username از جدول profiles
@@ -79,31 +80,30 @@ export default function Navbar() {
     if (error) {
       console.error('Logout Error:', error.message)
     } else {
-      router.push('/login')
+      router.push('/signup')
       router.refresh()
       setUsername(null)
     }
   }
 
-  const modalView = () => {
-    setModalMessage(t('noMessage'))
-    setIsModalOpen(true)
-    return
-  }
-  
+  // const modalView = () => {
+  //   setModalMessage(t('noMessage'))
+  //   setIsModalOpen(true)
+  //   return
+  // }
+
 
   return (
     <>
-      <Modal
+      {/* <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
-      />
+      /> */}
       <nav className='h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10'>
-        <Link href={'/'} className='hidden md:block'>
-          <Image src={Logo} width={150} height={100} alt='' />
+        <Link href={'/'} className='hidden md:block my-auto'>
+          <Image src={Logo} width={80} height={50} alt='' />
         </Link>
-        <ThemeSwitcher />
         <div className='my-[1rem] md:my-[1.8rem] flex gap-x-8 mx-auto'>
           {item.map((data, index) => (
             <Link
@@ -131,24 +131,24 @@ export default function Navbar() {
             </Link>
           ))}
         </div>
-        <div className='hidden md:block my-auto gap-4'>
-          {username ? (
-            <div className='flex flex-col items-center'>
-              <span className='text-black dark:text-white'>{username}{t("welcome")}</span>
-              <button className='text-red-500' onClick={handleLogout}>{t("logout")}</button>
-            </div>
-          ) : (
-            <Link href='/login' className='text-blue-600 dark:text-green-500'>{t("login")}</Link>
-          )}
+        <div className='flex flex-row gap-2'>
+          <ThemeSwitcher />
+          <div className='hidden md:block my-auto gap-4'>
+            {username ? (
+              <div className='flex flex-col items-center'>
+                <span className='text-black dark:text-white'>{username}{t("welcome")}</span>
+                <button className='text-red-500' onClick={handleLogout}>{t("logout")}</button>
+              </div>
+            ) : (
+              <Link href='/login' className='text-blue-600 dark:text-green-500'>{t("login")}</Link>
+            )}
+          </div>
         </div>
       </nav>
 
       <div className='h-[5rem] visible md:invisible fixed top-0  w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10'>
         <div className='my-auto px-4'>
-          <Notification
-            onClick={modalView}
-            size='32'
-            className='stroke-black dark:stroke-white'
+          <LocaleSwitcher
           />
         </div>
         <Image src={LogoMD} width={100} alt='' className='mx-auto' />
@@ -159,7 +159,7 @@ export default function Navbar() {
               <button className='text-red-500' onClick={handleLogout}>{t("logout")}</button>
             </div>
           ) : (
-            <Link href='/login' className='text-blue-600 dark:text-green-500 p-4'>{t("login")}</Link>
+            <Link href='/signup' className='text-blue-600 dark:text-green-500 p-4'>{t("login")}</Link>
           )}
         </div>
       </div>

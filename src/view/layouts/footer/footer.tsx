@@ -7,9 +7,9 @@ export default function Footer() {
   return (
     <div className='invisible md:visible flex flex-col gap-4  items-center justify-center bg-blue-100 text-xl text-blue-500 p-2'>
       <LocaleSwitcher />
-      <p>
+      <a href='https://www.linkedin.com/in/arman-tabibzade-tehrani/'>
         {t("createdarman")}
-      </p>
+      </a>
     </div>
   )
 }
