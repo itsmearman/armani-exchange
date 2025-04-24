@@ -69,7 +69,7 @@
     "cash":"نقد",
     "orderList":"لیست سفارشات",
     "phone":"شماره تماس : ",
-    "email":"ایمیل : ",
+    "email":"ایمیل",
     "SigninTitle":"ثبت نام",
     "LoginTitle":"ورود به سامانه",
 
@@ -87,10 +87,15 @@
     "homeSpotButtonText":"ورود به بخش معامله",
     "registerSession":"در حال بررسی وضعیت ورود...",
     "welcome":"خوش آمدی",
-    "login":"ورود",
+    "login":"وارد شوید",
     "logout":"خروج",
     "noAccount":"حساب کاربری ندارید؟",
     "register":"ثبت نام",
     "fuck":"کنید",
-    "LoadingMessage":"در حال بازگذاری ..."
+    "LoadingMessage":"در حال بازگذاری ...",
+    "signup":"ثبت نام",
+    "createacc":"ساخت حساب کاربری",
+    "haveacc":"حساب کاربری دارید؟",
+    "username":"نام کاربری",
+    "password":"رمز عبور"
 }

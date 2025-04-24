@@ -11,9 +11,6 @@ export async function generateMetadata() {
 
 export default function SignUpPage() {
   return (
-    <div className="max-w-md mx-auto mt-28">
-      <h1 className="text-xl font-bold mb-4 text-center">ثبت‌نام</h1>
       <SignUpForm />
-    </div>
   )
 }

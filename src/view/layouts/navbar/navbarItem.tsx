@@ -9,12 +9,12 @@ return [
             imgActive:<Home2 size={32} className='fill-blue-600 dark:fill-green-500' variant="Bulk"/>,
             route: "/",
         },
-        {
-            title: t("blog"),
-            img: <DocumentText size={32} className='stroke-black dark:stroke-white' />,
-            imgActive:<DocumentText size={32} className='fill-blue-600 dark:fill-green-500' variant="Bulk"/>,
-            route: "/blog",
-        },
+        // {
+        //     title: t("blog"),
+        //     img: <DocumentText size={32} className='stroke-black dark:stroke-white' />,
+        //     imgActive:<DocumentText size={32} className='fill-blue-600 dark:fill-green-500' variant="Bulk"/>,
+        //     route: "/blog",
+        // },
         {
             title: t("aboutUs"),
             img: <Profile2User size={32} className='stroke-black dark:stroke-white' />,

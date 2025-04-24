@@ -79,7 +79,7 @@ export default function Navbar() {
     if (error) {
       console.error('Logout Error:', error.message)
     } else {
-      router.push('/login')
+      router.push('/signup')
       router.refresh()
       setUsername(null)
     }
@@ -90,7 +90,7 @@ export default function Navbar() {
     setIsModalOpen(true)
     return
   }
-  
+
 
   return (
     <>
@@ -100,10 +100,9 @@ export default function Navbar() {
         message={modalMessage}
       />
       <nav className='h-[5rem] fixed bottom-0 md:top-0 w-full flex px-6 shadow-lg justify-between bg-white dark:bg-gray-900 z-10'>
-        <Link href={'/'} className='hidden md:block'>
-          <Image src={Logo} width={150} height={100} alt='' />
+        <Link href={'/'} className='hidden md:block my-auto'>
+          <Image src={Logo} width={80} height={50} alt='' />
         </Link>
-        <ThemeSwitcher />
         <div className='my-[1rem] md:my-[1.8rem] flex gap-x-8 mx-auto'>
           {item.map((data, index) => (
             <Link
@@ -131,15 +130,18 @@ export default function Navbar() {
             </Link>
           ))}
         </div>
-        <div className='hidden md:block my-auto gap-4'>
-          {username ? (
-            <div className='flex flex-col items-center'>
-              <span className='text-black dark:text-white'>{username}{t("welcome")}</span>
-              <button className='text-red-500' onClick={handleLogout}>{t("logout")}</button>
-            </div>
-          ) : (
-            <Link href='/login' className='text-blue-600 dark:text-green-500'>{t("login")}</Link>
-          )}
+        <div className='flex flex-row gap-2'>
+          <ThemeSwitcher />
+          <div className='hidden md:block my-auto gap-4'>
+            {username ? (
+              <div className='flex flex-col items-center'>
+                <span className='text-black dark:text-white'>{username}{t("welcome")}</span>
+                <button className='text-red-500' onClick={handleLogout}>{t("logout")}</button>
+              </div>
+            ) : (
+              <Link href='/login' className='text-blue-600 dark:text-green-500'>{t("login")}</Link>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -159,7 +161,7 @@ export default function Navbar() {
               <button className='text-red-500' onClick={handleLogout}>{t("logout")}</button>
             </div>
           ) : (
-            <Link href='/login' className='text-blue-600 dark:text-green-500 p-4'>{t("login")}</Link>
+            <Link href='/signup' className='text-blue-600 dark:text-green-500 p-4'>{t("login")}</Link>
           )}
         </div>
       </div>
