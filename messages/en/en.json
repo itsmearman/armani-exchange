@@ -83,5 +83,6 @@
   "createacc":"Create Account",
   "haveacc":"Have account?",
   "password":"Password",
-  "username":"User Name"
+  "username":"User Name",
+  "abouttext":"Armani Exchange was created with the goal of delivering a modern, fast, and user-friendly experience in the world of fashion and style. We focused on a minimal design, smooth performance, and full responsiveness to ensure users can easily engage with our products. This project was built using modern technologies, aiming to offer not only visual appeal but also top-tier functionality."
 }
