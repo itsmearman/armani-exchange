@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect ,useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePrices, setPricesState } from "@/src/store/slices/pricesSlice";
 import {
@@ -24,6 +24,7 @@ export {
   React,
   type RootState,
   useEffect,
+  useState,
   useDispatch,
   useSelector,
   updatePrices,
