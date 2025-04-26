@@ -158,11 +158,18 @@ function Spot() {
         bitcoin_balance: updatedCrypto.bitcoin,
         ethereum_balance: updatedCrypto.ethereum,
         cardano_balance: updatedCrypto.cardano,
-      })
+      })      
       .eq("id", userId);
+      await supabase.from("orders").update([
+        {
+          user_id: userId,
+          type,
+          asset,
+          amount,
+          price
+        }
+      ]);
   };
-
-
   const router = useRouter()
 
   useEffect(() => {
