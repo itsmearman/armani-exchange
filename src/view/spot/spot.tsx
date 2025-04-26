@@ -2,6 +2,7 @@
 import {
   React,
   useEffect,
+  useState,
   useDispatch,
   useSelector,
   updatePrices,
@@ -28,16 +29,21 @@ import {
 function Spot() {
   const t = useTranslations();
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const { bitcoin, ethereum, cardano } = useSelector(
     (state: RootState) => state.prices
   );
-  useBalanceSync();
   const { cashBalance, cryptoBalance } = useSelector(
     (state: RootState) => state.balances
   );
   const orders = useSelector((state: RootState) => state.orders);
   const { isOpen, message } = useSelector((state: RootState) => state.modal);
+
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [ordersError, setOrdersError] = useState<string | null>(null);
+
+  useBalanceSync();
 
   useEffect(() => {
     const storedBalances = localStorage.getItem("balances");
@@ -49,7 +55,6 @@ function Spot() {
     if (storedPrices) dispatch(setPricesState(JSON.parse(storedPrices)));
   }, [dispatch]);
 
-  // Save to localStorage
   useEffect(() => {
     localStorage.setItem(
       "balances",
@@ -62,97 +67,83 @@ function Spot() {
     );
   }, [cashBalance, cryptoBalance, orders, bitcoin, ethereum, cardano]);
 
-  // WebSocket
-  // useEffect(() => {
-  //   const ws = new WebSocket(
-  //     "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,cardano"
-  //   );
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        const res = await fetch("/api/prices");
+        const data = await res.json();
 
-  //   ws.onmessage = (event) => {
-  //     const data = JSON.parse(event.data);
-  //     dispatch(updatePrices(data));
-  //   };
+        dispatch(updatePrices({
+          bitcoin: data.bitcoin.usd,
+          ethereum: data.ethereum.usd,
+          cardano: data.cardano.usd
+        }));
+      } catch (err) {
+        console.error("Error fetching prices:", err);
+      }
+    };
 
-  //   ws.onopen = () => console.log("WebSocket opened");
-  //   ws.onclose = () => console.warn("WebSocket closed. Reconnecting...");
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 10000);
 
-  //   return () => ws.close();
-  // }, [dispatch]);
-
-   useEffect(() => {
-        const fetchPrices = async () => {
-          try {
-            const res = await fetch("/api/prices");
-            const data = await res.json();
-      
-            dispatch(updatePrices({
-              bitcoin: data.bitcoin.usd,
-              ethereum: data.ethereum.usd,
-              cardano: data.cardano.usd
-            }));
-          } catch (err) {
-            console.error("Error fetching prices:", err);
-          }
-        };
-      
-        fetchPrices();
-        const interval = setInterval(fetchPrices, 10000);
-      
-        return () => clearInterval(interval);
-      }, [dispatch]);
-
+    return () => clearInterval(interval);
+  }, [dispatch]);
 
   const handleTrade = async (type: "buy" | "sell", asset: string, amount: number) => {
     let price: number;
 
-    // بررسی مقدار asset و انتخاب قیمت مناسب
-    if (asset === "bitcoin") {
-      price = bitcoin;
-    } else if (asset === "ethereum") {
-      price = ethereum;
-    } else if (asset === "cardano") {
-      price = cardano;
-    } else {
-      // اگر ارز دیجیتال شناخته شده نباشد
+    if (asset === "bitcoin") price = bitcoin;
+    else if (asset === "ethereum") price = ethereum;
+    else if (asset === "cardano") price = cardano;
+    else {
       dispatch(openModal(t("unknownCrypto")));
       return;
     }
 
     const cost = price * amount;
 
-    if (type === "buy" && cost <= cashBalance) {
-      dispatch(updateCashBalance(cashBalance - cost));
-      dispatch(updateCryptoBalance({ asset, amount }));
-    } else if (type === "sell" && cryptoBalance[asset] >= amount) {
-      dispatch(updateCashBalance(cashBalance + cost));
-      dispatch(updateCryptoBalance({ asset, amount: -amount }));
-    } else {
-      dispatch(openModal(t("notEnough")));
+    if (type === "buy" && cost > cashBalance) {
+      dispatch(openModal(t("notEnoughCash")));
       return;
     }
 
-    dispatch(addOrder({ id: Date.now(), type, asset, amount, price }));
-    // 🔐 گرفتن session برای دسترسی به user.id
-    const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user.id;
+    if (type === "sell" && (!cryptoBalance[asset] || cryptoBalance[asset] < amount)) {
+      dispatch(openModal(t("notEnoughCrypto")));
+      return;
+    }
 
-    if (!userId) return;
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+      console.error("خطا در دریافت سشن:", sessionError);
+      return;
+    }
+    const userId = session.user.id;
 
-    // 🧠 مقدار جدید حساب‌ها
-    const updatedCash = type === "buy"
-      ? cashBalance - cost
-      : cashBalance + cost;
-
+    const updatedCash = type === "buy" ? cashBalance - cost : cashBalance + cost;
     const updatedCrypto = {
       ...cryptoBalance,
       [asset]: type === "buy"
-        ? cryptoBalance[asset] + amount
-        : cryptoBalance[asset] - amount
+        ? (cryptoBalance[asset] || 0) + amount
+        : (cryptoBalance[asset] || 0) - amount,
     };
 
-    // 🔄 به‌روزرسانی در Supabase
-    await supabase
-      .from("profiles")
+    const { error: insertError } = await supabase.from("orders").insert([
+      {
+        user_id: userId,
+        type,
+        asset,
+        amount,
+        price,
+      }
+    ]);
+
+    if (insertError) {
+      console.error("خطا در ذخیره سفارش:", insertError);
+      dispatch(openModal(t("orderFailed")));
+      return;
+    }
+
+    const { error: updateError } = await supabase.from("profiles")
       .update({
         cash_balance: updatedCash,
         bitcoin_balance: updatedCrypto.bitcoin,
@@ -160,24 +151,76 @@ function Spot() {
         cardano_balance: updatedCrypto.cardano,
       })
       .eq("id", userId);
+
+    if (updateError) {
+      console.error("خطا در ذخیره موجودی جدید:", updateError);
+      dispatch(openModal(t("balanceUpdateFailed")));
+      return;
+    }
+
+    dispatch(updateCashBalance(updatedCash));
+    dispatch(updateCryptoBalance({ asset, amount: type === "buy" ? amount : -amount }));
+    dispatch(addOrder({
+      id: Date.now(),
+      type,
+      asset,
+      amount,
+      price,
+    }));
+
+    dispatch(openModal(t("tradeSuccess")));
   };
-
-
-  const router = useRouter()
 
   useEffect(() => {
     const checkAuth = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        router.replace('/') // یا هر صفحه‌ای برای ورود
+        router.replace('/');
       }
-    }
+    };
+    checkAuth();
+  }, [router]);
 
-    checkAuth()
-  }, [router])
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoadingOrders(true);
+        setOrdersError(null);
+
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !session) {
+          console.error("خطا در دریافت سشن:", sessionError);
+          setOrdersError(t("authError"));
+          setLoadingOrders(false);
+          return;
+        }
+
+        const userId = session.user.id;
+
+        const { data: ordersData, error: ordersError } = await supabase
+          .from("orders")
+          .select("*")
+          .eq("user_id", userId)
+          .order("id", { ascending: false });
+
+
+        if (ordersError) {
+          console.error("خطا در دریافت سفارشات:", ordersError);
+          setOrdersError(t("fetchOrdersError"));
+        } else if (ordersData) {
+          dispatch(setOrdersState(ordersData));
+        }
+      } catch (err) {
+        console.error("خطای ناشناخته در دریافت سفارشات:", err);
+        setOrdersError(t("unknownError"));
+      } finally {
+        setLoadingOrders(false);
+      }
+    };
+
+    fetchOrders();
+  }, [dispatch, t]);
+
   return (
     <>
       <Modal
@@ -195,10 +238,16 @@ function Spot() {
           cryptoBalance={cryptoBalance}
           cashBalance={cashBalance}
         />
-        <OrderList
-          orders={orders}
-          livePrices={{ bitcoin, ethereum, cardano }}
-        />
+        {loadingOrders ? (
+          <div className="mt-4 text-center">{t("loadingOrders")}</div>
+        ) : ordersError ? (
+          <div className="mt-4 text-red-500 text-center">{ordersError}</div>
+        ) : (
+          <OrderList
+            orders={orders}
+            livePrices={{ bitcoin, ethereum, cardano }}
+          />
+        )}
       </div>
     </>
   );
