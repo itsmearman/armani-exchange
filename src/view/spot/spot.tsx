@@ -18,18 +18,17 @@ import {
   Balances,
   TradeForm,
   OrderList,
-  Modal,
   useTranslations,
   RootState,
-  useRouter,
   supabase,
   useBalanceSync,
+  dynamic,
 } from "./imports";
+const Modal = dynamic(() => import('@/src/components/modal'), { ssr: false })
 
 function Spot() {
   const t = useTranslations();
   const dispatch = useDispatch();
-  const router = useRouter();
 
   const { bitcoin, ethereum, cardano } = useSelector(
     (state: RootState) => state.prices
@@ -84,7 +83,7 @@ function Spot() {
     };
 
     fetchPrices();
-    const interval = setInterval(fetchPrices, 10000);
+    const interval = setInterval(fetchPrices, 30000);
 
     return () => clearInterval(interval);
   }, [dispatch]);
@@ -172,16 +171,6 @@ function Spot() {
   };
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        router.replace('/');
-      }
-    };
-    checkAuth();
-  }, [router]);
-
-  useEffect(() => {
     const fetchOrders = async () => {
       try {
         setLoadingOrders(true);
@@ -199,7 +188,7 @@ function Spot() {
 
         const { data: ordersData, error: ordersError } = await supabase
           .from("orders")
-          .select("*")
+          .select("id, type, asset, amount, price")
           .eq("user_id", userId)
           .order("id", { ascending: false });
 
