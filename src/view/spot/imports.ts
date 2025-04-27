@@ -19,6 +19,7 @@ import { RootState } from "@/src/store/store";
 import { useRouter } from "next/navigation";
 import { supabase } from '@/lib/supabaseClient'
 import { useBalanceSync } from "@/src/hooks/useBalanceSync";
+import dynamic from "next/dynamic";
 
 export {
   React,
@@ -45,4 +46,5 @@ export {
   useRouter,
   supabase,
   useBalanceSync,
+  dynamic,
 };
