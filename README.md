@@ -6,6 +6,12 @@
 ## Framework(s) Used:
 - Next.js
 
+## Backend & Database:
+- Supabase (PostgreSQL database, authentication, and real-time functionality)
+
+## Internationalization:
+- next-intl (for multilingual page translations)
+
 ## Project Objective:
 The goal of this project is to create a simple simulator for a digital currency exchange platform, allowing users to buy and sell various cryptocurrencies. This exchange simulates real-time market data and enables users to perform transactions based on live market conditions.
 
@@ -13,13 +19,27 @@ The goal of this project is to create a simple simulator for a digital currency 
 1. **Buy and Sell Cryptocurrencies**: Users can buy and sell digital currencies by selecting specific cryptocurrencies and specifying the amount for the transaction.
 2. **User Account Overview**: Users can view their account balance and transaction history, tracking their cryptocurrency holdings.
 3. **Responsive Design**: The project is designed to be responsive, ensuring it works seamlessly across different devices, including mobile and desktop screens.
-4. **User Profile** : Users can have own profile and signin with them email and take 150,000 $ test money.
+4. **User Profile**: Users can have own profile and sign in with email (via Supabase Auth) and receive 150,000 $ test money.
+5. **Multi-language Support**: Internationalization support using next-intl for translating pages.
+6. **Real-time Data**: Supabase real-time functionality for live market updates.
 
 ## Technical Features:
 - **Next.js**: Utilized to build a Server-Side Rendered (SSR) application, ensuring fast initial loading and better SEO performance.
 - **TypeScript**: Used for type safety and better code structure, reducing the likelihood of runtime errors.
+- **Supabase**: Provides backend services including PostgreSQL database, authentication, and real-time subscriptions.
+- **next-intl**: Handles internationalization and localization of the application.
 - **Vercel Deployment**: The project is deployed on Vercel, providing an easy and fast way to host the application online.
 - **GitHub for Version Control**: The project is version-controlled on GitHub, allowing for easy collaboration and tracking of changes.
+
+## Implementation Notes:
+- **Supabase Integration**:
+  - User authentication via Supabase Auth
+  - PostgreSQL database for storing user data, transactions, and cryptocurrency information
+  - Real-time subscriptions for live market data updates
+- **next-intl Setup**:
+  - Locale-based routing (e.g., /en, /fa)
+  - Translation files for each supported language
+  - Server-side rendering of translated content
 
 ## Project Links:
 - **Live Project (Deployed on Vercel)**: [armaniexchange.vercel.app](https://armaniexchange.vercel.app)
