@@ -80,7 +80,6 @@ export default function Navbar() {
     if (error) {
       console.error('Logout Error:', error.message)
     } else {
-      router.push('/signup')
       router.refresh()
       setUsername(null)
     }

@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect ,useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePrices, setPricesState } from "@/src/store/slices/pricesSlice";
 import {
@@ -19,11 +19,13 @@ import { RootState } from "@/src/store/store";
 import { useRouter } from "next/navigation";
 import { supabase } from '@/lib/supabaseClient'
 import { useBalanceSync } from "@/src/hooks/useBalanceSync";
+import dynamic from "next/dynamic";
 
 export {
   React,
   type RootState,
   useEffect,
+  useState,
   useDispatch,
   useSelector,
   updatePrices,
@@ -44,4 +46,5 @@ export {
   useRouter,
   supabase,
   useBalanceSync,
+  dynamic,
 };

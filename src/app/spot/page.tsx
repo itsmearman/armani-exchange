@@ -11,8 +11,5 @@ export async function generateMetadata() {
 }
 
 export default function SpotPage() {
-
-  return (
-    <Spot />
-  );
+  return <Spot />;
 }

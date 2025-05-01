@@ -1,12 +1,13 @@
 import React from "react";
 import { useTranslations } from "next-intl";
 interface Order {
-  id: number;
+  id: number | string;
   type: "buy" | "sell";
   asset: string;
   amount: number;
   price: number;
 }
+
 
 interface LivePrices {
   [key: string]: string | number;
@@ -21,12 +22,6 @@ const tableHead = ["currency", "price", "amount", "type"];
 
 const OrderList = ({ orders }: OrderListProps) => {
   const t = useTranslations();
-  // const calculateProfitLossPercentage = (order) => {
-  //   const currentPrice = parseFloat(livePrices[order.asset] || 0);
-  //   if (!currentPrice || !order.price) return null;
-  //   const profitLoss = ((currentPrice - order.price) / order.price) * 100;
-  //   return profitLoss;
-  // };
 
   return (
     <div className="shadow-md dark:shadow-white/50 rounded-lg p-6 w-full max-w-lg space-y-4 pb-[5rem] md:pb-6">
@@ -43,7 +38,6 @@ const OrderList = ({ orders }: OrderListProps) => {
                   {t(`${data}`)}
                 </th>
               ))}
-              {/* <th className="border  px-4 py-2 ">سود/زیان</th> */}
             </tr>
           </thead>
           <tbody>
@@ -58,15 +52,8 @@ const OrderList = ({ orders }: OrderListProps) => {
               </tr>
             ) : (
               orders.map((order) => {
-                // const profitLoss = calculateProfitLossPercentage(order);
-                // const profitLossClass =
-                //   profitLoss > 0
-                //     ? "text-green-600 font-bold"
-                //     : profitLoss < 0
-                //     ? "text-red-600 font-bold"
-                //     : "text-gray-600";
                 return (
-                  <tr key={order.id} className="hover:bg-gray-50">
+                  <tr key={order.id} >
                     <td className="border border-gray-300 dark:border-gray-700 px-4 py-2 ">
                       {t(`${order.asset}`)}
                     </td>
@@ -76,6 +63,9 @@ const OrderList = ({ orders }: OrderListProps) => {
                     <td className="border border-gray-300 dark:border-gray-700 px-4 py-2 ">
                       {order.amount.toFixed(6)}
                     </td>
+                    {/* <td className="border border-gray-300 dark:border-gray-700 px-4 py-2 ">
+                      {t(`${order.createdAt}`)}
+                    </td> */}
                     <td
                       className={`border border-gray-300 dark:border-gray-700 px-4 py-2 ${
                         order.type === "buy" ? "text-green-700" : "text-red-700"
@@ -83,9 +73,6 @@ const OrderList = ({ orders }: OrderListProps) => {
                     >
                       {order.type === "buy" ? t("buy") : t("sell")}
                     </td>
-                    {/* <td className={`border  px-4 py-2 ${profitLossClass}`}>
-                      {profitLoss !== null ? `${profitLoss.toFixed(2)}%` : "در حال دریافت..."}
-                    </td> */}
                   </tr>
                 );
               })

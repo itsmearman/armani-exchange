@@ -51,7 +51,7 @@ export default function LocaleSwitcherSelect({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute bg-white dark:bg-gray-900 mb-2 bottom-full w-full shadow-md rounded-md border border-gray-300 dark:border-gray-700">
+        <div className="absolute bg-white dark:bg-gray-900 mb-2 md:bottom-full w-full shadow-md rounded-md border border-gray-300 dark:border-gray-700">
           <ul>
             {items.map((item) => (
               <li

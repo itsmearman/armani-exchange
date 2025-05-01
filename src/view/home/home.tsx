@@ -17,24 +17,6 @@ export default function HomeTrade() {
   const { bitcoin, ethereum, cardano } = useSelector(
     (state: RootState) => state.prices
   );
-  
-    // useEffect(() => {
-    //   const ws = new WebSocket(
-    //     "wss://stream.binance.com:9443/ws/btcusdt@trade"
-    //   );
-
-    //   ws.onmessage = (event) => {
-    //     const data = JSON.parse(event.data);
-    //     dispatch(updatePrices(data));
-    //   };
-
-    //   ws.onopen = () => console.log("WebSocket opened" );
-    //   ws.onclose = () => console.warn("WebSocket closed. Reconnecting...");
-
-    //   return () => ws.close();
-    // }, [dispatch]);
-    
-    // برای نمایش تغییرات قیمت
     useEffect(() => {
       const fetchPrices = async () => {
         try {
