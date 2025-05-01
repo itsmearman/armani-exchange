@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import LoadPage from "./Loading"; // فرض کردم این یک صفحه لودینگ سبک داری
 import { useTranslations } from "next-intl";
