@@ -37,8 +37,9 @@ export default function SignUpForm() {
     if (profileError) {
       setLoading(false);
       return setError("ثبت نام انجام شد اما خطا در ذخیره نام کاربری");
+    } else {
+      window.location.reload();
     }
-
     router.push("/spot");
   };
   if (loading) return <LoadPage />;
