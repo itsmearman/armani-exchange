@@ -3,25 +3,31 @@ import { useTranslations } from "next-intl";
 import Modal from "@/src/components/modal";
 interface TradeFormProps {
   prices: { [key: string]: string | number }; // Prices of cryptocurrencies (bitcoin, ethereum)
-  onTrade: (
-    type: "buy" | "sell", asset: string , amount: number
-  ) => void;
+  onTrade: (type: "buy" | "sell", asset: string, amount: number) => void;
   cryptoBalance: {
     [key: string]: number;
   };
   cashBalance: number;
 }
-export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance }: TradeFormProps) {
+export default function TradeForm({
+  prices,
+  onTrade,
+  cryptoBalance,
+  cashBalance,
+}: TradeFormProps) {
   const t = useTranslations();
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
-  const [selectedAsset, setSelectedAsset] = useState<string>(Object.keys(cryptoBalance)[0] || "bitcoin");
+  const [selectedAsset, setSelectedAsset] = useState<string>(
+    Object.keys(cryptoBalance)[0] || "bitcoin"
+  );
   const [tradeAmount, setTradeAmount] = useState<string>(""); // Trade amount
   const [cryptoAmount, setCryptoAmount] = useState<string>(""); // Cryptocurrency amount
   const [modalMessage, setModalMessage] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const currentPrice = typeof prices[selectedAsset] === 'number'
-    ? prices[selectedAsset] // If it's a number, use it directly
-    : !isNaN(parseFloat(prices[selectedAsset] as string)) // If it's a string, parse it to a number
+  const currentPrice =
+    typeof prices[selectedAsset] === "number"
+      ? prices[selectedAsset] // If it's a number, use it directly
+      : !isNaN(parseFloat(prices[selectedAsset] as string)) // If it's a string, parse it to a number
       ? parseFloat(prices[selectedAsset] as string)
       : 0;
 
@@ -50,12 +56,8 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
       setIsModalOpen(true);
       return;
     }
-    let calculatedAmount = totalAmount
-      ? totalAmount / currentPrice
-      : cryptoQty;
-    const calculatedTotal = cryptoQty
-      ? cryptoQty * currentPrice
-      : totalAmount;
+    let calculatedAmount = totalAmount ? totalAmount / currentPrice : cryptoQty;
+    const calculatedTotal = cryptoQty ? cryptoQty * currentPrice : totalAmount;
     if (calculatedAmount <= 0 || calculatedTotal <= 0) {
       setModalMessage(t("Invalidate"));
       setIsModalOpen(true);
@@ -74,11 +76,14 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
         return;
       }
     }
-    onTrade(tradeType, selectedAsset, calculatedAmount,
+    onTrade(
+      tradeType,
+      selectedAsset,
+      calculatedAmount
       // calculatedTotal
     );
     setIsModalOpen(true);
-    setModalMessage("tradeDone")
+    setModalMessage("tradeDone");
     setTradeAmount("");
     setCryptoAmount("");
   };
@@ -88,7 +93,7 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
     const formattedAmount = cryptoBalance[selectedAsset].toFixed(6);
     // setAmount(formattedAmount); // Update the state with the formatted amount
     setCryptoAmount(formattedAmount);
-    setTradeAmount(""); 
+    setTradeAmount("");
   };
 
   const handleCashClick = () => {
@@ -97,7 +102,7 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
     setTradeAmount(formattedAmount); // Set the input field with the formatted amount
     setCryptoAmount(""); // Clear the crypto amount input
   };
-  
+
   return (
     <>
       <Modal
@@ -107,9 +112,7 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
       />
       <div className="shadow-md dark:shadow-white/50 rounded-lg p-6 w-full max-w-lg space-y-4">
         <div>
-          <label className="block text-sm font-medium">
-            {t("tradeType")}
-          </label>
+          <label className="block text-sm font-medium">{t("tradeType")}</label>
           <select
             value={tradeType}
             onChange={handleTradeChange}
@@ -168,8 +171,9 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
               className="text-gray-400 hover:text-gray-700 cursor-pointer"
               onClick={handleBalanceClick}
             >
-              
-              {tradeType === "buy" ? "" : cryptoBalance[selectedAsset].toFixed(6)}
+              {tradeType === "buy"
+                ? ""
+                : cryptoBalance[selectedAsset].toFixed(6)}
             </div>
           </label>
           <input
@@ -195,8 +199,12 @@ export default function TradeForm({ prices, onTrade, cryptoBalance, cashBalance 
           <div className="bg-gray-100 p-3 rounded-lg text-sm text-gray-800">
             <p>
               {tradeAmount
-                ? `${t("tradeValueCalculate")} ${(parseFloat(tradeAmount) / currentPrice).toFixed(6)}`
-                : `${t("tradePriceCalculate")} ${(parseFloat(cryptoAmount) * currentPrice).toFixed(2)} ${t("USD")}`}
+                ? `${t("tradeValueCalculate")} ${(
+                    parseFloat(tradeAmount) / currentPrice
+                  ).toFixed(6)}`
+                : `${t("tradePriceCalculate")} ${(
+                    parseFloat(cryptoAmount) * currentPrice
+                  ).toFixed(2)} ${t("USD")}`}
             </p>
           </div>
         )}
