@@ -23,7 +23,6 @@ export default function LoginForm() {
     setLoading(true);
     setError(null);
 
-    // ورود کاربر
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -36,7 +35,6 @@ export default function LoginForm() {
       return;
     }
 
-    // دریافت session مطمئن برای ادامه
     const { data: sessionData, error: sessionError } =
       await supabase.auth.getSession();
 
@@ -46,9 +44,9 @@ export default function LoginForm() {
       setLoading(false);
       return;
     }
-
-    // همه چیز اوکی: انتقال به اسپات
-    router.replace("/spot");
+    setTimeout(() => {
+      router.replace("/spot");
+    }, 100);
   };
 
   if (loading) return <LoadPage />;

@@ -14,36 +14,49 @@ import {
   setOrdersState,
   openModal,
   closeModal,
-  // LivePrices,
-  Balances,
-  TradeForm,
-  // OrderList,
   useTranslations,
-  RootState,
+  // RootState,
   supabase,
   useBalanceSync,
   dynamic,
 } from "./imports";
+import { useUser } from "@supabase/auth-helpers-react";
+
+// type CryptoAsset = "bitcoin" | "ethereum" | "cardano";
+
 const Modal = dynamic(() => import("@/src/components/modal"), { ssr: false });
-const OrderList = dynamic(() => import("@/src/view/spot/orderList"), {
-  loading: () => <p>Loading orders...</p>,
-});
 const LivePrices = dynamic(() => import("@/src/view/spot/livePrices"), {
-  loading: () => <div>در حال دریافت قیمت‌ها...</div>,
   ssr: false,
+  loading: () => <div className="text-center">در حال دریافت قیمت‌ها...</div>,
 });
+const Balances = dynamic(() => import("@/src/view/spot/balances"), {
+  ssr: false,
+  loading: () => <div className="text-center">در حال دریافت موجودی‌ها...</div>,
+});
+const TradeForm = dynamic(() => import("@/src/view/spot/tradeForm"), {
+  ssr: false,
+  loading: () => (
+    <div className="text-center">در حال بارگذاری فرم معامله...</div>
+  ),
+});
+const OrderList = dynamic(() => import("@/src/view/spot/orderList"), {
+  ssr: false,
+  loading: () => <div className="text-center">در حال بارگذاری سفارش‌ها...</div>,
+});
+
 function Spot() {
   const t = useTranslations();
   const dispatch = useDispatch();
+  const user = useUser();
 
   const { bitcoin, ethereum, cardano } = useSelector(
-    (state: RootState) => state.prices
+    (state) => state.prices //: RootState
   );
   const { cashBalance, cryptoBalance } = useSelector(
-    (state: RootState) => state.balances
+    (state) => state.balances //: RootState
   );
-  const orders = useSelector((state: RootState) => state.orders);
-  const { isOpen, message } = useSelector((state: RootState) => state.modal);
+  const orders = useSelector((state) => state.orders); //: RootState
+  const { isOpen, message } = useSelector((state) => state.modal); //: RootState
 
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [ordersError, setOrdersError] = useState<string | null>(null);
@@ -96,45 +109,53 @@ function Spot() {
     return () => clearInterval(interval);
   }, [dispatch]);
 
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const fetchOrders = async () => {
+      try {
+        setLoadingOrders(true);
+        const { data, error } = await supabase
+          .from("orders")
+          .select("id, type, asset, amount, price")
+          .eq("user_id", user.id)
+          .order("id", { ascending: false });
+
+        if (error) {
+          console.error("Fetch error:", error);
+          setOrdersError(t("fetchOrdersError"));
+        } else {
+          dispatch(setOrdersState(data || []));
+        }
+      } catch (err) {
+        console.error("Unexpected fetch error:", err);
+        setOrdersError(t("unknownError"));
+      } finally {
+        setLoadingOrders(false);
+      }
+    };
+
+    const timer = setTimeout(fetchOrders, 100);
+    return () => clearTimeout(timer);
+  }, [dispatch, user?.id, t]);
+
   const handleTrade = async (
-    type: "buy" | "sell",
-    asset: string,
-    amount: number
+    // type: "buy" | "sell",
+    // asset: CryptoAsset,
+    // amount: number
   ) => {
-    let price: number;
-
-    if (asset === "bitcoin") price = bitcoin;
-    else if (asset === "ethereum") price = ethereum;
-    else if (asset === "cardano") price = cardano;
-    else {
-      dispatch(openModal(t("unknownCrypto")));
-      return;
-    }
-
+    const prices= { bitcoin, ethereum, cardano };//: Record<CryptoAsset, number> 
+    const price = prices[asset];
     const cost = price * amount;
 
-    if (type === "buy" && cost > cashBalance) {
-      dispatch(openModal(t("notEnoughCash")));
-      return;
-    }
+    if (type === "buy" && cost > cashBalance)
+      return dispatch(openModal(t("notEnoughCash")));
 
     if (
-      type === "sell" &&
-      (!cryptoBalance[asset] || cryptoBalance[asset] < amount)
-    ) {
-      dispatch(openModal(t("notEnoughCrypto")));
-      return;
-    }
-
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-    if (sessionError || !session) {
-      console.error("خطا در دریافت سشن:", sessionError);
-      return;
-    }
-    const userId = session.user.id;
+      !cryptoBalance[asset] ||
+      (type === "sell" && cryptoBalance[asset] < amount)
+    )
+      return dispatch(openModal(t("notEnoughCrypto")));
 
     const updatedCash =
       type === "buy" ? cashBalance - cost : cashBalance + cost;
@@ -146,9 +167,9 @@ function Spot() {
           : (cryptoBalance[asset] || 0) - amount,
     };
 
-    const { error: insertError } = await supabase.from("orders").insert([
+    const { error: orderError } = await supabase.from("orders").insert([
       {
-        user_id: userId,
+        user_id: user?.id,
         type,
         asset,
         amount,
@@ -156,13 +177,12 @@ function Spot() {
       },
     ]);
 
-    if (insertError) {
-      console.error("خطا در ذخیره سفارش:", insertError);
-      dispatch(openModal(t("orderFailed")));
-      return;
+    if (orderError) {
+      console.error("Order error:", orderError);
+      return dispatch(openModal(t("orderFailed")));
     }
 
-    const { error: updateError } = await supabase
+    const { error: balanceError } = await supabase
       .from("profiles")
       .update({
         cash_balance: updatedCash,
@@ -170,17 +190,19 @@ function Spot() {
         ethereum_balance: updatedCrypto.ethereum,
         cardano_balance: updatedCrypto.cardano,
       })
-      .eq("id", userId);
+      .eq("id", user?.id);
 
-    if (updateError) {
-      console.error("خطا در ذخیره موجودی جدید:", updateError);
-      dispatch(openModal(t("balanceUpdateFailed")));
-      return;
+    if (balanceError) {
+      console.error("Balance update error:", balanceError);
+      return dispatch(openModal(t("balanceUpdateFailed")));
     }
 
     dispatch(updateCashBalance(updatedCash));
     dispatch(
-      updateCryptoBalance({ asset, amount: type === "buy" ? amount : -amount })
+      updateCryptoBalance({
+        asset,
+        amount: type === "buy" ? amount : -amount,
+      })
     );
     dispatch(
       addOrder({
@@ -191,51 +213,8 @@ function Spot() {
         price,
       })
     );
-
     dispatch(openModal(t("tradeSuccess")));
   };
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLoadingOrders(true);
-        setOrdersError(null);
-
-        const {
-          data: { session },
-          error: sessionError,
-        } = await supabase.auth.getSession();
-        if (sessionError || !session) {
-          console.error("خطا در دریافت سشن:", sessionError);
-          setOrdersError(t("authError"));
-          setLoadingOrders(false);
-          return;
-        }
-
-        const userId = session.user.id;
-
-        const { data: ordersData, error: ordersError } = await supabase
-          .from("orders")
-          .select("id, type, asset, amount, price")
-          .eq("user_id", userId)
-          .order("id", { ascending: false });
-
-        if (ordersError) {
-          console.error("خطا در دریافت سفارشات:", ordersError);
-          setOrdersError(t("fetchOrdersError"));
-        } else if (ordersData) {
-          dispatch(setOrdersState(ordersData));
-        }
-      } catch (err) {
-        console.error("خطای ناشناخته در دریافت سفارشات:", err);
-        setOrdersError(t("unknownError"));
-      } finally {
-        setLoadingOrders(false);
-      }
-    };
-
-    fetchOrders();
-  }, [dispatch, t]);
 
   return (
     <>
