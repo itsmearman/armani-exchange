@@ -32,23 +32,6 @@ const Modal = dynamic(() => import("@/src/components/modal"), { ssr: false });
 function Spot() {
   const t = useTranslations();
   const dispatch = useDispatch();
-
-  const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (!data.session) {
-        router.replace("/login");
-      } else {
-        setIsLoading(false);
-      }
-    };
-    checkSession();
-  }, []);
-
-  if (isLoading) return <LoadPage />;
-
   const { bitcoin, ethereum, cardano } = useSelector(
     (state: RootState) => state.prices
   );
@@ -249,6 +232,22 @@ function Spot() {
 
     fetchOrders();
   }, [dispatch, t]);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        router.replace("/login");
+      } else {
+        setIsLoading(false);
+      }
+    };
+    checkSession();
+  }, []);
+
+  if (isLoading) return <LoadPage />;
 
   return (
     <>
