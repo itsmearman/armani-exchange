@@ -14,18 +14,24 @@ import {
   setOrdersState,
   openModal,
   closeModal,
-  LivePrices,
+  // LivePrices,
   Balances,
   TradeForm,
-  OrderList,
+  // OrderList,
   useTranslations,
   RootState,
   supabase,
   useBalanceSync,
   dynamic,
 } from "./imports";
-const Modal = dynamic(() => import('@/src/components/modal'), { ssr: false })
-
+const Modal = dynamic(() => import("@/src/components/modal"), { ssr: false });
+const OrderList = dynamic(() => import("@/src/view/spot/orderList"), {
+  loading: () => <p>Loading orders...</p>,
+});
+const LivePrices = dynamic(() => import("@/src/view/spot/livePrices"), {
+  loading: () => <div>در حال دریافت قیمت‌ها...</div>,
+  ssr: false,
+});
 function Spot() {
   const t = useTranslations();
   const dispatch = useDispatch();
@@ -72,11 +78,13 @@ function Spot() {
         const res = await fetch("/api/prices");
         const data = await res.json();
 
-        dispatch(updatePrices({
-          bitcoin: data.bitcoin.usd,
-          ethereum: data.ethereum.usd,
-          cardano: data.cardano.usd
-        }));
+        dispatch(
+          updatePrices({
+            bitcoin: data.bitcoin.usd,
+            ethereum: data.ethereum.usd,
+            cardano: data.cardano.usd,
+          })
+        );
       } catch (err) {
         console.error("Error fetching prices:", err);
       }
@@ -88,7 +96,11 @@ function Spot() {
     return () => clearInterval(interval);
   }, [dispatch]);
 
-  const handleTrade = async (type: "buy" | "sell", asset: string, amount: number) => {
+  const handleTrade = async (
+    type: "buy" | "sell",
+    asset: string,
+    amount: number
+  ) => {
     let price: number;
 
     if (asset === "bitcoin") price = bitcoin;
@@ -106,24 +118,32 @@ function Spot() {
       return;
     }
 
-    if (type === "sell" && (!cryptoBalance[asset] || cryptoBalance[asset] < amount)) {
+    if (
+      type === "sell" &&
+      (!cryptoBalance[asset] || cryptoBalance[asset] < amount)
+    ) {
       dispatch(openModal(t("notEnoughCrypto")));
       return;
     }
 
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
     if (sessionError || !session) {
       console.error("خطا در دریافت سشن:", sessionError);
       return;
     }
     const userId = session.user.id;
 
-    const updatedCash = type === "buy" ? cashBalance - cost : cashBalance + cost;
+    const updatedCash =
+      type === "buy" ? cashBalance - cost : cashBalance + cost;
     const updatedCrypto = {
       ...cryptoBalance,
-      [asset]: type === "buy"
-        ? (cryptoBalance[asset] || 0) + amount
-        : (cryptoBalance[asset] || 0) - amount,
+      [asset]:
+        type === "buy"
+          ? (cryptoBalance[asset] || 0) + amount
+          : (cryptoBalance[asset] || 0) - amount,
     };
 
     const { error: insertError } = await supabase.from("orders").insert([
@@ -133,7 +153,7 @@ function Spot() {
         asset,
         amount,
         price,
-      }
+      },
     ]);
 
     if (insertError) {
@@ -142,7 +162,8 @@ function Spot() {
       return;
     }
 
-    const { error: updateError } = await supabase.from("profiles")
+    const { error: updateError } = await supabase
+      .from("profiles")
       .update({
         cash_balance: updatedCash,
         bitcoin_balance: updatedCrypto.bitcoin,
@@ -158,14 +179,18 @@ function Spot() {
     }
 
     dispatch(updateCashBalance(updatedCash));
-    dispatch(updateCryptoBalance({ asset, amount: type === "buy" ? amount : -amount }));
-    dispatch(addOrder({
-      id: Date.now(),
-      type,
-      asset,
-      amount,
-      price,
-    }));
+    dispatch(
+      updateCryptoBalance({ asset, amount: type === "buy" ? amount : -amount })
+    );
+    dispatch(
+      addOrder({
+        id: Date.now(),
+        type,
+        asset,
+        amount,
+        price,
+      })
+    );
 
     dispatch(openModal(t("tradeSuccess")));
   };
@@ -176,7 +201,10 @@ function Spot() {
         setLoadingOrders(true);
         setOrdersError(null);
 
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
         if (sessionError || !session) {
           console.error("خطا در دریافت سشن:", sessionError);
           setOrdersError(t("authError"));
@@ -191,7 +219,6 @@ function Spot() {
           .select("id, type, asset, amount, price")
           .eq("user_id", userId)
           .order("id", { ascending: false });
-
 
         if (ordersError) {
           console.error("خطا در دریافت سفارشات:", ordersError);
@@ -218,7 +245,9 @@ function Spot() {
         message={message}
       />
       <div className="flex pt-[7rem] flex-col items-center space-y-6 md:pt-24">
-        <h1 className="text-xl sm:text-2xl font-bold text-center">{t("tradeSystem")}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-center">
+          {t("tradeSystem")}
+        </h1>
         <Balances cashBalance={cashBalance} cryptoBalance={cryptoBalance} />
         <LivePrices prices={{ bitcoin, ethereum, cardano }} />
         <TradeForm
