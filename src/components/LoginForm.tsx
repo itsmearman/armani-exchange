@@ -3,7 +3,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import LoadPage from "./Loading"; // فرض کردم این یک صفحه لودینگ سبک داری
+import LoadPage from "./Loading";
 import { useTranslations } from "next-intl";
 
 export default function LoginForm() {
@@ -45,7 +45,7 @@ export default function LoginForm() {
       return;
     }
     setTimeout(() => {
-      router.replace("/spot");
+      router.replace("/");
     }, 100);
   };
 
