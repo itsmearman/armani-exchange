@@ -45,7 +45,7 @@ export default function LoginForm() {
       return;
     }
     setTimeout(() => {
-      router.replace("/");
+      window.location.href = "/";
     }, 100);
   };
 
