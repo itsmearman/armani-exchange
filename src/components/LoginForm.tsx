@@ -5,8 +5,11 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import LoadPage from "./Loading";
 import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 export default function LoginForm() {
+  const searchParams = useSearchParams();
   const t = useTranslations();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +19,11 @@ export default function LoginForm() {
 
   useEffect(() => {
     router.prefetch("/spot");
-  }, [router]);
+    const shouldShowToast = searchParams.get("emailCheck") === "true";
+    if (shouldShowToast) {
+      toast.success("لطفاً ایمیل خود را بررسی و تأیید کنید.");
+    }
+  }, [router, searchParams]);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
