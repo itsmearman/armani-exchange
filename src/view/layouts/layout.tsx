@@ -6,7 +6,8 @@ import { getLocale, getMessages } from "next-intl/server";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import Client from "./client";
-import NextTopLoader from 'nextjs-toploader';
+import NextTopLoader from "nextjs-toploader";
+import { Toaster } from "react-hot-toast";
 
 export default async function RootLayout({
   children,
@@ -19,12 +20,17 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={isRtl}>
       <link rel="manifest" href="/manifest.json" />
-      <body className={`${locale == "fa" ? "font-IranSans" : "font-English"} bg-white dark:bg-gray-900 text-black dark:text-white`}>
+      <body
+        className={`${
+          locale == "fa" ? "font-IranSans" : "font-English"
+        } bg-white dark:bg-gray-900 text-black dark:text-white`}
+      >
         <NextIntlClientProvider messages={messages}>
           <SpeedInsights />
           <Analytics />
+          <Toaster position="top-center" />
           <Client>
-            <NextTopLoader/>
+            <NextTopLoader />
             <Navbar />
             {children}
             <Footer />

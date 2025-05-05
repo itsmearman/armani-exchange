@@ -40,7 +40,7 @@ export default function SignUpForm() {
     } else {
       window.location.reload();
     }
-    router.push("/spot");
+    router.push("/login?emailCheck=true");
   };
   if (loading) return <LoadPage />;
 
