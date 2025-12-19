@@ -32,13 +32,21 @@ export function useBalanceSync() {
         .eq("id", session.user.id)
         .single();
 
-      if (data && !error) {
-        dispatch(updateCashBalance(data.cash_balance || 0));
+      if (error) {
+        console.error("Error fetching profile:", error);
+        return;
+      }
+
+      if (data) {
+        // Type assertion برای داده‌های داینامیک
+        const profileData = data as unknown as Record<string, number | null>;
+        
+        dispatch(updateCashBalance((profileData.cash_balance as number) || 0));
         
         // به‌روزرسانی موجودی تمام ارزها به صورت داینامیک
         getCryptoNames().forEach((cryptoName) => {
-          const balanceKey = `${cryptoName}_balance` as keyof typeof data;
-          const balance = (data[balanceKey] as number) || 0;
+          const balanceKey = `${cryptoName}_balance`;
+          const balance = (profileData[balanceKey] as number) || 0;
           // تنظیم مقدار دقیق
           dispatch(setCryptoBalance({ 
             asset: cryptoName, 
