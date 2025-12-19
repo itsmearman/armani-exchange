@@ -12,11 +12,11 @@ import {
   // Notification,
   // Modal,
   useState,
+  useEffect,
   useTranslations,
   ThemeSwitcher,
   LocaleSwitcher,
 } from "./imports";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
@@ -71,11 +71,7 @@ export default function Navbar() {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, []);
-
-  // بررسی مجدد وضعیت کاربر در هر تغییر مسیر
-  useEffect(() => {
-    fetchUserProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // خروج از حساب

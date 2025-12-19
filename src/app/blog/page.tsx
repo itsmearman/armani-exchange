@@ -1,5 +1,6 @@
 // pages/blog.tsx
 import React from "react";
+import Image from "next/image";
 
 interface Post {
   id: number;
@@ -49,9 +50,11 @@ const BlogPage: React.FC = () => {
             className="rounded-lg shadow-lg shadow-gray-500 overflow-hidden hover:shadow-xl transition-shadow duration-300 "
           >
             {post.imageUrl && (
-              <img
-                src={post?.imageUrl}
+              <Image
+                src={post.imageUrl}
                 alt={post.title}
+                width={400}
+                height={192}
                 className="w-full h-48 object-cover"
               />
             )}

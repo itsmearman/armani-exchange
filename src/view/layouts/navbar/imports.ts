@@ -10,7 +10,7 @@ import { useWidth } from "@/src/components/windowDimensions";
 import { ProfileCircle, Notification } from "iconsax-react";
 import LocaleSwitcher from "@/src/components/locale/LocaleSwitcher";
 import Modal from "@/src/components/modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import ThemeSwitcher from "@/src/components/theme/ThemeSwitcher";
 
@@ -28,6 +28,7 @@ export {
   LocaleSwitcher,
   Modal,
   useState,
+  useEffect,
   useTranslations,
   ThemeSwitcher,
 };

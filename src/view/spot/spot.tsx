@@ -252,7 +252,7 @@ function Spot() {
       }
     };
     checkSession();
-  }, []);
+  }, [router]);
 
   if (isLoading) return <LoadPage />;
 
