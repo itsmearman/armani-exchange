@@ -26,15 +26,14 @@ import {
   dynamic,
   useRouter,
 } from "./imports";
+import { getCryptoNames, SUPPORTED_CRYPTOCURRENCIES } from "@/src/config/cryptocurrencies";
 
 const Modal = dynamic(() => import("@/src/components/modal"), { ssr: false });
 
 function Spot() {
   const t = useTranslations();
   const dispatch = useDispatch();
-  const { bitcoin, ethereum, cardano } = useSelector(
-    (state: RootState) => state.prices
-  );
+  const prices = useSelector((state: RootState) => state.prices);
   const { cashBalance, cryptoBalance } = useSelector(
     (state: RootState) => state.balances
   );
@@ -62,11 +61,8 @@ function Spot() {
       JSON.stringify({ cashBalance, cryptoBalance })
     );
     localStorage.setItem("orders", JSON.stringify(orders));
-    localStorage.setItem(
-      "prices",
-      JSON.stringify({ bitcoin, ethereum, cardano })
-    );
-  }, [cashBalance, cryptoBalance, orders, bitcoin, ethereum, cardano]);
+    localStorage.setItem("prices", JSON.stringify(prices));
+  }, [cashBalance, cryptoBalance, orders, prices]);
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -74,13 +70,15 @@ function Spot() {
         const res = await fetch("/api/prices");
         const data = await res.json();
 
-        dispatch(
-          updatePrices({
-            bitcoin: data.bitcoin.usd,
-            ethereum: data.ethereum.usd,
-            cardano: data.cardano.usd,
-          })
-        );
+        // تبدیل داده‌های API به فرمت مورد نیاز به صورت داینامیک
+        const priceUpdates: { [key: string]: number } = {};
+        SUPPORTED_CRYPTOCURRENCIES.forEach((crypto) => {
+          if (data[crypto.id] && data[crypto.id].usd) {
+            priceUpdates[crypto.name] = data[crypto.id].usd;
+          }
+        });
+
+        dispatch(updatePrices(priceUpdates));
       } catch (err) {
         console.error("Error fetching prices:", err);
       }
@@ -97,13 +95,16 @@ function Spot() {
     asset: string,
     amount: number
   ) => {
-    let price: number;
-
-    if (asset === "bitcoin") price = bitcoin;
-    else if (asset === "ethereum") price = ethereum;
-    else if (asset === "cardano") price = cardano;
-    else {
+    // بررسی وجود ارز در لیست پشتیبانی شده
+    const crypto = SUPPORTED_CRYPTOCURRENCIES.find((c) => c.name === asset);
+    if (!crypto) {
       dispatch(openModal(t("unknownCrypto")));
+      return;
+    }
+
+    const price = prices[asset] || 0;
+    if (price <= 0) {
+      dispatch(openModal(t("priceNotAvailable")));
       return;
     }
 
@@ -158,14 +159,20 @@ function Spot() {
       return;
     }
 
+    // ساخت object برای update به صورت داینامیک
+    const updateData: { [key: string]: any } = {
+      cash_balance: updatedCash,
+    };
+    
+    // اضافه کردن موجودی هر ارز به صورت داینامیک
+    getCryptoNames().forEach((cryptoName) => {
+      const balanceKey = `${cryptoName}_balance`;
+      updateData[balanceKey] = updatedCrypto[cryptoName] || 0;
+    });
+
     const { error: updateError } = await supabase
       .from("profiles")
-      .update({
-        cash_balance: updatedCash,
-        bitcoin_balance: updatedCrypto.bitcoin,
-        ethereum_balance: updatedCrypto.ethereum,
-        cardano_balance: updatedCrypto.cardano,
-      })
+      .update(updateData)
       .eq("id", userId);
 
     if (updateError) {
@@ -261,9 +268,9 @@ function Spot() {
           {t("tradeSystem")}
         </h1>
         <Balances cashBalance={cashBalance} cryptoBalance={cryptoBalance} />
-        <LivePrices prices={{ bitcoin, ethereum, cardano }} />
+        <LivePrices prices={prices} />
         <TradeForm
-          prices={{ bitcoin, ethereum, cardano }}
+          prices={prices}
           onTrade={handleTrade}
           cryptoBalance={cryptoBalance}
           cashBalance={cashBalance}
@@ -275,7 +282,7 @@ function Spot() {
         ) : (
           <OrderList
             orders={orders}
-            livePrices={{ bitcoin, ethereum, cardano }}
+            livePrices={prices}
           />
         )}
       </div>

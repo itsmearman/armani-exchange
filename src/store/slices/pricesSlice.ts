@@ -1,15 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getCryptoNames } from "@/src/config/cryptocurrencies";
 
 // تغییر ساختار داده به یک شیء داینامیک
 interface PricesState {
   [key: string]: number;
 }
 
-const initialState: PricesState = {
-  bitcoin: 0, 
-  ethereum: 0,
-  cardano: 0,
-};
+// ایجاد initial state داینامیک بر اساس لیست ارزها
+const initialPrices: PricesState = {};
+getCryptoNames().forEach((name) => {
+  initialPrices[name] = 0;
+});
+
+const initialState: PricesState = initialPrices;
 
 const pricesSlice = createSlice({
   name: "prices",

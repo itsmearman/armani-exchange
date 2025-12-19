@@ -38,15 +38,15 @@ const posts: Post[] = [
 
 const BlogPage: React.FC = () => {
   return (
-    <div className="container mx-auto px-4 pt-[7rem]">
-      <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">
+    <div className="container mx-auto px-4 pt-[7rem] py-24">
+      <h1 className="text-4xl font-bold mb-8 text-center text-gray-800 dark:text-white">
         وبلاگ ما
       </h1>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map((post) => (
           <div
             key={post.id}
-            className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+            className="rounded-lg shadow-lg shadow-gray-500 overflow-hidden hover:shadow-xl transition-shadow duration-300 "
           >
             {post.imageUrl && (
               <img
@@ -56,11 +56,11 @@ const BlogPage: React.FC = () => {
               />
             )}
             <div className="p-4">
-              <h2 className="text-xl font-semibold mb-2 text-gray-800">
+              <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white">
                 {post.title}
               </h2>
-              <p className="text-gray-600 mb-4">{post.excerpt}</p>
-              <p className="text-sm text-gray-500">{post.date}</p>
+              <p className="text-gray-600 mb-4 dark:text-white">{post.excerpt}</p>
+              <p className="text-sm text-gray-500 dark:text-white">{post.date}</p>
             </div>
           </div>
         ))}

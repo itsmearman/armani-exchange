@@ -1,13 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getCryptoNames } from "@/src/config/cryptocurrencies";
 
 interface BalancesState {
   cashBalance: number;
-  cryptoBalance: { bitcoin: number; ethereum: number; cardano: number };
+  cryptoBalance: { [key: string]: number };
 }
+
+// ایجاد initial state داینامیک بر اساس لیست ارزها
+const initialCryptoBalance: { [key: string]: number } = {};
+getCryptoNames().forEach((name) => {
+  initialCryptoBalance[name] = 0;
+});
 
 const initialState: BalancesState = {
   cashBalance: 0,
-  cryptoBalance: { bitcoin: 0, ethereum: 0 , cardano: 0},
+  cryptoBalance: initialCryptoBalance,
 };
 
 const balancesSlice = createSlice({
@@ -19,7 +26,20 @@ const balancesSlice = createSlice({
     },
     updateCryptoBalance(
       state,
-      action: PayloadAction<{ asset: "bitcoin" | "ethereum" | "cardano"; amount: number }>
+      action: PayloadAction<{ asset: string; amount: number }>
+    ) {
+      if (!state.cryptoBalance[action.payload.asset]) {
+        state.cryptoBalance[action.payload.asset] = 0;
+      }
+      state.cryptoBalance[action.payload.asset] += action.payload.amount;
+      // اطمینان از اینکه مقدار منفی نشود
+      if (state.cryptoBalance[action.payload.asset] < 0) {
+        state.cryptoBalance[action.payload.asset] = 0;
+      }
+    },
+    setCryptoBalance(
+      state,
+      action: PayloadAction<{ asset: string; amount: number }>
     ) {
       state.cryptoBalance[action.payload.asset] = action.payload.amount;
     },
@@ -29,7 +49,7 @@ const balancesSlice = createSlice({
   },
 });
 
-export const { updateCashBalance, updateCryptoBalance, setBalancesState } =
+export const { updateCashBalance, updateCryptoBalance, setCryptoBalance, setBalancesState } =
   balancesSlice.actions;
 
 export default balancesSlice.reducer;
