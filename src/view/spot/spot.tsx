@@ -160,7 +160,7 @@ function Spot() {
     }
 
     // ساخت object برای update به صورت داینامیک
-    const updateData: { [key: string]: any } = {
+    const updateData: { [key: string]: number } = {
       cash_balance: updatedCash,
     };
     
