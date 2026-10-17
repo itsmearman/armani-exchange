@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Signup error:", error);
     const message =
-      error instanceof Error && error.message.includes("UPSTASH")
+      error instanceof Error && error.message.includes("DATABASE_URL")
         ? "Server storage is not configured"
         : "Signup failed";
     return NextResponse.json({ error: message }, { status: 500 });
