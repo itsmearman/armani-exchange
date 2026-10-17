@@ -1,54 +1,50 @@
-# **Armani Exchange :** <br>
+# Armani Exchange
 
-## Programming Language(s) Used:
-- TypeScript
+Next.js crypto exchange simulator with a self-contained backend (no Supabase).
 
-## Framework(s) Used:
-- Next.js
+## Stack
 
-## Backend & Database:
-- Supabase (PostgreSQL database, authentication, and real-time functionality)
+- **TypeScript** + **Next.js** (App Router)
+- **Next.js API Routes** for auth, profile, orders, and live prices proxy
+- **JSON file database** (`data/db.json`)
+- **JWT httpOnly cookies** (`jose`) + **bcryptjs** password hashing
+- **Redux Toolkit** for client trading state
+- **next-intl** for FA/EN localization
+- **IRANSansX FaNum** fonts for Persian numerals
 
-## Internationalization:
-- next-intl (for multilingual page translations)
+## Features
 
-## Project Objective:
-The goal of this project is to create a simple simulator for a digital currency exchange platform, allowing users to buy and sell various cryptocurrencies. This exchange simulates real-time market data and enables users to perform transactions based on live market conditions.
+1. Buy and sell supported cryptocurrencies with live CoinGecko prices
+2. Account balances and order history
+3. Email/password signup & login (starts with **$150,000** test cash)
+4. Responsive UI + dark mode
+5. Multi-language support (FA / EN)
 
-## Key Features:
-1. **Buy and Sell Cryptocurrencies**: Users can buy and sell digital currencies by selecting specific cryptocurrencies and specifying the amount for the transaction.
-2. **User Account Overview**: Users can view their account balance and transaction history, tracking their cryptocurrency holdings.
-3. **Responsive Design**: The project is designed to be responsive, ensuring it works seamlessly across different devices, including mobile and desktop screens.
-4. **User Profile**: Users can have own profile and sign in with email (via Supabase Auth) and receive 150,000 $ test money.
-5. **Multi-language Support**: Internationalization support using next-intl for translating pages.
-6. **Real-time Data**: Supabase real-time functionality for live market updates.
+## Getting started
 
-## Technical Features:
-- **Next.js**: Utilized to build a Server-Side Rendered (SSR) application, ensuring fast initial loading and better SEO performance.
-- **TypeScript**: Used for type safety and better code structure, reducing the likelihood of runtime errors.
-- **Supabase**: Provides backend services including PostgreSQL database, authentication, and real-time subscriptions.
-- **next-intl**: Handles internationalization and localization of the application.
-- **Vercel Deployment**: The project is deployed on Vercel, providing an easy and fast way to host the application online.
-- **GitHub for Version Control**: The project is version-controlled on GitHub, allowing for easy collaboration and tracking of changes.
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
 
-## Implementation Notes:
-- **Supabase Integration**:
-  - User authentication via Supabase Auth
-  - PostgreSQL database for storing user data, transactions, and cryptocurrency information
-  - Real-time subscriptions for live market data updates
-- **next-intl Setup**:
-  - Locale-based routing (e.g., /en, /fa)
-  - Translation files for each supported language
-  - Server-side rendering of translated content
+Open [http://localhost:3000](http://localhost:3000).
 
-## Project Links:
-- **Live Project (Deployed on Vercel)**: [armaniexchange.vercel.app](https://armaniexchange.vercel.app)
-- **GitHub Repository**: [itsmearman/armani-exchange](https://github.com/itsmearman/armani-exchange)
+## API overview
 
-<br>
-also if you have suggestion or criticism :
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/auth/signup` | Create account + session |
+| POST | `/api/auth/login` | Login |
+| POST | `/api/auth/logout` | Logout |
+| GET | `/api/auth/me` | Current user |
+| GET | `/api/profile` | Balances + profile |
+| GET | `/api/orders` | User orders |
+| POST | `/api/orders` | Place trade |
+| GET | `/api/prices` | Live prices proxy |
 
-<a href="mailto: arman.t.tehrani@gmail.com">![Gmail](https://img.shields.io/badge/Gmail-D14836?logo=gmail&logoColor=white)</a>
-<a href="https://www.linkedin.com/in/arman-tabibzade-tehrani-00b414220">![LinkedIn](https://img.shields.io/badge/Linkedin-%230077B5.svg?logo=linkedin&logoColor=white)</a>
+## Notes
 
-**[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=25C58E&background=284EFF00&random=true&width=800&lines=Armani+Exchange+is+getting+better%2C+I+am+working+on+it)](https://git.io/typing-svg)**
+- Session cookie name: `ae_session`
+- Local user data is stored in `data/db.json` (gitignored)
+- Set a strong `AUTH_SECRET` before deploying

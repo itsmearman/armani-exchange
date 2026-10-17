@@ -6,6 +6,7 @@ export interface Cryptocurrency {
   name: string; // نام انگلیسی برای استفاده در کد
   displayName: string; // نام نمایشی
   symbol: string; // نماد (BTC, ETH, ...)
+  tradingViewSymbol: string;
 }
 
 // لیست ارزهای پشتیبانی شده
@@ -15,48 +16,56 @@ export const SUPPORTED_CRYPTOCURRENCIES: Cryptocurrency[] = [
     name: "bitcoin",
     displayName: "Bitcoin",
     symbol: "BTC",
+    tradingViewSymbol: "BINANCE:BTCUSDT",
   },
   {
     id: "ethereum",
     name: "ethereum",
     displayName: "Ethereum",
     symbol: "ETH",
+    tradingViewSymbol: "BINANCE:ETHUSDT",
   },
   {
     id: "cardano",
     name: "cardano",
     displayName: "Cardano",
     symbol: "ADA",
+    tradingViewSymbol: "BINANCE:ADAUSDT",
   },
   {
     id: "solana",
     name: "solana",
     displayName: "Solana",
     symbol: "SOL",
+    tradingViewSymbol: "BINANCE:SOLUSDT",
   },
   {
     id: "binancecoin",
     name: "binancecoin",
     displayName: "Binance Coin",
     symbol: "BNB",
+    tradingViewSymbol: "BINANCE:BNBUSDT",
   },
   {
     id: "ripple",
     name: "ripple",
     displayName: "Ripple",
     symbol: "XRP",
+    tradingViewSymbol: "BINANCE:XRPUSDT",
   },
   {
     id: "polkadot",
     name: "polkadot",
     displayName: "Polkadot",
     symbol: "DOT",
+    tradingViewSymbol: "BINANCE:DOTUSDT",
   },
   {
     id: "dogecoin",
     name: "dogecoin",
     displayName: "Dogecoin",
     symbol: "DOGE",
+    tradingViewSymbol: "BINANCE:DOGEUSDT",
   },
 ];
 

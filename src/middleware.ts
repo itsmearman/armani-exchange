@@ -1,22 +1,17 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { SESSION_COOKIE } from "@/lib/constants";
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
+  const token = req.cookies.get(SESSION_COOKIE)?.value;
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  if (!session && req.nextUrl.pathname.startsWith('/spot')) {
-    return NextResponse.redirect(new URL('/login', req.url))
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  return res
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/spot'],
-}
+  matcher: ["/spot", "/assets", "/profile"],
+};

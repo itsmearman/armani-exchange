@@ -1,48 +1,49 @@
 "use client";
+
 import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
 import LoadPage from "./Loading";
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 export default function SignUpForm() {
   const t = useTranslations();
+  const { signup, user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
   useEffect(() => {
     router.prefetch("/spot");
   }, [router]);
 
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace("/");
+    }
+  }, [authLoading, user, router]);
+
   const handleSignUp = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    if (signUpError) return setError(signUpError.message);
-
-    const user = data.user;
-    if (!user) return setError("خطا در دریافت اطلاعات کاربر");
-
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .insert({ id: user.id, username, email: user.email });
-
-    if (profileError) {
+    try {
+      await signup(username, email, password);
+      router.replace("/");
+      router.refresh();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Signup failed";
+      setError(message);
       setLoading(false);
-      return setError("ثبت نام انجام شد اما خطا در ذخیره نام کاربری");
-    } else {
-      window.location.reload();
     }
-    router.push("/login?emailCheck=true");
   };
-  if (loading) return <LoadPage />;
+
+  if (loading || authLoading) return <LoadPage />;
 
   return (
     <div className="max-w-md mx-auto mt-28">
@@ -86,8 +87,7 @@ export default function SignUpForm() {
             className="text-blue-500 hover:text-green-500 font-bold"
             href="/login"
           >
-            {" "}
-            {t("login")}{" "}
+            {t("login")}
           </a>
         </p>
       </div>

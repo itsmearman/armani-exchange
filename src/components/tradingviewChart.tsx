@@ -1,45 +1,71 @@
-// import { useEffect } from 'react';
-// import { useWidth } from './windowDimensions';
+"use client";
 
-// export const TradingViewChart = () => {
-//   // const width = useWidth();
-//   // let w: number;
-//   // let h: number;
-//   // if(width < 768) {
-//   //   w=300;
-//   //   h=300;
-//   // }else if (width > 768) {
-//   //   w = 600;
-//   //   h = 600;
-//   // }
-//   useEffect(() => {
-//     const script = document.createElement('script');
-//     script.src = "https://s3.tradingview.com/tv.js";
-//     script.async = true;
-//     document.body.appendChild(script);
+import { useEffect, useMemo, useState } from "react";
 
-//     script.onload = () => {
-//       new window.TradingView.widget({
-//         container_id: 'technical-analysis',
-//         // width: w,
-//         // height: h,
-//         width: 900,
-//         height: 400,
-//         symbol: "BITSTAMP:BTCUSD",
-//         interval: "30",
-//         timezone: "exchange",
-//         theme: "White",
-//         style: "1",
-//         toolbar_bg: "#f1f3f6",
-//         withdateranges: false,
-//         hide_side_toolbar: true,
-//         allow_symbol_change: false,
-//         save_image: false,
-//         hideideas: true,
-//         show_popup_button: false,
-//       });
-//     };
-//   }, []);
+type TradingViewChartProps = {
+  symbol: string;
+};
 
-//   return <div id='technical-analysis' className='z-[-1]'></div>;
-// };
+export default function TradingViewChart({ symbol }: TradingViewChartProps) {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const syncTheme = () => {
+      setTheme(
+        document.documentElement.classList.contains("dark") ? "dark" : "light"
+      );
+    };
+
+    syncTheme();
+    setReady(true);
+
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const src = useMemo(() => {
+    const params = new URLSearchParams({
+      symbol,
+      interval: "60",
+      theme,
+      style: "1",
+      locale: "en",
+      timezone: "Etc/UTC",
+      enable_publishing: "false",
+      hide_side_toolbar: "true",
+      allow_symbol_change: "false",
+      save_image: "false",
+      calendar: "false",
+      withdateranges: "true",
+      studies: "[]",
+    });
+
+    return `https://s.tradingview.com/widgetembed/?${params.toString()}`;
+  }, [symbol, theme]);
+
+  return (
+    <div className="h-[320px] w-full overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950 md:h-[480px]">
+      {ready ? (
+        <iframe
+          key={`${symbol}-${theme}`}
+          title={`TradingView ${symbol}`}
+          src={src}
+          className="h-full w-full border-0"
+          allow="fullscreen"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      ) : (
+        <div className="flex h-full items-center justify-center text-sm text-gray-400">
+          Loading chart...
+        </div>
+      )}
+    </div>
+  );
+}

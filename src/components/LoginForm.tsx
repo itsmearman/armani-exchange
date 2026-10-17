@@ -2,15 +2,13 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
 import LoadPage from "./Loading";
 import { useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
-import { toast } from "react-hot-toast";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 export default function LoginForm() {
-  const searchParams = useSearchParams();
   const t = useTranslations();
+  const { login, user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -19,44 +17,30 @@ export default function LoginForm() {
 
   useEffect(() => {
     router.prefetch("/spot");
-    const shouldShowToast = searchParams.get("emailCheck") === "true";
-    if (shouldShowToast) {
-      toast.success("لطفاً ایمیل خود را بررسی و تأیید کنید.");
+  }, [router]);
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace("/");
     }
-  }, [router, searchParams]);
+  }, [authLoading, user, router]);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (signInError) {
-      console.error(signInError);
+    try {
+      await login(email, password);
+      router.replace("/");
+      router.refresh();
+    } catch {
       setError(t("invalidEmailOrPassword"));
       setLoading(false);
-      return;
     }
-
-    const { data: sessionData, error: sessionError } =
-      await supabase.auth.getSession();
-
-    if (sessionError || !sessionData.session) {
-      console.error("Error getting session:", sessionError);
-      setError(t("sessionError") || "مشکلی در ورود رخ داد.");
-      setLoading(false);
-      return;
-    }
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 100);
   };
 
-  if (loading) return <LoadPage />;
+  if (loading || authLoading) return <LoadPage />;
 
   return (
     <div className="max-w-md mx-auto mt-28 px-4">

@@ -1,59 +1,47 @@
-import { Home2, DocumentText, Profile2User, Trade } from "iconsax-react";
+import { Home2, WalletMoney, Profile2User, Trade } from "iconsax-react";
 import { useTranslations } from "next-intl";
-export default function NavbarItem() {
+import type { ComponentType } from "react";
+
+export type NavIconProps = {
+  size?: number;
+  className?: string;
+  variant?: "Linear" | "Outline" | "TwoTone" | "Bulk" | "Broken" | "Bold";
+};
+
+export type NavItem = {
+  title: string;
+  route: string;
+  Icon: ComponentType<NavIconProps>;
+};
+
+export default function useNavbarItems(): NavItem[] {
   const t = useTranslations();
+
   return [
     {
       title: t("home"),
-      img: <Home2 size={32} className="stroke-black dark:stroke-white" />,
-      imgActive: (
-        <Home2
-          size={32}
-          className="fill-blue-600 dark:fill-green-500"
-          variant="Bulk"
-        />
-      ),
       route: "/",
+      Icon: Home2,
     },
     {
-      title: t("blog"),
-      img: (
-        <DocumentText size={32} className="stroke-black dark:stroke-white" />
-      ),
-      imgActive: (
-        <DocumentText
-          size={32}
-          className="fill-blue-600 dark:fill-green-500"
-          variant="Bulk"
-        />
-      ),
-      route: "/blog",
-    },
-    {
-      title: t("aboutUs"),
-      img: (
-        <Profile2User size={32} className="stroke-black dark:stroke-white" />
-      ),
-      imgActive: (
-        <Profile2User
-          size={32}
-          className="fill-blue-600 dark:fill-green-500"
-          variant="Bulk"
-        />
-      ),
-      route: "/about-us",
+      title: t("myAssets"),
+      route: "/assets",
+      Icon: WalletMoney,
     },
     {
       title: t("trade"),
-      img: <Trade size={32} className="stroke-black dark:stroke-white" />,
-      imgActive: (
-        <Trade
-          size={32}
-          className="fill-blue-600 dark:fill-green-500"
-          variant="Bulk"
-        />
-      ),
       route: "/spot",
+      Icon: Trade,
+    },
+    {
+      title: t("aboutUs"),
+      route: "/about-us",
+      Icon: Profile2User,
     },
   ];
+}
+
+export function isNavActive(pathname: string, route: string) {
+  if (route === "/") return pathname === "/";
+  return pathname === route || pathname.startsWith(`${route}/`);
 }

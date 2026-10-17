@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect } from "react";
 import { Provider } from "react-redux";
 import { store } from "@/src/store/store";
-import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
+import { AuthProvider } from "@/src/contexts/AuthContext";
 
 export default function Client({
   children,
@@ -12,10 +12,11 @@ export default function Client({
   children: React.ReactNode;
 }>) {
   const router = useRouter();
+
   useEffect(() => {
     router.prefetch("/spot");
   }, [router]);
-  const [supabaseClient] = useState(() => createPagesBrowserClient());
+
   useEffect(() => {
     if (
       localStorage.theme === "dark" ||
@@ -27,11 +28,10 @@ export default function Client({
       document.documentElement.classList.remove("dark");
     }
   }, []);
+
   return (
     <Provider store={store}>
-      <SessionContextProvider supabaseClient={supabaseClient}>
-        {children}
-      </SessionContextProvider>
+      <AuthProvider>{children}</AuthProvider>
     </Provider>
   );
 }

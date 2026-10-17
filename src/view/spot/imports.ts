@@ -1,5 +1,4 @@
-
-import React, { useEffect ,useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePrices, setPricesState } from "@/src/store/slices/pricesSlice";
 import {
@@ -17,7 +16,6 @@ import Modal from "@/src/components/modal";
 import { useTranslations } from "next-intl";
 import { RootState } from "@/src/store/store";
 import { useRouter } from "next/navigation";
-import { supabase } from '@/lib/supabaseClient'
 import { useBalanceSync } from "@/src/hooks/useBalanceSync";
 import dynamic from "next/dynamic";
 
@@ -44,7 +42,6 @@ export {
   Modal,
   useTranslations,
   useRouter,
-  supabase,
   useBalanceSync,
   dynamic,
 };

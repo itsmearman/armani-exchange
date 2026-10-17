@@ -1,50 +1,84 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import Modal from "@/src/components/modal";
+import {
+  getCryptoByName,
+  SUPPORTED_CRYPTOCURRENCIES,
+} from "@/src/config/cryptocurrencies";
+
 interface TradeFormProps {
-  prices: { [key: string]: string | number }; // Prices of cryptocurrencies (bitcoin, ethereum)
+  prices: { [key: string]: string | number };
   onTrade: (type: "buy" | "sell", asset: string, amount: number) => void;
   cryptoBalance: {
     [key: string]: number;
   };
   cashBalance: number;
+  selectedAsset: string;
+  onSelectAsset: (asset: string) => void;
 }
+
+const PERCENTS = [25, 50, 75, 100] as const;
+
 export default function TradeForm({
   prices,
   onTrade,
   cryptoBalance,
   cashBalance,
+  selectedAsset,
+  onSelectAsset,
 }: TradeFormProps) {
   const t = useTranslations();
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
-  const [selectedAsset, setSelectedAsset] = useState<string>(
-    Object.keys(cryptoBalance)[0] || "bitcoin"
-  );
-  const [tradeAmount, setTradeAmount] = useState<string>(""); // Trade amount
-  const [cryptoAmount, setCryptoAmount] = useState<string>(""); // Cryptocurrency amount
-  const [modalMessage, setModalMessage] = useState<string>("");
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const currentPrice =
-    typeof prices[selectedAsset] === "number"
-      ? prices[selectedAsset] // If it's a number, use it directly
-      : !isNaN(parseFloat(prices[selectedAsset] as string)) // If it's a string, parse it to a number
-      ? parseFloat(prices[selectedAsset] as string)
-      : 0;
+  const [tradeAmount, setTradeAmount] = useState("");
+  const [cryptoAmount, setCryptoAmount] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleAssetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setSelectedAsset(value);
-  };
-  const handleTradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (value === "buy" || value === "sell") {
-      setTradeType(value);
+  const crypto = getCryptoByName(selectedAsset);
+  const currentPrice = useMemo(() => {
+    const raw = prices[selectedAsset];
+    const num = typeof raw === "number" ? raw : parseFloat(String(raw));
+    return Number.isFinite(num) ? num : 0;
+  }, [prices, selectedAsset]);
+
+  const estimated = useMemo(() => {
+    if (tradeAmount) {
+      const usd = parseFloat(tradeAmount);
+      if (!Number.isFinite(usd) || currentPrice <= 0) return null;
+      return {
+        qty: usd / currentPrice,
+        total: usd,
+      };
     }
+    if (cryptoAmount) {
+      const qty = parseFloat(cryptoAmount);
+      if (!Number.isFinite(qty) || currentPrice <= 0) return null;
+      return {
+        qty,
+        total: qty * currentPrice,
+      };
+    }
+    return null;
+  }, [tradeAmount, cryptoAmount, currentPrice]);
+
+  const handlePercent = (percent: number) => {
+    if (tradeType === "buy") {
+      const usd = (cashBalance * percent) / 100;
+      setTradeAmount(usd.toFixed(2));
+      setCryptoAmount("");
+      return;
+    }
+    const qty = ((cryptoBalance[selectedAsset] || 0) * percent) / 100;
+    setCryptoAmount(qty.toFixed(6));
+    setTradeAmount("");
   };
-  // Handle submit for trade
+
   const handleSubmit = () => {
-    const totalAmount = parseFloat(parseFloat(tradeAmount).toFixed(2));
-    const cryptoQty = parseFloat(parseFloat(cryptoAmount).toFixed(6));
+    const totalAmount = parseFloat(parseFloat(tradeAmount || "0").toFixed(2));
+    const cryptoQty = parseFloat(parseFloat(cryptoAmount || "0").toFixed(6));
+
     if ((!totalAmount && !cryptoQty) || currentPrice <= 0) {
       setModalMessage(t("enterCustomPrice"));
       setIsModalOpen(true);
@@ -56,51 +90,30 @@ export default function TradeForm({
       setIsModalOpen(true);
       return;
     }
+
     let calculatedAmount = totalAmount ? totalAmount / currentPrice : cryptoQty;
-    const calculatedTotal = cryptoQty ? cryptoQty * currentPrice : totalAmount;
-    if (calculatedAmount <= 0 || calculatedTotal <= 0) {
+
+    if (calculatedAmount <= 0) {
       setModalMessage(t("Invalidate"));
       setIsModalOpen(true);
       return;
     }
-    if (tradeType === "sell") {
-      const availableBalance = cryptoBalance[selectedAsset];
-      const adjustedAmount = Math.min(calculatedAmount, availableBalance);
 
-      if (availableBalance - adjustedAmount < 0.000001) {
-        calculatedAmount = availableBalance;
-      }
-      if (!availableBalance || availableBalance < cryptoQty - 0.000001) {
+    if (tradeType === "sell") {
+      const availableBalance = cryptoBalance[selectedAsset] || 0;
+      if (availableBalance < calculatedAmount - 0.000001) {
         setModalMessage(t("notEnough"));
         setIsModalOpen(true);
         return;
       }
+      if (availableBalance - calculatedAmount < 0.000001) {
+        calculatedAmount = availableBalance;
+      }
     }
-    onTrade(
-      tradeType,
-      selectedAsset,
-      calculatedAmount
-      // calculatedTotal
-    );
-    setIsModalOpen(true);
-    setModalMessage("tradeDone");
+
+    onTrade(tradeType, selectedAsset, calculatedAmount);
     setTradeAmount("");
     setCryptoAmount("");
-  };
-
-  // Handle click on the balance and set the input value
-  const handleBalanceClick = () => {
-    const formattedAmount = cryptoBalance[selectedAsset].toFixed(6);
-    // setAmount(formattedAmount); // Update the state with the formatted amount
-    setCryptoAmount(formattedAmount);
-    setTradeAmount("");
-  };
-
-  const handleCashClick = () => {
-    const formattedAmount = cashBalance.toFixed(2); // Format the value to 2 decimal places
-    // setAmount(formattedAmount); // Update the state with the formatted amount
-    setTradeAmount(formattedAmount); // Set the input field with the formatted amount
-    setCryptoAmount(""); // Clear the crypto amount input
   };
 
   return (
@@ -110,111 +123,189 @@ export default function TradeForm({
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
       />
-      <div className="shadow-md dark:shadow-white/50 rounded-lg p-6 w-full max-w-lg space-y-4">
-        <div>
-          <label className="block text-sm font-medium">{t("tradeType")}</label>
-          <select
-            value={tradeType}
-            onChange={handleTradeChange}
-            className="w-full mt-1 border border-gray-300 dark:border-gray-700 rounded-lg p-2  dark:bg-gray-900"
+
+      <div className="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
+        <div className="grid grid-cols-2 border-b border-gray-200 dark:border-gray-800">
+          <button
+            type="button"
+            onClick={() => setTradeType("buy")}
+            className={`py-3 text-sm font-semibold transition-colors ${
+              tradeType === "buy"
+                ? "bg-emerald-500 text-white"
+                : "text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-900"
+            }`}
           >
-            <option value="buy">{t("buy")}</option>
-            <option value="sell">{t("sell")}</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium ">
-            {t("cryptoCurrency")}
-          </label>
-          <select
-            value={selectedAsset}
-            onChange={handleAssetChange}
-            className="w-full mt-1 border dark:border-gray-700 rounded-lg p-2  dark:bg-gray-900"
+            {t("buy")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setTradeType("sell")}
+            className={`py-3 text-sm font-semibold transition-colors ${
+              tradeType === "sell"
+                ? "bg-rose-500 text-white"
+                : "text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-900"
+            }`}
           >
-            {Object.keys(cryptoBalance).map((asset) => (
-              <option key={asset} value={asset}>
-                {asset.charAt(0).toUpperCase() + asset.slice(1)} ({asset})
-              </option>
-            ))}
-          </select>
+            {t("sell")}
+          </button>
         </div>
 
-        <div>
-          <label className="flex justify-between text-sm font-medium ">
-            <div>{t("tradePrice")}</div>
-            <div
-              className="text-gray-400 hover:text-gray-700 cursor-pointer "
-              onClick={handleCashClick}
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          <div>
+            <label className="mb-1.5 block text-xs text-gray-400">
+              {t("cryptoCurrency")}
+            </label>
+            <select
+              value={selectedAsset}
+              onChange={(e) => onSelectAsset(e.target.value)}
+              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-blue-500 dark:border-gray-700 dark:bg-gray-900"
             >
-              {tradeType === "buy" ? cashBalance.toFixed(2) : ""}
-            </div>
-          </label>
-          <input
-            type="number"
-            value={tradeAmount}
-            onChange={(e) => {
-              setTradeAmount(e.target.value);
-              setCryptoAmount(""); // Clear the crypto amount input
-            }}
-            placeholder={t("contractionPrice")}
-            className="w-full mt-1 border dark:border-gray-700 rounded-lg p-2  dark:bg-gray-900"
-            step="0.01"
-            min="0.00"
-          />
-        </div>
-
-        <div>
-          <label className="flex justify-between text-sm font-medium">
-            <div>{t("tradeValue")}</div>
-            <div
-              className="text-gray-400 hover:text-gray-700 cursor-pointer"
-              onClick={handleBalanceClick}
-            >
-              {tradeType === "buy"
-                ? ""
-                : cryptoBalance[selectedAsset].toFixed(6)}
-            </div>
-          </label>
-          <input
-            type="number"
-            value={cryptoAmount}
-            onChange={(e) => {
-              setCryptoAmount(e.target.value);
-              setTradeAmount(""); // Clear the trade amount input
-            }}
-            placeholder={t("tradeValuePlaceholder")}
-            className="w-full mt-1 border dark:border-gray-700 rounded-lg p-2  dark:bg-gray-900"
-            step="0.000001"
-            min="0.000000"
-          />
-          {/* {!tradeAmount && !cryptoAmount && currentPrice > 0 && (
-            <p className="text-sm text-gray-600 mt-1">
-            قیمت فعلی: <strong>{currentPrice.toFixed(2)} USD</strong>
-            </p>
-            )} */}
-        </div>
-
-        {currentPrice > 0 && (tradeAmount || cryptoAmount) && (
-          <div className="bg-gray-100 p-3 rounded-lg text-sm text-gray-800">
-            <p>
-              {tradeAmount
-                ? `${t("tradeValueCalculate")} ${(
-                    parseFloat(tradeAmount) / currentPrice
-                  ).toFixed(6)}`
-                : `${t("tradePriceCalculate")} ${(
-                    parseFloat(cryptoAmount) * currentPrice
-                  ).toFixed(2)} ${t("USD")}`}
-            </p>
+              {SUPPORTED_CRYPTOCURRENCIES.map((item) => (
+                <option key={item.name} value={item.name}>
+                  {item.symbol}/USDT — {t(item.name)}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
 
-        <button
-          onClick={handleSubmit}
-          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
-        >
-          {t("tradeDone")}
-        </button>
+          <div className="rounded-lg bg-gray-50 px-3 py-2 dark:bg-gray-900">
+            <div className="flex items-center justify-between text-xs text-gray-400">
+              <span>{t("lastPrice")}</span>
+              <span className="tabular-nums text-sm font-semibold text-gray-900 dark:text-white">
+                {currentPrice > 0
+                  ? `$${currentPrice.toLocaleString(undefined, {
+                      maximumFractionDigits: 6,
+                    })}`
+                  : t("fetching")}
+              </span>
+            </div>
+            <div className="mt-1 flex items-center justify-between text-xs text-gray-400">
+              <span>{t("available")}</span>
+              <span className="tabular-nums">
+                {tradeType === "buy"
+                  ? `${cashBalance.toFixed(2)} USDT`
+                  : `${(cryptoBalance[selectedAsset] || 0).toFixed(6)} ${
+                      crypto?.symbol || ""
+                    }`}
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1.5 flex items-center justify-between text-xs text-gray-400">
+              <span>{t("tradePrice")}</span>
+              {tradeType === "buy" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTradeAmount(cashBalance.toFixed(2));
+                    setCryptoAmount("");
+                  }}
+                  className="text-blue-500 hover:underline"
+                >
+                  Max
+                </button>
+              )}
+            </label>
+            <div className="relative">
+              <input
+                type="number"
+                value={tradeAmount}
+                onChange={(e) => {
+                  setTradeAmount(e.target.value);
+                  setCryptoAmount("");
+                }}
+                placeholder="0.00"
+                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 pe-14 text-sm outline-none focus:border-blue-500 dark:border-gray-700 dark:bg-gray-900"
+                step="0.01"
+                min="0"
+              />
+              <span className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                USDT
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1.5 flex items-center justify-between text-xs text-gray-400">
+              <span>{t("tradeValue")}</span>
+              {tradeType === "sell" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCryptoAmount(
+                      (cryptoBalance[selectedAsset] || 0).toFixed(6)
+                    );
+                    setTradeAmount("");
+                  }}
+                  className="text-blue-500 hover:underline"
+                >
+                  Max
+                </button>
+              )}
+            </label>
+            <div className="relative">
+              <input
+                type="number"
+                value={cryptoAmount}
+                onChange={(e) => {
+                  setCryptoAmount(e.target.value);
+                  setTradeAmount("");
+                }}
+                placeholder="0.000000"
+                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 pe-14 text-sm outline-none focus:border-blue-500 dark:border-gray-700 dark:bg-gray-900"
+                step="0.000001"
+                min="0"
+              />
+              <span className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                {crypto?.symbol || "—"}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2">
+            {PERCENTS.map((percent) => (
+              <button
+                key={percent}
+                type="button"
+                onClick={() => handlePercent(percent)}
+                className="rounded-md border border-gray-200 py-1.5 text-xs text-gray-500 transition hover:border-blue-400 hover:text-blue-600 dark:border-gray-700 dark:hover:border-green-500 dark:hover:text-green-400"
+              >
+                {percent}%
+              </button>
+            ))}
+          </div>
+
+          {estimated && (
+            <div className="rounded-lg border border-dashed border-gray-200 px-3 py-2 text-xs text-gray-500 dark:border-gray-700">
+              <div className="flex justify-between">
+                <span>{t("tradeValueCalculate")}</span>
+                <span className="tabular-nums font-medium text-gray-800 dark:text-gray-100">
+                  {estimated.qty.toFixed(6)} {crypto?.symbol}
+                </span>
+              </div>
+              <div className="mt-1 flex justify-between">
+                <span>{t("tradePriceCalculate")}</span>
+                <span className="tabular-nums font-medium text-gray-800 dark:text-gray-100">
+                  {estimated.total.toFixed(2)} USDT
+                </span>
+              </div>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className={`mt-auto w-full rounded-lg py-3 text-sm font-semibold text-white transition ${
+              tradeType === "buy"
+                ? "bg-emerald-500 hover:bg-emerald-600"
+                : "bg-rose-500 hover:bg-rose-600"
+            }`}
+          >
+            {tradeType === "buy" ? t("buy") : t("sell")}{" "}
+            {crypto?.symbol || ""}
+          </button>
+        </div>
       </div>
     </>
   );
