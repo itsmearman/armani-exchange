@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { Redis } from "@upstash/redis";
 import {
   Database,
   INITIAL_CASH_BALANCE,
@@ -8,6 +9,7 @@ import {
   createEmptyCryptoBalances,
 } from "./types";
 
+const REDIS_KEY = "armani-exchange:db";
 const DATA_DIR = path.join(process.cwd(), "data");
 const DB_PATH = path.join(DATA_DIR, "db.json");
 
@@ -18,6 +20,26 @@ const emptyDb = (): Database => ({
 });
 
 let writeQueue: Promise<void> = Promise.resolve();
+let redisClient: Redis | null | undefined;
+
+function getRedis(): Redis | null {
+  if (redisClient !== undefined) return redisClient;
+
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (url && token) {
+    redisClient = new Redis({ url, token });
+  } else {
+    redisClient = null;
+  }
+
+  return redisClient;
+}
+
+function isVercel(): boolean {
+  return Boolean(process.env.VERCEL);
+}
 
 async function ensureDbFile(): Promise<void> {
   await fs.mkdir(DATA_DIR, { recursive: true });
@@ -28,7 +50,7 @@ async function ensureDbFile(): Promise<void> {
   }
 }
 
-export async function readDb(): Promise<Database> {
+async function readDbFromFile(): Promise<Database> {
   await ensureDbFile();
   const raw = await fs.readFile(DB_PATH, "utf-8");
   try {
@@ -43,9 +65,48 @@ export async function readDb(): Promise<Database> {
   }
 }
 
-async function writeDb(db: Database): Promise<void> {
+async function writeDbToFile(db: Database): Promise<void> {
   await ensureDbFile();
   await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+}
+
+export async function readDb(): Promise<Database> {
+  const redis = getRedis();
+
+  if (redis) {
+    const data = await redis.get<Database>(REDIS_KEY);
+    if (!data) return emptyDb();
+    return {
+      users: data.users ?? [],
+      orders: data.orders ?? [],
+      nextOrderId: data.nextOrderId ?? 1,
+    };
+  }
+
+  if (isVercel()) {
+    throw new Error(
+      "Missing UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN. File storage is not writable on Vercel."
+    );
+  }
+
+  return readDbFromFile();
+}
+
+async function writeDb(db: Database): Promise<void> {
+  const redis = getRedis();
+
+  if (redis) {
+    await redis.set(REDIS_KEY, db);
+    return;
+  }
+
+  if (isVercel()) {
+    throw new Error(
+      "Missing UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN. File storage is not writable on Vercel."
+    );
+  }
+
+  await writeDbToFile(db);
 }
 
 export async function updateDb<T>(
