@@ -1,42 +1,92 @@
 # Armani Exchange
 
-Next.js crypto exchange simulator with a self-contained backend (no Supabase).
+Armani Exchange یک شبیه‌ساز معاملهٔ نقدی (Spot) ارز دیجیتال است. کاربر با ثبت‌نام، ۱۵۰٬۰۰۰ دلار اعتبار مجازی می‌گیرد و می‌تواند خرید و فروش را تمرین کند، موجودی خود را ببیند و تاریخچهٔ سفارش‌هایش را مرور کند.
 
-## Stack
+## امکانات نسخهٔ فعلی
 
-- **TypeScript** + **Next.js** (App Router)
-- **Next.js API Routes** for auth, profile, orders, and live prices proxy
-- **Local JSON file** (`data/db.json`) in development (without `DATABASE_URL`)
-- **Neon Postgres** for Vercel / production
-- **JWT httpOnly cookies** (`jose`) + **bcryptjs** password hashing
-- **Redux Toolkit**, **next-intl**, **IRANSansX FaNum**
+- ثبت‌نام، ورود و خروج با نشست مبتنی بر JWT و کوکی `httpOnly` به نام `ae_session`. رمز عبور با bcrypt هش می‌شود.
+- نمایش قیمت دلاری از CoinGecko و نمودار TradingView. ارزهای پشتیبانی‌شده شامل BTC، ETH، ADA، SOL، BNB، XRP، DOT و DOGE است.
+- خرید و فروش شبیه‌سازی‌شده با بررسی موجودی نقدی یا ارزی، به‌روزرسانی موجودی و ثبت سفارش در بک‌اند.
+- صفحهٔ دارایی‌ها، ویرایش پروفایل و بارگذاری تصویر پروفایل تا ۱ مگابایت. تصویر به‌صورت Data URL ذخیره می‌شود.
+- رابط فارسی و انگلیسی، چیدمان واکنش‌گرا، پوستهٔ روشن و تاریک، صفحهٔ دربارهٔ ما و وبلاگ.
 
-## Getting started (local)
+## راه‌اندازی محلی
 
-```bash
-npm install
-cp .env.example .env.local
+از ریشهٔ پروژه با Node.js و npm اجرا کنید.
+
+```sh
+npm ci
 npm run dev
 ```
 
-If `DATABASE_URL` is set, Neon is used even locally. Otherwise data goes to `data/db.json`.
+صفحهٔ [اجرای محلی](http://localhost:3000) را باز کنید. برای بررسی جریان اصلی، حساب بسازید، به صفحهٔ معاملات بروید، یک خرید کوچک انجام دهید و نتیجه را در تاریخچهٔ سفارش‌ها و صفحهٔ دارایی‌ها ببینید. دریافت قیمت و نمایش نمودار به اینترنت نیاز دارد.
 
-## Deploy on Vercel + Neon
+برای تنظیم متغیرهای محیطی، فایل `.env.local` را در ریشهٔ پروژه بسازید. برای تولید مقدار تصادفی `AUTH_SECRET` می‌توانید از این دستور استفاده کنید.
 
-1. Create a project at [console.neon.tech](https://console.neon.tech)
-2. Copy the connection string (`DATABASE_URL`)
-3. In Vercel → Project → Settings → Environment Variables add:
+```sh
+node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+```
 
-| Name | Value |
-|------|--------|
-| `AUTH_SECRET` | a long random string |
-| `DATABASE_URL` | Neon connection string |
+| متغیر | کاربرد |
+| --- | --- |
+| `AUTH_SECRET` | کلید امضای نشست. برای استقرار مقدار تصادفی اختصاصی تنظیم کنید. کد `JWT_SECRET` را هم به‌عنوان مقدار جایگزین می‌خواند. |
+| `DATABASE_URL` | رشتهٔ اتصال Neon Postgres. کد `POSTGRES_URL` را هم به‌عنوان مقدار جایگزین می‌خواند. در اجرای محلی، اگر هیچ‌کدام تنظیم نشده باشد، داده‌ها در `data/db.json` ذخیره می‌شوند. |
 
-4. Redeploy
-5. Sign up again on production (tables are auto-created on first request)
+| دستور | کاربرد |
+| --- | --- |
+| `npm run dev` | اجرای سرور توسعه |
+| `npm run lint` | بررسی قواعد ESLint |
+| `npm run build` | ساخت نسخهٔ انتشار |
+| `npm run start` | اجرای نسخهٔ ساخته‌شده |
 
-## Notes
+## استقرار روی Vercel با Neon
 
-- Session cookie: `ae_session`
-- Avatars are stored as data URLs in Postgres
-- Never commit `.env.local` or real database passwords
+1. یک پایگاه دادهٔ Postgres در Neon بسازید و رشتهٔ اتصال آن را بردارید.
+2. در تنظیمات پروژهٔ Vercel، متغیرهای `DATABASE_URL` و `AUTH_SECRET` را برای محیط مورد نظر تنظیم کنید و دوباره استقرار دهید.
+3. پس از استقرار ثبت‌نام یا ورود را بررسی کنید. جدول‌های `users` و `orders` هنگام نخستین استفاده از پایگاه داده ساخته می‌شوند. برای پایگاه دادهٔ تازه، یک حساب جدید بسازید.
+
+روی Vercel اتصال Postgres لازم است. اجرای محلی با فایل JSON و اجرای متصل به Neon داده‌های مستقل دارند. مقادیر واقعی اتصال و کلید نشست را در فایل محلی یا تنظیمات محیط استقرار نگه دارید.
+
+## مسیرهای برنامه و API
+
+| مسیر | کاربرد |
+| --- | --- |
+| `/`، `/about-us`، `/blog` | صفحهٔ اصلی، معرفی پروژه و وبلاگ |
+| `/signup`، `/login` | ثبت‌نام و ورود |
+| `/spot`، `/assets`، `/profile` | معامله و تاریخچهٔ سفارش، دارایی‌ها و پروفایل. برای دسترسی وارد حساب شوید. |
+
+| متد و مسیر API | کاربرد |
+| --- | --- |
+| `POST /api/auth/signup`، `POST /api/auth/login`، `POST /api/auth/logout` | ثبت‌نام، ورود و خروج |
+| `GET /api/auth/me` | دریافت حساب مرتبط با نشست جاری |
+| `GET /api/profile`، `PATCH /api/profile` | خواندن و ویرایش پروفایل |
+| `POST /api/profile/avatar` | بارگذاری تصویر پروفایل |
+| `GET /api/orders`، `POST /api/orders` | دریافت تاریخچه و ثبت معاملهٔ شبیه‌سازی‌شده |
+| `GET /api/prices` | دریافت قیمت دلاری ارزهای پشتیبانی‌شده از CoinGecko |
+
+## ساختار پروژه
+
+پروژه با Next.js App Router، React و TypeScript نوشته شده است. Redux Toolkit وضعیت قیمت‌ها، موجودی‌ها، سفارش‌ها و پنجره‌های پیام را در رابط مدیریت می‌کند. Tailwind CSS و MUI برای رابط و next-intl برای ترجمه استفاده می‌شوند.
+
+| مسیر | مسئولیت |
+| --- | --- |
+| [`src/app/`](src/app/) | صفحه‌ها، چیدمان و مسیرهای API |
+| [`src/view/`](src/view/) و [`src/components/`](src/components/) | نماهای صفحه‌ها و اجزای مشترک |
+| [`src/store/`](src/store/) و [`src/contexts/`](src/contexts/) | وضعیت رابط و نشست کاربر در کلاینت |
+| [`lib/`](lib/) | احراز هویت، مدل داده، ذخیره‌سازی و منطق ثبت معامله |
+| [`src/config/cryptocurrencies.ts`](src/config/cryptocurrencies.ts) | فهرست ارزها و شناسه‌های CoinGecko و TradingView |
+| [`messages/`](messages/) و [`src/i18n/`](src/i18n/) | ترجمه‌ها و تنظیمات زبان |
+
+## فازهای توسعه
+
+تاریخ‌های میلادی زیر از تاریخچهٔ کامیت‌های شاخهٔ `develop` گرفته شده‌اند و زمان ثبت تغییرات در گیت را نشان می‌دهند. هر ردیف یک مرحله از تکامل پروژه را خلاصه می‌کند.
+
+| تاریخ | فاز | تغییرات |
+| --- | --- | --- |
+| ۲۰۲۴/۱۱/۰۴ تا ۲۰۲۴/۱۱/۱۱ | پایهٔ پروژه | راه‌اندازی Next.js، ساخت نوار ناوبری و مسیرها، افزودن فونت و آیکن و اتصال نمودار TradingView. [کامیت آغاز پروژه](../../commit/2008d27) |
+| ۲۰۲۴/۱۱/۱۵ تا ۲۰۲۴/۱۲/۳۰ | معاملات و رابط دوزبانه | ساخت فرم سفارش Spot، مدیریت موجودی، دریافت قیمت با WebSocket، افزودن تعویض زبان و پنجرهٔ پیام و توسعهٔ مدیریت وضعیت با Redux. [کامیت تعویض زبان](../../commit/6df803c) |
+| ۲۰۲۵/۰۱/۰۹ تا ۲۰۲۵/۰۴/۰۲ | گسترش رابط | پویاتر شدن نمایش قیمت و موجودی، افزودن مانیفست وب، پوستهٔ تاریک، توسعهٔ صفحهٔ اصلی و پیام تأیید معامله. [مانیفست](../../commit/3a25001) · [پوستهٔ تاریک](../../commit/411e87d) |
+| ۲۰۲۵/۰۴/۰۶ تا ۲۰۲۵/۰۵/۰۵ | حساب کاربری و ذخیرهٔ سفارش | اضافه‌شدن Supabase و مسیر ورود، توسعهٔ مدیریت معاملات با Redux، جایگزینی WebSocket با REST برای قیمت، ذخیره و بازیابی سفارش‌ها از پایگاه داده و افزودن وبلاگ. [Supabase](../../commit/33d6e7c) · [REST](../../commit/fde886e) · [سفارش‌ها](../../commit/1af1cf1) · [وبلاگ](../../commit/0d9e089) |
+| ۲۰۲۵/۱۲/۱۹ | پایداری ساخت و بازآرایی ارزها | متمرکز شدن تنظیمات ارزها، اصلاح ترجمه‌ها و ساخت پروژه و اعمال اصلاحیهٔ امنیتی React Server Components در همان مقطع. [تنظیمات ارزها](../../commit/f7d7cd7) · [اصلاحیه](../../commit/ab86a48) |
+| ۲۰۲۶/۱۰/۱۷ | بک‌اند داخلی | جایگزینی Supabase با APIهای Next.js، نشست JWT و ذخیره‌سازی محلی. صفحات دارایی‌ها و پروفایل اضافه و رابط معاملات بازطراحی شد. [کامیت بک‌اند و رابط](../../commit/b1e32d4) |
+| ۲۰۲۶/۱۰/۱۷ | ذخیره‌سازی در محیط استقرار | ابتدا Upstash Redis اضافه و سقف تصویر پروفایل به ۱ مگابایت تغییر کرد. در کامیت بعدی، Neon Postgres جایگزین Redis شد و ذخیره‌سازی JSON برای توسعهٔ محلی در دسترس ماند. [Upstash](../../commit/e808222) · [Neon](../../commit/de3f172) |
